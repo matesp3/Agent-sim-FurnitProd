@@ -3,7 +3,7 @@ package agents.agentfurnitprod;
 import OSPABA.*;
 import simulation.*;
 
-//meta! id="8"
+//meta! id="24"
 public class AgentFurnitProd extends OSPABA.Agent
 {
 	public AgentFurnitProd(int id, Simulation mySim, Agent parent)
@@ -24,13 +24,14 @@ public class AgentFurnitProd extends OSPABA.Agent
 	{
 		new ManagerFurnitProd(Id.managerFurnitProd, mySim(), this);
 		addOwnMessage(Mc.deskTransfer);
-		addOwnMessage(Mc.storageTransfer);
+		addOwnMessage(Mc.prepAndCarving);
 		addOwnMessage(Mc.orderProcessing);
+		addOwnMessage(Mc.storageTransfer);
 		addOwnMessage(Mc.assembling);
-		addOwnMessage(Mc.staining);
 		addOwnMessage(Mc.assignCarpenterA);
 		addOwnMessage(Mc.assignCarpenterB);
 		addOwnMessage(Mc.assignCarpenterC);
+		addOwnMessage(Mc.stainingAndPaintcoat);
 		addOwnMessage(Mc.fittingsInstallation);
 	}
 	//meta! tag="end"

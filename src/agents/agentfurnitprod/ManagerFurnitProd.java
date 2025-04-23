@@ -3,7 +3,7 @@ package agents.agentfurnitprod;
 import OSPABA.*;
 import simulation.*;
 
-//meta! id="8"
+//meta! id="24"
 public class ManagerFurnitProd extends OSPABA.Manager
 {
 	public ManagerFurnitProd(int id, Simulation mySim, Agent myAgent)
@@ -24,48 +24,58 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		}
 	}
 
-	//meta! sender="AgentTransfer", id="36", type="Response"
+	//meta! sender="AgentTransfer", id="35", type="Response"
 	public void processDeskTransfer(MessageForm message)
 	{
 	}
 
-	//meta! sender="AgentTransfer", id="32", type="Response"
-	public void processStorageTransfer(MessageForm message)
+	//meta! sender="AgentGroupA", id="57", type="Response"
+	public void processPrepAndCarving(MessageForm message)
 	{
 	}
 
-	//meta! sender="AgentModel", id="26", type="Request"
+	//meta! sender="AgentModel", id="28", type="Request"
 	public void processOrderProcessing(MessageForm message)
 	{
 	}
 
-	//meta! sender="AgentGroupB", id="80", type="Response"
+	//meta! sender="AgentTransfer", id="33", type="Response"
+	public void processStorageTransfer(MessageForm message)
+	{
+	}
+
+	//meta! sender="AgentGroupB", id="79", type="Response"
 	public void processAssembling(MessageForm message)
 	{
 	}
 
-	//meta! sender="AgentGroupC", id="86", type="Response"
-	public void processStaining(MessageForm message)
-	{
-	}
-
-	//meta! sender="AgentGroupA", id="132", type="Response"
+	//meta! sender="AgentGroupA", id="54", type="Response"
 	public void processAssignCarpenterA(MessageForm message)
 	{
 	}
 
-	//meta! sender="AgentGroupB", id="134", type="Response"
+	//meta! sender="AgentGroupB", id="77", type="Response"
 	public void processAssignCarpenterB(MessageForm message)
 	{
 	}
 
-	//meta! sender="AgentGroupC", id="136", type="Response"
+	//meta! sender="AgentGroupC", id="88", type="Response"
 	public void processAssignCarpenterC(MessageForm message)
 	{
 	}
 
-	//meta! sender="AgentGroupC", id="88", type="Response"
-	public void processFittingsInstallation(MessageForm message)
+	//meta! sender="AgentGroupC", id="90", type="Response"
+	public void processStainingAndPaintcoat(MessageForm message)
+	{
+	}
+
+	//meta! sender="AgentGroupA", id="59", type="Response"
+	public void processFittingsInstallationAgentGroupA(MessageForm message)
+	{
+	}
+
+	//meta! sender="AgentGroupC", id="92", type="Response"
+	public void processFittingsInstallationAgentGroupC(MessageForm message)
 	{
 	}
 
@@ -87,40 +97,53 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.deskTransfer:
-			processDeskTransfer(message);
-		break;
-
-		case Mc.fittingsInstallation:
-			processFittingsInstallation(message);
-		break;
-
-		case Mc.storageTransfer:
-			processStorageTransfer(message);
-		break;
-
-		case Mc.assignCarpenterC:
-			processAssignCarpenterC(message);
-		break;
-
 		case Mc.orderProcessing:
 			processOrderProcessing(message);
 		break;
 
-		case Mc.staining:
-			processStaining(message);
-		break;
-
-		case Mc.assignCarpenterB:
-			processAssignCarpenterB(message);
+		case Mc.prepAndCarving:
+			processPrepAndCarving(message);
 		break;
 
 		case Mc.assembling:
 			processAssembling(message);
 		break;
 
+		case Mc.fittingsInstallation:
+			switch (message.sender().id())
+			{
+			case Id.agentGroupA:
+				processFittingsInstallationAgentGroupA(message);
+			break;
+
+			case Id.agentGroupC:
+				processFittingsInstallationAgentGroupC(message);
+			break;
+			}
+		break;
+
 		case Mc.assignCarpenterA:
 			processAssignCarpenterA(message);
+		break;
+
+		case Mc.storageTransfer:
+			processStorageTransfer(message);
+		break;
+
+		case Mc.assignCarpenterB:
+			processAssignCarpenterB(message);
+		break;
+
+		case Mc.assignCarpenterC:
+			processAssignCarpenterC(message);
+		break;
+
+		case Mc.deskTransfer:
+			processDeskTransfer(message);
+		break;
+
+		case Mc.stainingAndPaintcoat:
+			processStainingAndPaintcoat(message);
 		break;
 
 		default:

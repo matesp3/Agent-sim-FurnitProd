@@ -5,7 +5,7 @@ import simulation.*;
 import agents.agentgroupb.*;
 import OSPABA.Process;
 
-//meta! id="100"
+//meta! id="82"
 public class ProcessAssembling extends OSPABA.Process
 {
 	public ProcessAssembling(int id, Simulation mySim, CommonAgent myAgent)
@@ -20,7 +20,7 @@ public class ProcessAssembling extends OSPABA.Process
 		// Setup component for the next replication
 	}
 
-	//meta! sender="AgentGroupB", id="101", type="Start"
+	//meta! sender="AgentGroupB", id="83", type="Start"
 	public void processStart(MessageForm message)
 	{
 	}

@@ -4,6 +4,7 @@ import OSPABA.*;
 import agents.agenttransfer.*;
 import agents.agentmodel.*;
 import agents.agentenvironment.*;
+import agents.agentgroupa.*;
 import agents.agentgroupb.*;
 import agents.agentgroupc.*;
 import agents.agentfurnitprod.*;
@@ -49,9 +50,10 @@ public class MySimulation extends OSPABA.Simulation
 		setAgentModel(new AgentModel(Id.agentModel, this, null));
 		setAgentEnvironment(new AgentEnvironment(Id.agentEnvironment, this, agentModel()));
 		setAgentFurnitProd(new AgentFurnitProd(Id.agentFurnitProd, this, agentModel()));
+		setAgentTransfer(new AgentTransfer(Id.agentTransfer, this, agentFurnitProd()));
+		setAgentGroupA(new AgentGroupA(Id.agentGroupA, this, agentFurnitProd()));
 		setAgentGroupB(new AgentGroupB(Id.agentGroupB, this, agentFurnitProd()));
 		setAgentGroupC(new AgentGroupC(Id.agentGroupC, this, agentFurnitProd()));
-		setAgentTransfer(new AgentTransfer(Id.agentTransfer, this, agentFurnitProd()));
 	}
 
 	private AgentModel _agentModel;
@@ -78,6 +80,22 @@ public AgentFurnitProd agentFurnitProd()
 	public void setAgentFurnitProd(AgentFurnitProd agentFurnitProd)
 	{_agentFurnitProd = agentFurnitProd; }
 
+	private AgentTransfer _agentTransfer;
+
+public AgentTransfer agentTransfer()
+	{ return _agentTransfer; }
+
+	public void setAgentTransfer(AgentTransfer agentTransfer)
+	{_agentTransfer = agentTransfer; }
+
+	private AgentGroupA _agentGroupA;
+
+public AgentGroupA agentGroupA()
+	{ return _agentGroupA; }
+
+	public void setAgentGroupA(AgentGroupA agentGroupA)
+	{_agentGroupA = agentGroupA; }
+
 	private AgentGroupB _agentGroupB;
 
 public AgentGroupB agentGroupB()
@@ -93,13 +111,5 @@ public AgentGroupC agentGroupC()
 
 	public void setAgentGroupC(AgentGroupC agentGroupC)
 	{_agentGroupC = agentGroupC; }
-
-	private AgentTransfer _agentTransfer;
-
-public AgentTransfer agentTransfer()
-	{ return _agentTransfer; }
-
-	public void setAgentTransfer(AgentTransfer agentTransfer)
-	{_agentTransfer = agentTransfer; }
 	//meta! tag="end"
 }

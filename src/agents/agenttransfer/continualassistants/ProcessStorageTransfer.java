@@ -5,7 +5,7 @@ import agents.agenttransfer.*;
 import simulation.*;
 import OSPABA.Process;
 
-//meta! id="110"
+//meta! id="47"
 public class ProcessStorageTransfer extends OSPABA.Process
 {
 	public ProcessStorageTransfer(int id, Simulation mySim, CommonAgent myAgent)
@@ -20,7 +20,7 @@ public class ProcessStorageTransfer extends OSPABA.Process
 		// Setup component for the next replication
 	}
 
-	//meta! sender="AgentTransfer", id="111", type="Start"
+	//meta! sender="AgentTransfer", id="48", type="Start"
 	public void processStart(MessageForm message)
 	{
 	}

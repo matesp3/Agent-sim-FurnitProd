@@ -3,7 +3,7 @@ package agents.agenttransfer;
 import OSPABA.*;
 import simulation.*;
 
-//meta! id="29"
+//meta! id="30"
 public class ManagerTransfer extends OSPABA.Manager
 {
 	public ManagerTransfer(int id, Simulation mySim, Agent myAgent)
@@ -24,23 +24,23 @@ public class ManagerTransfer extends OSPABA.Manager
 		}
 	}
 
-	//meta! sender="AgentFurnitProd", id="36", type="Request"
+	//meta! sender="AgentFurnitProd", id="35", type="Request"
 	public void processDeskTransfer(MessageForm message)
 	{
 	}
 
-	//meta! sender="AgentFurnitProd", id="32", type="Request"
+	//meta! sender="AgentFurnitProd", id="33", type="Request"
 	public void processStorageTransfer(MessageForm message)
 	{
 	}
 
-	//meta! sender="ProcessDeskTransfer", id="109", type="Finish"
-	public void processFinishProcessDeskTransfer(MessageForm message)
+	//meta! sender="ProcessStorageTransfer", id="48", type="Finish"
+	public void processFinishProcessStorageTransfer(MessageForm message)
 	{
 	}
 
-	//meta! sender="ProcessStorageTransfer", id="111", type="Finish"
-	public void processFinishProcessStorageTransfer(MessageForm message)
+	//meta! sender="ProcessDeskTransfer", id="46", type="Finish"
+	public void processFinishProcessDeskTransfer(MessageForm message)
 	{
 	}
 
@@ -62,25 +62,25 @@ public class ManagerTransfer extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.deskTransfer:
-			processDeskTransfer(message);
+		case Mc.finish:
+			switch (message.sender().id())
+			{
+			case Id.processStorageTransfer:
+				processFinishProcessStorageTransfer(message);
+			break;
+
+			case Id.processDeskTransfer:
+				processFinishProcessDeskTransfer(message);
+			break;
+			}
 		break;
 
 		case Mc.storageTransfer:
 			processStorageTransfer(message);
 		break;
 
-		case Mc.finish:
-			switch (message.sender().id())
-			{
-			case Id.processDeskTransfer:
-				processFinishProcessDeskTransfer(message);
-			break;
-
-			case Id.processStorageTransfer:
-				processFinishProcessStorageTransfer(message);
-			break;
-			}
+		case Mc.deskTransfer:
+			processDeskTransfer(message);
 		break;
 
 		default:

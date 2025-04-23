@@ -2,10 +2,9 @@ package agents.agentgroupb;
 
 import OSPABA.*;
 import simulation.*;
-import agents.agentgroupb.instantassistants.*;
 import agents.agentgroupb.continualassistants.*;
 
-//meta! id="79"
+//meta! id="73"
 public class AgentGroupB extends OSPABA.Agent
 {
 	public AgentGroupB(int id, Simulation mySim, Agent parent)
@@ -26,7 +25,6 @@ public class AgentGroupB extends OSPABA.Agent
 	{
 		new ManagerGroupB(Id.managerGroupB, mySim(), this);
 		new ProcessAssembling(Id.processAssembling, mySim(), this);
-		new QueryAssignCarpenterB(Id.queryAssignCarpenterB, mySim(), this);
 		addOwnMessage(Mc.assembling);
 		addOwnMessage(Mc.assignCarpenterB);
 	}

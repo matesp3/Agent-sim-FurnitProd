@@ -5,7 +5,7 @@ import simulation.*;
 import agents.agentgroupc.*;
 import OSPABA.Process;
 
-//meta! id="104"
+//meta! id="98"
 public class ProcessStaining extends OSPABA.Process
 {
 	public ProcessStaining(int id, Simulation mySim, CommonAgent myAgent)
@@ -20,7 +20,7 @@ public class ProcessStaining extends OSPABA.Process
 		// Setup component for the next replication
 	}
 
-	//meta! sender="AgentGroupC", id="105", type="Start"
+	//meta! sender="AgentGroupC", id="99", type="Start"
 	public void processStart(MessageForm message)
 	{
 	}
