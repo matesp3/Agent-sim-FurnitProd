@@ -11,61 +11,61 @@ public class Carpenter {
     private final int carpenterId;
     private final GROUP group;
     private int deskID;
-    private FurnitureOrder currentOrder;
-    private double orderProcessingBT;
-    private double orderProcessingET;
+    private Furniture assignedProduct;
+    private double productProcessingBT;
+    private double productProcessingET;
     private double sumOfWorkingTime;
 
     public Carpenter(GROUP group, int carpenterID) {
         this.group = group;
         this.carpenterId = carpenterID;
         this.deskID = IN_STORAGE;
-        this.orderProcessingBT = -1;
-        this.orderProcessingET = -1;
-        this.currentOrder = null;
+        this.productProcessingBT = -1;
+        this.productProcessingET = -1;
+        this.assignedProduct = null;
         this.sumOfWorkingTime = 0;
     }
 
     public void reset() {
         this.deskID = IN_STORAGE;
-        this.orderProcessingBT = -1;
-        this.orderProcessingET = -1;
-        this.currentOrder = null;
+        this.productProcessingBT = -1;
+        this.productProcessingET = -1;
+        this.assignedProduct = null;
         this.sumOfWorkingTime = 0;
     }
 
     /**
-     * Carpenter receives {@code newOrder} for which will be executed specific technological step.
-     * @param timeOfStart simulation time of assigning {@code newOrder} to this carpenter's instance
+     * Carpenter receives {@code product} for which will be executed specific technological step.
+     * @param timeOfStart simulation time of assigning {@code product} to this carpenter's instance
      * @throws RuntimeException if Carpenter is already working
      * @throws IllegalArgumentException if order is null
      */
-    public void receiveOrder(FurnitureOrder newOrder, double timeOfStart) {
+    public void receiveProduct(Furniture product, double timeOfStart) {
         if (this.isWorking())
             throw new RuntimeException("Carpenter is still working.. Cannot start processing of new order");
-        if (newOrder == null)
-            throw new IllegalArgumentException("New order for processing not provided (newOrder=null)");
-        this.orderProcessingET = -1;
-        this.orderProcessingBT = timeOfStart;
-        this.currentOrder = newOrder;
-        newOrder.setStepBT(timeOfStart);
+        if (product == null)
+            throw new IllegalArgumentException("New product for processing not provided (product=null)");
+        this.productProcessingET = -1;
+        this.productProcessingBT = timeOfStart;
+        this.assignedProduct = product;
+//        product.setStepBT(timeOfStart);
     }
 
     /**
-     * Carpenter returns order after executing specific technological step.
-     * @param timeOfEnd simulation time of completing work on current order by this carpenter's instance
+     * Carpenter returns product after executing specific technological step.
+     * @param timeOfEnd simulation time of completing work on current product by this carpenter's instance
      */
-    public FurnitureOrder returnOrder(double timeOfEnd) {
+    public Furniture returnProduct(double timeOfEnd) {
         if (!this.isWorking())
             throw new RuntimeException("Carpenter is not working, so he cannot end processing of order..");
-        if (DoubleComp.compare(this.orderProcessingBT, timeOfEnd) == 1) {
+        if (DoubleComp.compare(this.productProcessingBT, timeOfEnd) == 1) {
             throw new IllegalArgumentException("Order processing beginning > time of end of processing");
         }
-        this.orderProcessingET = timeOfEnd;
-        this.sumOfWorkingTime += (this.orderProcessingET - this.orderProcessingBT);
-        FurnitureOrder orderToReturn = this.currentOrder;
-        this.currentOrder = null;
-        return orderToReturn;
+        this.productProcessingET = timeOfEnd;
+        this.sumOfWorkingTime += (this.productProcessingET - this.productProcessingBT);
+        Furniture productToReturn = this.assignedProduct;
+        this.assignedProduct = null;
+        return productToReturn;
     }
 
     /**
@@ -75,7 +75,7 @@ public class Carpenter {
     public void startExecutingStep(double timeOfStart) {
         if (!this.isWorking())
             throw new RuntimeException("Carpenter is not working, so he cannot start executing tech. step..");
-        this.currentOrder.setStepBT(timeOfStart);
+        this.assignedProduct.setStepBT(timeOfStart);
     }
 
     /**
@@ -85,22 +85,22 @@ public class Carpenter {
     public void endExecutingStep(double timeOfEnd) {
         if (!this.isWorking())
             throw new RuntimeException("Carpenter is not working, so he cannot start executing tech. step..");
-        this.currentOrder.setStepET(timeOfEnd);
+        this.assignedProduct.setStepET(timeOfEnd);
     }
 
     /**
-     * @return amount of time of work on lastly processed order
+     * @return amount of time of work on lastly processed product
      * @throws RuntimeException if carpenter is working right now or was not working at all
      */
     public double getLastWorkDuration() throws RuntimeException {
         if (this.isWorking() || this.deskID == IN_STORAGE)
-            throw new RuntimeException("Carpenter is working (hasn't returned order yet) or is located in the storage");
-        return this.orderProcessingET - this.orderProcessingBT;
+            throw new RuntimeException("Carpenter is working (hasn't returned product yet) or is located in the storage");
+        return this.productProcessingET - this.productProcessingBT;
     }
 
     /**
      * Sets new position of this carpenter.
-     * @param deskID deskID of assigned order or {@code Carpenter.IN_STORAGE} constant if he is located in storage
+     * @param deskID deskID of assigned product or {@code Carpenter.IN_STORAGE} constant if he is located in storage
      */
     public void setCurrentDeskID(int deskID) {
         this.deskID = deskID;
@@ -129,31 +129,31 @@ public class Carpenter {
     }
 
     /**
-     * @return order that is currently being processed by this carpenter's instance
+     * @return product that is currently being processed by this carpenter's instance
      */
-    public FurnitureOrder getCurrentOrder() {
-        return this.currentOrder;
+    public Furniture getAssignedProduct() {
+        return this.assignedProduct;
     }
 
     /**
-     * @return time of beginning of lastly processing order
+     * @return time of beginning of lastly processing product
      */
     public double getWorkBT() {
-        return this.orderProcessingBT;
+        return this.productProcessingBT;
     }
 
     /**
-      * @return time of end of lastly processed order
+      * @return time of end of lastly processed product
      */
     public double getWorkET() {
-        return this.orderProcessingET;
+        return this.productProcessingET;
     }
 
     /**
-     * @return <code>true</code> if he is processing (if he owns) some instance of order
+     * @return <code>true</code> if he is processing (if he owns) some instance of product
      */
     public boolean isWorking() {
-        return this.currentOrder != null;
+        return this.assignedProduct != null;
     }
 
     /**
@@ -163,7 +163,7 @@ public class Carpenter {
      * @return amount of overall time, that carpenter has worked from the start of simulation till this moment.
      */
     public double getSumOfWorkingTime(double simEndTime) {
-        return this.isWorking() ? (this.sumOfWorkingTime + (simEndTime-this.orderProcessingBT)) // trim last working duration
+        return this.isWorking() ? (this.sumOfWorkingTime + (simEndTime-this.productProcessingBT)) // trim last working duration
                                 : this.sumOfWorkingTime;
     }
 
@@ -177,34 +177,30 @@ public class Carpenter {
 
     @Override
     public String toString() {
-        return String.format("Carp{%s;carpID=%d;desk=%d;orderID=%d}", this.group, this.carpenterId, this.deskID,
-                this.isWorking() ? this.currentOrder.getOrderID() : null);
+        return String.format("Carp{%s;carpID=%d;desk=%d;productID=%s}", this.group, this.carpenterId, this.deskID,
+                this.isWorking() ? this.assignedProduct.getProductID() : null);
     }
 
     public static void main(String[] args) {
         Carpenter carpenter = new Carpenter(GROUP.A, 1);
-        FurnitureOrder order = new FurnitureOrder(14, 0.25, FurnitureOrder.Product.CHAIR);
-        order.setDeskID(1);
+        Order order = new Order(1, 2500);
+        Furniture product = new Furniture(order, (order.getOrderID()+"-"+1), Furniture.Type.CHAIR);
+        product.setDeskID(1);
+        carpenter.setCurrentDeskID(1);
         System.out.println(carpenter.getGroup());
         System.out.println(carpenter.isWorking());
         System.out.println(carpenter.getWorkBT());
-        carpenter.receiveOrder(order,5.0);
+        carpenter.receiveProduct(product,5.0);
         System.out.println(carpenter.getWorkBT());
         System.out.println(carpenter.isWorking());
 //        System.out.println(carpenter.getLastlyProcessedOrderDuration()); // ok
-        carpenter.returnOrder(56.4);
+        carpenter.returnProduct(56.4);
         System.out.println(carpenter.getWorkET());
         System.out.println(carpenter.isWorking());
         System.out.println(carpenter.getLastWorkDuration());
-        carpenter.receiveOrder(order,60.0);
+        carpenter.receiveProduct(product,60.0);
         System.out.println(carpenter.getWorkBT());
         System.out.println(carpenter.isWorking());
-//        System.out.println(carpenter.getOrderProcessingET());
-//        System.out.println(carpenter.getLastlyProcessedOrderDuration()); // ok
-
-//        System.out.println("compare(false, true): "+Boolean.compare(false, true));
-//        System.out.println("compare(true, true): "+Boolean.compare(true, true));
-//        System.out.println("compare(true, false): "+Boolean.compare(true, false));
-//        System.out.println("compare(false, false): "+Boolean.compare(false, false));
+         // ok
     }
 }

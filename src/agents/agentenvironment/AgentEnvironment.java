@@ -2,7 +2,7 @@ package agents.agentenvironment;
 
 import OSPABA.*;
 import OSPStat.Stat;
-import common.FurnitureOrder;
+import common.Furniture;
 import simulation.*;
 import agents.agentenvironment.continualassistants.*;
 
@@ -39,9 +39,9 @@ public class AgentEnvironment extends OSPABA.Agent
 	}
 	//meta! tag="end"
 
-	public void orderCompleted(FurnitureOrder o) {
+	public void orderCompleted(Furniture o) {
 		this.ordersCompleted++;
-		this.avgTimeOrderCompletion.addSample(o.getTimeCompleted()-o.getTimeCreated());
+		this.avgTimeOrderCompletion.addSample(o.getTimeCompleted()-o.getProcessingBT());
 	}
 
 	public int getOrdersCompleted() {
