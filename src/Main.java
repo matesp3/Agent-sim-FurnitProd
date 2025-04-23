@@ -17,5 +17,6 @@ public class Main {
 //                );
         MySimulation sim = new MySimulation();
         sim.simulate(1, 3600*3);
+//        sim.setSimSpeed();
     }
 }

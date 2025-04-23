@@ -1,17 +1,23 @@
 package agents.agentfurnitprod;
 
 import OSPABA.*;
+import common.Order;
 import simulation.*;
 
+import java.util.LinkedList;
+import java.util.Queue;
 
 
 //meta! id="24"
 public class AgentFurnitProd extends OSPABA.Agent
 {
+	private Queue<OrderMessage> queueA;
+
 	public AgentFurnitProd(int id, Simulation mySim, Agent parent)
 	{
 		super(id, mySim, parent);
 		init();
+		this.queueA = new LinkedList<OrderMessage>();
 	}
 
 	@Override
@@ -37,4 +43,9 @@ public class AgentFurnitProd extends OSPABA.Agent
 		addOwnMessage(Mc.fittingsInstallation);
 	}
 	//meta! tag="end"
+
+
+	public Queue<OrderMessage> getQueueA() {
+		return this.queueA;
+	}
 }

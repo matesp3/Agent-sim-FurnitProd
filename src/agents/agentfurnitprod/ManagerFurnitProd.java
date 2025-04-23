@@ -39,18 +39,19 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	public void processOrderProcessing(MessageForm message)
 	{
 		OrderMessage msg = (OrderMessage)message;
-		// print received order
-		System.out.println(msg.getOrder());
-		Furniture f = msg.getOrder().assignUnprocessedProduct();
-		while (f != null) {
-			System.out.println(f);
-			f = msg.getOrder().assignUnprocessedProduct();
-		}
-		System.out.println();
-		// return it back to test communication through AgentModel
+		this.myAgent().getQueueA().add(msg);
+//		// print received order
+//		System.out.println(msg.getOrder());
+//		Furniture f = msg.getOrder().assignUnprocessedProduct();
+//		while (f != null) {
+//			System.out.println(f);
+//			f = msg.getOrder().assignUnprocessedProduct();
+//		}
+//		System.out.println();
+//		// return it back to test communication through AgentModel
 		msg.setCode(Mc.orderProcessing);
 		this.response(message);
-		// ok...
+//		// ok...
 	}
 
 	//meta! sender="AgentTransfer", id="33", type="Response"

@@ -76,6 +76,10 @@ public class Order {
         this.completedAt = completedAt;
     }
 
+    public Furniture[] getProducts() {
+        return this.products;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
