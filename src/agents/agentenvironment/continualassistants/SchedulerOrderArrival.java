@@ -61,6 +61,7 @@ public class SchedulerOrderArrival extends OSPABA.Scheduler
 				OrderMessage copyMsg = (OrderMessage)message.createCopy();
 				copyMsg.setOrder(this.generateNewOrder(this.mySim().currentTime()+gap));
 				this.hold(gap, copyMsg); // update of simTime + message to yourself
+//				System.out.println(" >>> NEXT = "+Formatter.getStrDateTime(this.mySim().currentTime()+gap,8,6));
 				// - - - - - - - - - - - - - - - -
 				message.setAddressee(this.myAgent());
 				this.notice(message);
@@ -89,6 +90,10 @@ public class SchedulerOrderArrival extends OSPABA.Scheduler
 	public AgentEnvironment myAgent()
 	{
 		return (AgentEnvironment)super.myAgent();
+	}
+
+	public int getCreatedOrdersCount() {
+		return this.nextOrderID-1;
 	}
 
 	/**

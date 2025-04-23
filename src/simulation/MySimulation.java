@@ -4,6 +4,7 @@ import OSPABA.*;
 import OSPRNG.RNG;
 import OSPRNG.UniformContinuousRNG;
 import OSPStat.Stat;
+import agents.agentenvironment.continualassistants.SchedulerOrderArrival;
 import agents.agenttransfer.*;
 import agents.agentmodel.*;
 import agents.agentenvironment.*;
@@ -95,6 +96,9 @@ public class MySimulation extends OSPABA.Simulation
 //		this.avgTimeInStaining.addSample();
 //		this.avgTimeInAssembling.addSample();
 //		this.avgTimeInFitInstallation.addSample();
+		SchedulerOrderArrival sch = (SchedulerOrderArrival) agentEnvironment().findAssistant(Id.schedulerOrderArrival);
+		System.out.println("created: "+sch.getCreatedOrdersCount());
+		System.out.println("completed: "+agentEnvironment().getOrdersCompleted());
 	}
 
 	@Override

@@ -27,6 +27,7 @@ public class ManagerModel extends OSPABA.Manager
 	//meta! sender="AgentFurnitProd", id="28", type="Response"
 	public void processOrderProcessing(MessageForm message)
 	{
+		// handling response --v
 		message.setCode(Mc.orderCompleted);
 		message.setAddressee(Id.agentEnvironment);
 		this.notice(message);
