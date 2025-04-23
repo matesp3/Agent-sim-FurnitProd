@@ -24,14 +24,7 @@ public class SeedGen {
     }
 
     public static Random getSeedRNG() {
-        if (instance == null) {
-            synchronized (SeedGen.class) {
-                if (instance == null) {
-                    instance = new SeedGen();
-                }
-            }
-        }
-        return instance.rand;
+        return getInstance().rand;
     }
 
     public long nextSeed() {

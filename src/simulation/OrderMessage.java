@@ -3,10 +3,11 @@ package simulation;
 import OSPABA.MessageForm;
 import OSPABA.Simulation;
 import common.Furniture;
+import common.Order;
 
 public class OrderMessage extends OSPABA.MessageForm {
 
-    private Furniture order;
+    private Order order;
 
     public OrderMessage(Simulation mySim) {
         super(mySim);
@@ -32,11 +33,11 @@ public class OrderMessage extends OSPABA.MessageForm {
         this.order = original.order;
     }
 
-    public Furniture getOrder() {
+    public Order getOrder() {
         return this.order;
     }
 
-    public void setOrder(Furniture order) {
+    public void setOrder(Order order) {
         this.order = order;
     }
 }

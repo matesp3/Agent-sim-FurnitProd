@@ -79,6 +79,22 @@ public class MySimulation extends OSPABA.Simulation
 	{
 		// Collect local statistics into global, update UI, etc...
 		super.replicationFinished();
+		this.avgTimeOrderCompletion.addSample(this.agentEnvironment().getAvgTimeOrderCompletion().mean());
+		this.avgCountOrdersCompleted.addSample(this.agentEnvironment().getOrdersCompleted());
+//		 todo remaining stats updating
+//		this.avgUtilizationA.addSample();
+//		this.avgUtilizationB.addSample();
+//		this.avgUtilizationC.addSample();
+//		this.avgCountNotStarted.addSample();
+//		this.avgCountPartiallyStarted.addSample();
+//		this.avgCountStaining.addSample();
+//		this.avgCountAssembling.addSample();
+//		this.avgCountFitInstallation.addSample();
+//		this.avgTimeInNotStarted.addSample();
+//		this.avgTimeInPartiallyStarted.addSample();
+//		this.avgTimeInStaining.addSample();
+//		this.avgTimeInAssembling.addSample();
+//		this.avgTimeInFitInstallation.addSample();
 	}
 
 	@Override

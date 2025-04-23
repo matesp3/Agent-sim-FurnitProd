@@ -7,6 +7,7 @@ import java.util.Arrays;
 public class Order {
     private final int orderID;
     private final double createdAt;
+    private double completedAt;
     private Furniture[] products;
     private int nextToBeProcessed;
 
@@ -19,11 +20,6 @@ public class Order {
         this(id, null, createdAt);
     }
 
-    public void setProducts(Furniture[] products) {
-        this.products = products;
-        this.nextToBeProcessed = 0;
-    }
-
     /**
      *
      * @param id unique ID among orders within system
@@ -33,6 +29,14 @@ public class Order {
     public Order(int id, Furniture[] products, double createdAt) {
         this.orderID = id;
         this.createdAt = createdAt;
+        this.products = products;
+        this.nextToBeProcessed = 0;
+    }
+
+    /**
+     * @param products ordered products of which order consists
+     */
+    public void setProducts(Furniture[] products) {
         this.products = products;
         this.nextToBeProcessed = 0;
     }
@@ -54,6 +58,22 @@ public class Order {
      */
     public double getCreatedAt() {
         return this.createdAt;
+    }
+
+    /**
+     *
+     * @return simulation time of whole order completion (completion time of last not completed product)
+     */
+    public double getCompletedAt() {
+        return this.completedAt;
+    }
+
+    /**
+     * After completing lastly not completed product, this setter should be called
+     * @param completedAt simulation time of whole order completion
+     */
+    public void setCompletedAt(double completedAt) {
+        this.completedAt = completedAt;
     }
 
     @Override
