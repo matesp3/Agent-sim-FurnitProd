@@ -1,14 +1,14 @@
-package agents.agentgroupa.continualassistants;
+package agents.agentgroupc.continualassistants;
 
 import OSPABA.*;
 import simulation.*;
-import agents.agentgroupa.*;
+import agents.agentgroupc.*;
 import OSPABA.Process;
 
-//meta! id="118"
-public class ProcessCutting extends OSPABA.Process
+//meta! id="100"
+public class ProcessPaintcoat extends OSPABA.Process
 {
-	public ProcessCutting(int id, Simulation mySim, CommonAgent myAgent)
+	public ProcessPaintcoat(int id, Simulation mySim, CommonAgent myAgent)
 	{
 		super(id, mySim, myAgent);
 	}
@@ -20,7 +20,7 @@ public class ProcessCutting extends OSPABA.Process
 		// Setup component for the next replication
 	}
 
-	//meta! sender="AgentGroupA", id="119", type="Start"
+	//meta! sender="AgentGroupC", id="101", type="Start"
 	public void processStart(MessageForm message)
 	{
 	}
@@ -51,9 +51,9 @@ public class ProcessCutting extends OSPABA.Process
 	//meta! tag="end"
 
 	@Override
-	public AgentGroupA myAgent()
+	public AgentGroupC myAgent()
 	{
-		return (AgentGroupA)super.myAgent();
+		return (AgentGroupC)super.myAgent();
 	}
 
 }

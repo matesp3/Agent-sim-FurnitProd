@@ -5,7 +5,7 @@ import agents.agenttransfer.*;
 import simulation.*;
 import OSPABA.Process;
 
-//meta! id="108"
+//meta! id="45"
 public class ProcessDeskTransfer extends OSPABA.Process
 {
 	public ProcessDeskTransfer(int id, Simulation mySim, CommonAgent myAgent)
@@ -20,7 +20,7 @@ public class ProcessDeskTransfer extends OSPABA.Process
 		// Setup component for the next replication
 	}
 
-	//meta! sender="AgentTransfer", id="109", type="Start"
+	//meta! sender="AgentTransfer", id="46", type="Start"
 	public void processStart(MessageForm message)
 	{
 	}

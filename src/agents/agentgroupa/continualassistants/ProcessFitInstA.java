@@ -1,14 +1,14 @@
-package agents.agentgroupc.continualassistants;
+package agents.agentgroupa.continualassistants;
 
 import OSPABA.*;
 import simulation.*;
-import agents.agentgroupc.*;
+import agents.agentgroupa.*;
 import OSPABA.Process;
 
-//meta! id="128"
-public class ProcessFitInst extends OSPABA.Process
+//meta! id="70"
+public class ProcessFitInstA extends OSPABA.Process
 {
-	public ProcessFitInst(int id, Simulation mySim, CommonAgent myAgent)
+	public ProcessFitInstA(int id, Simulation mySim, CommonAgent myAgent)
 	{
 		super(id, mySim, myAgent);
 	}
@@ -20,7 +20,7 @@ public class ProcessFitInst extends OSPABA.Process
 		// Setup component for the next replication
 	}
 
-	//meta! sender="AgentGroupC", id="129", type="Start"
+	//meta! sender="AgentGroupA", id="71", type="Start"
 	public void processStart(MessageForm message)
 	{
 	}
@@ -51,9 +51,9 @@ public class ProcessFitInst extends OSPABA.Process
 	//meta! tag="end"
 
 	@Override
-	public AgentGroupC myAgent()
+	public AgentGroupA myAgent()
 	{
-		return (AgentGroupC)super.myAgent();
+		return (AgentGroupA)super.myAgent();
 	}
 
 }

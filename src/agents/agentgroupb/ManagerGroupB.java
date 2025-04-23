@@ -3,7 +3,7 @@ package agents.agentgroupb;
 import OSPABA.*;
 import simulation.*;
 
-//meta! id="79"
+//meta! id="73"
 public class ManagerGroupB extends OSPABA.Manager
 {
 	public ManagerGroupB(int id, Simulation mySim, Agent myAgent)
@@ -24,17 +24,17 @@ public class ManagerGroupB extends OSPABA.Manager
 		}
 	}
 
-	//meta! sender="AgentFurnitProd", id="80", type="Request"
+	//meta! sender="AgentFurnitProd", id="79", type="Request"
 	public void processAssembling(MessageForm message)
 	{
 	}
 
-	//meta! sender="AgentFurnitProd", id="134", type="Request"
+	//meta! sender="AgentFurnitProd", id="77", type="Request"
 	public void processAssignCarpenterB(MessageForm message)
 	{
 	}
 
-	//meta! sender="ProcessAssembling", id="101", type="Finish"
+	//meta! sender="ProcessAssembling", id="83", type="Finish"
 	public void processFinish(MessageForm message)
 	{
 	}

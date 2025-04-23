@@ -4,7 +4,7 @@ import OSPABA.*;
 import simulation.*;
 import agents.agentgroupc.continualassistants.*;
 
-//meta! id="83"
+//meta! id="85"
 public class AgentGroupC extends OSPABA.Agent
 {
 	public AgentGroupC(int id, Simulation mySim, Agent parent)
@@ -24,11 +24,11 @@ public class AgentGroupC extends OSPABA.Agent
 	private void init()
 	{
 		new ManagerGroupC(Id.managerGroupC, mySim(), this);
-		new ProcessFitInst(Id.processFitInst, mySim(), this);
+		new ProcessPaintcoat(Id.processPaintcoat, mySim(), this);
 		new ProcessStaining(Id.processStaining, mySim(), this);
-		new ProcessPaintCoat(Id.processPaintCoat, mySim(), this);
-		addOwnMessage(Mc.staining);
+		new ProcessFitInstC(Id.processFitInstC, mySim(), this);
 		addOwnMessage(Mc.assignCarpenterC);
+		addOwnMessage(Mc.stainingAndPaintcoat);
 		addOwnMessage(Mc.fittingsInstallation);
 	}
 	//meta! tag="end"

@@ -3,7 +3,7 @@ package agents.agentmodel;
 import OSPABA.*;
 import simulation.*;
 
-//meta! id="3"
+//meta! id="4"
 public class AgentModel extends OSPABA.Agent
 {
 	public AgentModel(int id, Simulation mySim, Agent parent)

@@ -3,7 +3,7 @@ package agents.agentgroupc;
 import OSPABA.*;
 import simulation.*;
 
-//meta! id="83"
+//meta! id="85"
 public class ManagerGroupC extends OSPABA.Manager
 {
 	public ManagerGroupC(int id, Simulation mySim, Agent myAgent)
@@ -24,32 +24,32 @@ public class ManagerGroupC extends OSPABA.Manager
 		}
 	}
 
-	//meta! sender="AgentFurnitProd", id="86", type="Request"
-	public void processStaining(MessageForm message)
-	{
-	}
-
-	//meta! sender="ProcessFitInst", id="129", type="Finish"
-	public void processFinishProcessFitInst(MessageForm message)
-	{
-	}
-
-	//meta! sender="ProcessPaintCoat", id="127", type="Finish"
-	public void processFinishProcessPaintCoat(MessageForm message)
-	{
-	}
-
-	//meta! sender="ProcessStaining", id="105", type="Finish"
-	public void processFinishProcessStaining(MessageForm message)
-	{
-	}
-
-	//meta! sender="AgentFurnitProd", id="136", type="Request"
+	//meta! sender="AgentFurnitProd", id="88", type="Request"
 	public void processAssignCarpenterC(MessageForm message)
 	{
 	}
 
-	//meta! sender="AgentFurnitProd", id="88", type="Request"
+	//meta! sender="ProcessStaining", id="99", type="Finish"
+	public void processFinishProcessStaining(MessageForm message)
+	{
+	}
+
+	//meta! sender="ProcessFitInstC", id="103", type="Finish"
+	public void processFinishProcessFitInstC(MessageForm message)
+	{
+	}
+
+	//meta! sender="ProcessPaintcoat", id="101", type="Finish"
+	public void processFinishProcessPaintcoat(MessageForm message)
+	{
+	}
+
+	//meta! sender="AgentFurnitProd", id="90", type="Request"
+	public void processStainingAndPaintcoat(MessageForm message)
+	{
+	}
+
+	//meta! sender="AgentFurnitProd", id="92", type="Request"
 	public void processFittingsInstallation(MessageForm message)
 	{
 	}
@@ -72,33 +72,33 @@ public class ManagerGroupC extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.fittingsInstallation:
-			processFittingsInstallation(message);
-		break;
-
-		case Mc.staining:
-			processStaining(message);
+		case Mc.assignCarpenterC:
+			processAssignCarpenterC(message);
 		break;
 
 		case Mc.finish:
 			switch (message.sender().id())
 			{
-			case Id.processFitInst:
-				processFinishProcessFitInst(message);
-			break;
-
-			case Id.processPaintCoat:
-				processFinishProcessPaintCoat(message);
-			break;
-
 			case Id.processStaining:
 				processFinishProcessStaining(message);
+			break;
+
+			case Id.processFitInstC:
+				processFinishProcessFitInstC(message);
+			break;
+
+			case Id.processPaintcoat:
+				processFinishProcessPaintcoat(message);
 			break;
 			}
 		break;
 
-		case Mc.assignCarpenterC:
-			processAssignCarpenterC(message);
+		case Mc.fittingsInstallation:
+			processFittingsInstallation(message);
+		break;
+
+		case Mc.stainingAndPaintcoat:
+			processStainingAndPaintcoat(message);
 		break;
 
 		default:

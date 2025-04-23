@@ -1,13 +1,14 @@
-package agents.agentenvironment.continualassistants;
+package agents.agentgroupc.continualassistants;
 
 import OSPABA.*;
 import simulation.*;
-import agents.agentenvironment.*;
+import agents.agentgroupc.*;
+import OSPABA.Process;
 
-//meta! id="114"
-public class SchedulerOrder extends OSPABA.Scheduler
+//meta! id="102"
+public class ProcessFitInstC extends OSPABA.Process
 {
-	public SchedulerOrder(int id, Simulation mySim, CommonAgent myAgent)
+	public ProcessFitInstC(int id, Simulation mySim, CommonAgent myAgent)
 	{
 		super(id, mySim, myAgent);
 	}
@@ -19,7 +20,7 @@ public class SchedulerOrder extends OSPABA.Scheduler
 		// Setup component for the next replication
 	}
 
-	//meta! sender="AgentEnvironment", id="115", type="Start"
+	//meta! sender="AgentGroupC", id="103", type="Start"
 	public void processStart(MessageForm message)
 	{
 	}
@@ -50,9 +51,9 @@ public class SchedulerOrder extends OSPABA.Scheduler
 	//meta! tag="end"
 
 	@Override
-	public AgentEnvironment myAgent()
+	public AgentGroupC myAgent()
 	{
-		return (AgentEnvironment)super.myAgent();
+		return (AgentGroupC)super.myAgent();
 	}
 
 }

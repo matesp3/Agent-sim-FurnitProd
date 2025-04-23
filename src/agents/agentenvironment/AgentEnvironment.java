@@ -4,7 +4,7 @@ import OSPABA.*;
 import simulation.*;
 import agents.agentenvironment.continualassistants.*;
 
-//meta! id="7"
+//meta! id="6"
 public class AgentEnvironment extends OSPABA.Agent
 {
 	public AgentEnvironment(int id, Simulation mySim, Agent parent)
@@ -24,7 +24,7 @@ public class AgentEnvironment extends OSPABA.Agent
 	private void init()
 	{
 		new ManagerEnvironment(Id.managerEnvironment, mySim(), this);
-		new SchedulerOrder(Id.schedulerOrder, mySim(), this);
+		new SchedulerOrderArrival(Id.schedulerOrderArrival, mySim(), this);
 		addOwnMessage(Mc.init);
 		addOwnMessage(Mc.orderCompleted);
 	}

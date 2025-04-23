@@ -3,7 +3,7 @@ package agents.agentenvironment;
 import OSPABA.*;
 import simulation.*;
 
-//meta! id="7"
+//meta! id="6"
 public class ManagerEnvironment extends OSPABA.Manager
 {
 	public ManagerEnvironment(int id, Simulation mySim, Agent myAgent)
@@ -24,17 +24,17 @@ public class ManagerEnvironment extends OSPABA.Manager
 		}
 	}
 
-	//meta! sender="AgentModel", id="9", type="Notice"
+	//meta! sender="AgentModel", id="11", type="Notice"
 	public void processInit(MessageForm message)
 	{
 	}
 
-	//meta! sender="SchedulerOrder", id="115", type="Finish"
+	//meta! sender="SchedulerOrderArrival", id="42", type="Finish"
 	public void processFinish(MessageForm message)
 	{
 	}
 
-	//meta! sender="AgentModel", id="18", type="Notice"
+	//meta! sender="AgentModel", id="13", type="Notice"
 	public void processOrderCompleted(MessageForm message)
 	{
 	}
@@ -57,16 +57,16 @@ public class ManagerEnvironment extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.init:
-			processInit(message);
-		break;
-
 		case Mc.finish:
 			processFinish(message);
 		break;
 
 		case Mc.orderCompleted:
 			processOrderCompleted(message);
+		break;
+
+		case Mc.init:
+			processInit(message);
 		break;
 
 		default:
