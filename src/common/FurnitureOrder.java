@@ -1,7 +1,7 @@
 package common;
 
-import mpoljak.dsim.utils.DoubleComp;
-import mpoljak.dsim.utils.Formatter;
+import utils.DoubleComp;
+import utils.Formatter;
 
 import java.util.Comparator;
 import java.util.concurrent.PriorityBlockingQueue;

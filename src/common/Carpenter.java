@@ -1,6 +1,6 @@
 package common;
 
-import mpoljak.dsim.utils.DoubleComp;
+import utils.DoubleComp;
 
 public class Carpenter {
     public enum GROUP {
