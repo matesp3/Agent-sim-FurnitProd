@@ -24,11 +24,8 @@ public class Id extends OSPABA.IdList
 	public static final int processDeskTransfer = 1004;
 	public static final int processStorageTransfer = 1005;
 	public static final int schedulerOrder = 1006;
-	public static final int queryAssignCarpenterA = 1011;
 	public static final int processCutting = 1007;
-	public static final int queryAssignCarpenterB = 1012;
 	public static final int processFitInst = 1008;
-	public static final int queryAssignCarpenterC = 1014;
 	public static final int processPaintCoat = 1009;
 	//meta! tag="end"
 }

@@ -3,7 +3,6 @@ package agents.agentgroupc;
 import OSPABA.*;
 import simulation.*;
 import agents.agentgroupc.continualassistants.*;
-import agents.agentgroupc.instantassistants.*;
 
 //meta! id="83"
 public class AgentGroupC extends OSPABA.Agent
@@ -25,7 +24,6 @@ public class AgentGroupC extends OSPABA.Agent
 	private void init()
 	{
 		new ManagerGroupC(Id.managerGroupC, mySim(), this);
-		new QueryAssignCarpenterC(Id.queryAssignCarpenterC, mySim(), this);
 		new ProcessFitInst(Id.processFitInst, mySim(), this);
 		new ProcessStaining(Id.processStaining, mySim(), this);
 		new ProcessPaintCoat(Id.processPaintCoat, mySim(), this);
