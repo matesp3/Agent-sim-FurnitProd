@@ -27,6 +27,8 @@ public class ManagerEnvironment extends OSPABA.Manager
 	//meta! sender="AgentModel", id="11", type="Notice"
 	public void processInit(MessageForm message)
 	{
+		message.setAddressee(this.myAgent().findAssistant(Id.schedulerOrderArrival));
+		this.startContinualAssistant(message);
 	}
 
 	//meta! sender="SchedulerOrderArrival", id="42", type="Finish"
@@ -37,6 +39,7 @@ public class ManagerEnvironment extends OSPABA.Manager
 	//meta! sender="AgentModel", id="13", type="Notice"
 	public void processOrderCompleted(MessageForm message)
 	{
+
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"

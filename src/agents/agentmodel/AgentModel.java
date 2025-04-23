@@ -17,6 +17,10 @@ public class AgentModel extends OSPABA.Agent
 	{
 		super.prepareReplication();
 		// Setup component for the next replication
+		MyMessage msg = new MyMessage(this.mySim());
+		msg.setCode(Mc.init);
+		msg.setAddressee(this);
+		this.myManager().notice(msg);
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"

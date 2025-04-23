@@ -1,11 +1,13 @@
 package agents.agentgroupc;
 
 import OSPABA.*;
+import OSPRNG.RNG;
+import contracts.IFittingsInstaller;
 import simulation.*;
 import agents.agentgroupc.continualassistants.*;
 
 //meta! id="85"
-public class AgentGroupC extends OSPABA.Agent
+public class AgentGroupC extends OSPABA.Agent implements IFittingsInstaller
 {
 	public AgentGroupC(int id, Simulation mySim, Agent parent)
 	{
@@ -32,4 +34,9 @@ public class AgentGroupC extends OSPABA.Agent
 		addOwnMessage(Mc.fittingsInstallation);
 	}
 	//meta! tag="end"
+
+	@Override
+	public void setFitInstGenerator(RNG<Double> durationGenerator) {
+		((ProcessFitInstC)this.findAssistant(Id.processFitInstC)).setFitInstGenerator(durationGenerator);
+	}
 }

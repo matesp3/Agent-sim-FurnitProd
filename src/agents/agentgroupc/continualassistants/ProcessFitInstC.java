@@ -1,13 +1,17 @@
 package agents.agentgroupc.continualassistants;
 
 import OSPABA.*;
+import OSPRNG.RNG;
+import contracts.IFittingsInstaller;
 import simulation.*;
 import agents.agentgroupc.*;
 import OSPABA.Process;
 
 //meta! id="102"
-public class ProcessFitInstC extends OSPABA.Process
+public class ProcessFitInstC extends OSPABA.Process implements IFittingsInstaller
 {
+	private RNG<Double> rndFitInstC = null;
+
 	public ProcessFitInstC(int id, Simulation mySim, CommonAgent myAgent)
 	{
 		super(id, mySim, myAgent);
@@ -56,4 +60,8 @@ public class ProcessFitInstC extends OSPABA.Process
 		return (AgentGroupC)super.myAgent();
 	}
 
+	@Override
+	public void setFitInstGenerator(RNG<Double> durationGenerator) {
+		this.rndFitInstC = durationGenerator;
+	}
 }
