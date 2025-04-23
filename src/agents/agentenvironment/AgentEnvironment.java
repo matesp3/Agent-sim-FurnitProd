@@ -6,6 +6,8 @@ import common.FurnitureOrder;
 import simulation.*;
 import agents.agentenvironment.continualassistants.*;
 
+
+
 //meta! id="6"
 public class AgentEnvironment extends OSPABA.Agent
 {

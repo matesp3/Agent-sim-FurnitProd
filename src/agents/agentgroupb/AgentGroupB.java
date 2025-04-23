@@ -4,6 +4,8 @@ import OSPABA.*;
 import simulation.*;
 import agents.agentgroupb.continualassistants.*;
 
+
+
 //meta! id="73"
 public class AgentGroupB extends OSPABA.Agent
 {
@@ -25,6 +27,7 @@ public class AgentGroupB extends OSPABA.Agent
 	{
 		new ManagerGroupB(Id.managerGroupB, mySim(), this);
 		new ProcessAssembling(Id.processAssembling, mySim(), this);
+		addOwnMessage(Mc.releaseCarpenterB);
 		addOwnMessage(Mc.assembling);
 		addOwnMessage(Mc.assignCarpenterB);
 	}

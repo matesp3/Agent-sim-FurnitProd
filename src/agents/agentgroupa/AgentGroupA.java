@@ -6,6 +6,8 @@ import contracts.IFittingsInstaller;
 import simulation.*;
 import agents.agentgroupa.continualassistants.*;
 
+
+
 //meta! id="39"
 public class AgentGroupA extends OSPABA.Agent implements IFittingsInstaller
 {
@@ -30,6 +32,7 @@ public class AgentGroupA extends OSPABA.Agent implements IFittingsInstaller
 		new ProcessFitInstA(Id.processFitInstA, mySim(), this);
 		new ProcessWoodPrep(Id.processWoodPrep, mySim(), this);
 		addOwnMessage(Mc.prepAndCarving);
+		addOwnMessage(Mc.releaseCarpenterA);
 		addOwnMessage(Mc.assignCarpenterA);
 		addOwnMessage(Mc.fittingsInstallation);
 	}

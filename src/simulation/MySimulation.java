@@ -13,6 +13,7 @@ import agents.agentgroupc.*;
 import agents.agentfurnitprod.*;
 import utils.SeedGen;
 
+
 public class MySimulation extends OSPABA.Simulation
 {
 	private final Stat avgTimeOrderCompletion = new Stat();

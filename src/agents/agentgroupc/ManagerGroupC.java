@@ -62,6 +62,11 @@ public class ManagerGroupC extends OSPABA.Manager
 		}
 	}
 
+	//meta! sender="AgentFurnitProd", id="109", type="Notice"
+	public void processReleaseCarpenterC(MessageForm message)
+	{
+	}
+
 	//meta! userInfo="Generated code: do not modify", tag="begin"
 	public void init()
 	{
@@ -72,6 +77,10 @@ public class ManagerGroupC extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
+		case Mc.releaseCarpenterC:
+			processReleaseCarpenterC(message);
+		break;
+
 		case Mc.assignCarpenterC:
 			processAssignCarpenterC(message);
 		break;

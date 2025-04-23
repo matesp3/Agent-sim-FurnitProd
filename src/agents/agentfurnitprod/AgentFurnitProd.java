@@ -3,6 +3,8 @@ package agents.agentfurnitprod;
 import OSPABA.*;
 import simulation.*;
 
+
+
 //meta! id="24"
 public class AgentFurnitProd extends OSPABA.Agent
 {

@@ -3,6 +3,8 @@ package agents.agentmodel;
 import OSPABA.*;
 import simulation.*;
 
+
+
 //meta! id="4"
 public class AgentModel extends OSPABA.Agent
 {
