@@ -31,7 +31,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	}
 
 	//meta! sender="AgentGroupA", id="57", type="Response"
-	public void processPrepAndCarving(MessageForm message)
+	public void processWoodPrep(MessageForm message)
 	{
 	}
 
@@ -102,6 +102,11 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		}
 	}
 
+	//meta! sender="AgentGroupA", id="130", type="Response"
+	public void processCarving(MessageForm message)
+	{
+	}
+
 	//meta! userInfo="Generated code: do not modify", tag="begin"
 	public void init()
 	{
@@ -112,45 +117,25 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.stainingAndPaintcoat:
-			processStainingAndPaintcoat(message);
-		break;
+		case Mc.fittingsInstallation:
+			switch (message.sender().id())
+			{
+			case Id.agentGroupC:
+				processFittingsInstallationAgentGroupC(message);
+			break;
 
-		case Mc.assembling:
-			processAssembling(message);
-		break;
-
-		case Mc.orderProcessing:
-			processOrderProcessing(message);
+			case Id.agentGroupA:
+				processFittingsInstallationAgentGroupA(message);
+			break;
+			}
 		break;
 
 		case Mc.assignCarpenterB:
 			processAssignCarpenterB(message);
 		break;
 
-		case Mc.deskTransfer:
-			processDeskTransfer(message);
-		break;
-
-		case Mc.fittingsInstallation:
-			switch (message.sender().id())
-			{
-			case Id.agentGroupA:
-				processFittingsInstallationAgentGroupA(message);
-			break;
-
-			case Id.agentGroupC:
-				processFittingsInstallationAgentGroupC(message);
-			break;
-			}
-		break;
-
-		case Mc.prepAndCarving:
-			processPrepAndCarving(message);
-		break;
-
-		case Mc.assignCarpenterC:
-			processAssignCarpenterC(message);
+		case Mc.woodPrep:
+			processWoodPrep(message);
 		break;
 
 		case Mc.storageTransfer:
@@ -159,6 +144,30 @@ public class ManagerFurnitProd extends OSPABA.Manager
 
 		case Mc.assignCarpenterA:
 			processAssignCarpenterA(message);
+		break;
+
+		case Mc.orderProcessing:
+			processOrderProcessing(message);
+		break;
+
+		case Mc.stainingAndPaintcoat:
+			processStainingAndPaintcoat(message);
+		break;
+
+		case Mc.deskTransfer:
+			processDeskTransfer(message);
+		break;
+
+		case Mc.assignCarpenterC:
+			processAssignCarpenterC(message);
+		break;
+
+		case Mc.assembling:
+			processAssembling(message);
+		break;
+
+		case Mc.carving:
+			processCarving(message);
 		break;
 
 		default:

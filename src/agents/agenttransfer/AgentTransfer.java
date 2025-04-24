@@ -26,8 +26,8 @@ public class AgentTransfer extends OSPABA.Agent
 	private void init()
 	{
 		new ManagerTransfer(Id.managerTransfer, mySim(), this);
-		new ProcessDeskTransfer(Id.processDeskTransfer, mySim(), this);
 		new ProcessStorageTransfer(Id.processStorageTransfer, mySim(), this);
+		new ProcessDeskTransfer(Id.processDeskTransfer, mySim(), this);
 		addOwnMessage(Mc.deskTransfer);
 		addOwnMessage(Mc.storageTransfer);
 	}

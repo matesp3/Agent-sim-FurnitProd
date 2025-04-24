@@ -69,12 +69,12 @@ public class ManagerTransfer extends OSPABA.Manager
 		case Mc.finish:
 			switch (message.sender().id())
 			{
-			case Id.processDeskTransfer:
-				processFinishProcessDeskTransfer(message);
-			break;
-
 			case Id.processStorageTransfer:
 				processFinishProcessStorageTransfer(message);
+			break;
+
+			case Id.processDeskTransfer:
+				processFinishProcessDeskTransfer(message);
 			break;
 			}
 		break;

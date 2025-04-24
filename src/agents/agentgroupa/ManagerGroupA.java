@@ -25,7 +25,7 @@ public class ManagerGroupA extends OSPABA.Manager
 	}
 
 	//meta! sender="AgentFurnitProd", id="57", type="Request"
-	public void processPrepAndCarving(MessageForm message)
+	public void processWoodPrep(MessageForm message)
 	{
 	}
 
@@ -67,6 +67,11 @@ public class ManagerGroupA extends OSPABA.Manager
 	{
 	}
 
+	//meta! sender="AgentFurnitProd", id="130", type="Request"
+	public void processCarving(MessageForm message)
+	{
+	}
+
 	//meta! userInfo="Generated code: do not modify", tag="begin"
 	public void init()
 	{
@@ -80,12 +85,12 @@ public class ManagerGroupA extends OSPABA.Manager
 		case Mc.finish:
 			switch (message.sender().id())
 			{
-			case Id.processFitInstA:
-				processFinishProcessFitInstA(message);
-			break;
-
 			case Id.processWoodPrep:
 				processFinishProcessWoodPrep(message);
+			break;
+
+			case Id.processFitInstA:
+				processFinishProcessFitInstA(message);
 			break;
 
 			case Id.processCarving:
@@ -98,8 +103,12 @@ public class ManagerGroupA extends OSPABA.Manager
 			processFittingsInstallation(message);
 		break;
 
-		case Mc.prepAndCarving:
-			processPrepAndCarving(message);
+		case Mc.carving:
+			processCarving(message);
+		break;
+
+		case Mc.woodPrep:
+			processWoodPrep(message);
 		break;
 
 		case Mc.assignCarpenterA:

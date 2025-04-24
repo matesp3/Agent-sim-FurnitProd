@@ -3,10 +3,12 @@ package simulation;
 import OSPABA.MessageForm;
 import OSPABA.Simulation;
 import common.Carpenter;
+import common.Furniture;
 
 public class TechStepMessage extends OSPABA.MessageForm {
 
     private Carpenter carpenter;
+    private Furniture product;
 
     public TechStepMessage(Simulation mySim) {
         super(mySim);
@@ -15,6 +17,7 @@ public class TechStepMessage extends OSPABA.MessageForm {
     protected TechStepMessage(TechStepMessage original) {
         super(original);
         this.carpenter = original.carpenter;
+        this.product = original.product;
     }
 
     @Override
@@ -29,6 +32,7 @@ public class TechStepMessage extends OSPABA.MessageForm {
         TechStepMessage original = (TechStepMessage)message;
         // Copy attributes
         this.carpenter = original.carpenter;
+        this.product = original.product;
     }
 
     public Carpenter getCarpenter() {
@@ -37,5 +41,13 @@ public class TechStepMessage extends OSPABA.MessageForm {
 
     public void setCarpenter(Carpenter carpenter) {
         this.carpenter = carpenter;
+    }
+
+    public Furniture getProduct() {
+        return product;
+    }
+
+    public void setProduct(Furniture product) {
+        this.product = product;
     }
 }

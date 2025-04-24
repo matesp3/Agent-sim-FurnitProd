@@ -30,10 +30,11 @@ public class AgentFurnitProd extends OSPABA.Agent
 	private void init()
 	{
 		new ManagerFurnitProd(Id.managerFurnitProd, mySim(), this);
+		addOwnMessage(Mc.woodPrep);
 		addOwnMessage(Mc.deskTransfer);
-		addOwnMessage(Mc.prepAndCarving);
-		addOwnMessage(Mc.orderProcessing);
 		addOwnMessage(Mc.storageTransfer);
+		addOwnMessage(Mc.orderProcessing);
+		addOwnMessage(Mc.carving);
 		addOwnMessage(Mc.assembling);
 		addOwnMessage(Mc.assignCarpenterA);
 		addOwnMessage(Mc.assignCarpenterB);

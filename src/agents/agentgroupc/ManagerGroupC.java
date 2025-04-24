@@ -80,12 +80,12 @@ public class ManagerGroupC extends OSPABA.Manager
 		case Mc.finish:
 			switch (message.sender().id())
 			{
-			case Id.processStaining:
-				processFinishProcessStaining(message);
-			break;
-
 			case Id.processPaintcoat:
 				processFinishProcessPaintcoat(message);
+			break;
+
+			case Id.processStaining:
+				processFinishProcessStaining(message);
 			break;
 
 			case Id.processFitInstC:
@@ -94,16 +94,16 @@ public class ManagerGroupC extends OSPABA.Manager
 			}
 		break;
 
-		case Mc.stainingAndPaintcoat:
-			processStainingAndPaintcoat(message);
-		break;
-
 		case Mc.fittingsInstallation:
 			processFittingsInstallation(message);
 		break;
 
 		case Mc.assignCarpenterC:
 			processAssignCarpenterC(message);
+		break;
+
+		case Mc.stainingAndPaintcoat:
+			processStainingAndPaintcoat(message);
 		break;
 
 		default:
