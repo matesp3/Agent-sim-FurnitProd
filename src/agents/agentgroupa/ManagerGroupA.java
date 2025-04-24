@@ -62,7 +62,7 @@ public class ManagerGroupA extends OSPABA.Manager
 		}
 	}
 
-	//meta! sender="AgentFurnitProd", id="107", type="Notice"
+	//meta! userInfo="Removed from model"
 	public void processReleaseCarpenterA(MessageForm message)
 	{
 	}
@@ -77,14 +77,6 @@ public class ManagerGroupA extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.assignCarpenterA:
-			processAssignCarpenterA(message);
-		break;
-
-		case Mc.prepAndCarving:
-			processPrepAndCarving(message);
-		break;
-
 		case Mc.finish:
 			switch (message.sender().id())
 			{
@@ -106,8 +98,12 @@ public class ManagerGroupA extends OSPABA.Manager
 			processFittingsInstallation(message);
 		break;
 
-		case Mc.releaseCarpenterA:
-			processReleaseCarpenterA(message);
+		case Mc.prepAndCarving:
+			processPrepAndCarving(message);
+		break;
+
+		case Mc.assignCarpenterA:
+			processAssignCarpenterA(message);
 		break;
 
 		default:

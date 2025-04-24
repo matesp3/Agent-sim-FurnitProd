@@ -112,16 +112,24 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.orderProcessing:
-			processOrderProcessing(message);
-		break;
-
-		case Mc.prepAndCarving:
-			processPrepAndCarving(message);
+		case Mc.stainingAndPaintcoat:
+			processStainingAndPaintcoat(message);
 		break;
 
 		case Mc.assembling:
 			processAssembling(message);
+		break;
+
+		case Mc.orderProcessing:
+			processOrderProcessing(message);
+		break;
+
+		case Mc.assignCarpenterB:
+			processAssignCarpenterB(message);
+		break;
+
+		case Mc.deskTransfer:
+			processDeskTransfer(message);
 		break;
 
 		case Mc.fittingsInstallation:
@@ -137,28 +145,20 @@ public class ManagerFurnitProd extends OSPABA.Manager
 			}
 		break;
 
-		case Mc.assignCarpenterA:
-			processAssignCarpenterA(message);
-		break;
-
-		case Mc.storageTransfer:
-			processStorageTransfer(message);
-		break;
-
-		case Mc.assignCarpenterB:
-			processAssignCarpenterB(message);
+		case Mc.prepAndCarving:
+			processPrepAndCarving(message);
 		break;
 
 		case Mc.assignCarpenterC:
 			processAssignCarpenterC(message);
 		break;
 
-		case Mc.deskTransfer:
-			processDeskTransfer(message);
+		case Mc.storageTransfer:
+			processStorageTransfer(message);
 		break;
 
-		case Mc.stainingAndPaintcoat:
-			processStainingAndPaintcoat(message);
+		case Mc.assignCarpenterA:
+			processAssignCarpenterA(message);
 		break;
 
 		default:

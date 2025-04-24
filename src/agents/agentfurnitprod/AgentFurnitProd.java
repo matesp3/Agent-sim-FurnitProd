@@ -1,7 +1,6 @@
 package agents.agentfurnitprod;
 
 import OSPABA.*;
-import common.Order;
 import simulation.*;
 
 import java.util.LinkedList;
@@ -38,8 +37,8 @@ public class AgentFurnitProd extends OSPABA.Agent
 		addOwnMessage(Mc.assembling);
 		addOwnMessage(Mc.assignCarpenterA);
 		addOwnMessage(Mc.assignCarpenterB);
-		addOwnMessage(Mc.assignCarpenterC);
 		addOwnMessage(Mc.stainingAndPaintcoat);
+		addOwnMessage(Mc.assignCarpenterC);
 		addOwnMessage(Mc.fittingsInstallation);
 	}
 	//meta! tag="end"

@@ -29,10 +29,9 @@ public class AgentGroupA extends OSPABA.Agent implements IFittingsInstaller
 	{
 		new ManagerGroupA(Id.managerGroupA, mySim(), this);
 		new ProcessCarving(Id.processCarving, mySim(), this);
-		new ProcessFitInstA(Id.processFitInstA, mySim(), this);
 		new ProcessWoodPrep(Id.processWoodPrep, mySim(), this);
+		new ProcessFitInstA(Id.processFitInstA, mySim(), this);
 		addOwnMessage(Mc.prepAndCarving);
-		addOwnMessage(Mc.releaseCarpenterA);
 		addOwnMessage(Mc.assignCarpenterA);
 		addOwnMessage(Mc.fittingsInstallation);
 	}
