@@ -4,6 +4,8 @@ import OSPABA.*;
 import simulation.*;
 import agents.agentgroupb.continualassistants.*;
 
+
+
 //meta! id="73"
 public class AgentGroupB extends OSPABA.Agent
 {

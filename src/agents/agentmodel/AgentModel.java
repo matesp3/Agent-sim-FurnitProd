@@ -3,6 +3,8 @@ package agents.agentmodel;
 import OSPABA.*;
 import simulation.*;
 
+
+
 //meta! id="4"
 public class AgentModel extends OSPABA.Agent
 {
@@ -17,6 +19,10 @@ public class AgentModel extends OSPABA.Agent
 	{
 		super.prepareReplication();
 		// Setup component for the next replication
+		OrderMessage msg = new OrderMessage(this.mySim());
+		msg.setCode(Mc.init);
+		msg.setAddressee(this);
+		this.myManager().notice(msg);
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"

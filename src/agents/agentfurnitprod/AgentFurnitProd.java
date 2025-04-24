@@ -3,13 +3,20 @@ package agents.agentfurnitprod;
 import OSPABA.*;
 import simulation.*;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
+
 //meta! id="24"
 public class AgentFurnitProd extends OSPABA.Agent
 {
+	private Queue<OrderMessage> queueA;
+
 	public AgentFurnitProd(int id, Simulation mySim, Agent parent)
 	{
 		super(id, mySim, parent);
 		init();
+		this.queueA = new LinkedList<OrderMessage>();
 	}
 
 	@Override
@@ -23,16 +30,22 @@ public class AgentFurnitProd extends OSPABA.Agent
 	private void init()
 	{
 		new ManagerFurnitProd(Id.managerFurnitProd, mySim(), this);
+		addOwnMessage(Mc.woodPrep);
 		addOwnMessage(Mc.deskTransfer);
-		addOwnMessage(Mc.prepAndCarving);
-		addOwnMessage(Mc.orderProcessing);
 		addOwnMessage(Mc.storageTransfer);
+		addOwnMessage(Mc.orderProcessing);
+		addOwnMessage(Mc.carving);
 		addOwnMessage(Mc.assembling);
 		addOwnMessage(Mc.assignCarpenterA);
 		addOwnMessage(Mc.assignCarpenterB);
-		addOwnMessage(Mc.assignCarpenterC);
 		addOwnMessage(Mc.stainingAndPaintcoat);
+		addOwnMessage(Mc.assignCarpenterC);
 		addOwnMessage(Mc.fittingsInstallation);
 	}
 	//meta! tag="end"
+
+
+	public Queue<OrderMessage> getQueueA() {
+		return this.queueA;
+	}
 }

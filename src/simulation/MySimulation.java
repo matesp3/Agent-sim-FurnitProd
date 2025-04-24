@@ -1,6 +1,10 @@
 package simulation;
 
 import OSPABA.*;
+import OSPRNG.RNG;
+import OSPRNG.UniformContinuousRNG;
+import OSPStat.Stat;
+import agents.agentenvironment.continualassistants.SchedulerOrderArrival;
 import agents.agenttransfer.*;
 import agents.agentmodel.*;
 import agents.agentenvironment.*;
@@ -8,12 +12,38 @@ import agents.agentgroupa.*;
 import agents.agentgroupb.*;
 import agents.agentgroupc.*;
 import agents.agentfurnitprod.*;
+import utils.SeedGen;
+
 
 public class MySimulation extends OSPABA.Simulation
 {
+	private final Stat avgTimeOrderCompletion = new Stat();
+	private final Stat avgCountOrdersCompleted = new Stat();
+
+	private final Stat avgUtilizationA  = new Stat();
+	private final Stat avgUtilizationB  = new Stat();
+	private final Stat avgUtilizationC  = new Stat();
+
+	private final Stat avgCountNotStarted = new Stat();
+	private final Stat avgCountPartiallyStarted = new Stat();
+	private final Stat avgCountStaining = new Stat();
+	private final Stat avgCountAssembling = new Stat();
+	private final Stat avgCountFitInstallation = new Stat();
+
+	private final Stat avgTimeInNotStarted = new Stat();
+	private final Stat avgTimeInPartiallyStarted = new Stat();
+	private final Stat avgTimeInStaining = new Stat();
+	private final Stat avgTimeInAssembling = new Stat();
+	private final Stat avgTimeInFitInstallation = new Stat();
+
 	public MySimulation()
 	{
 		init();
+		// fit installation is one random phenomenon
+		RNG<Double> rndFitInstDur = new UniformContinuousRNG(15.0, 25.0, SeedGen.getSeedRNG());
+		this.agentGroupA().setFitInstGenerator(rndFitInstDur);
+		this.agentGroupC().setFitInstGenerator(rndFitInstDur);
+
 	}
 
 	@Override
@@ -21,6 +51,21 @@ public class MySimulation extends OSPABA.Simulation
 	{
 		super.prepareSimulation();
 		// Create global statistcis
+		this.avgTimeOrderCompletion.clear();
+		this.avgCountOrdersCompleted.clear();
+		this.avgUtilizationA.clear();
+		this.avgUtilizationB.clear();
+		this.avgUtilizationC.clear();
+		this.avgCountNotStarted.clear();
+		this.avgCountPartiallyStarted.clear();
+		this.avgCountStaining.clear();
+		this.avgCountAssembling.clear();
+		this.avgCountFitInstallation.clear();
+		this.avgTimeInNotStarted.clear();
+		this.avgTimeInPartiallyStarted.clear();
+		this.avgTimeInStaining.clear();
+		this.avgTimeInAssembling.clear();
+		this.avgTimeInFitInstallation.clear();
 	}
 
 	@Override
@@ -35,6 +80,25 @@ public class MySimulation extends OSPABA.Simulation
 	{
 		// Collect local statistics into global, update UI, etc...
 		super.replicationFinished();
+		this.avgTimeOrderCompletion.addSample(this.agentEnvironment().getAvgTimeOrderCompletion().mean());
+		this.avgCountOrdersCompleted.addSample(this.agentEnvironment().getOrdersCompleted());
+//		 todo remaining stats updating
+//		this.avgUtilizationA.addSample();
+//		this.avgUtilizationB.addSample();
+//		this.avgUtilizationC.addSample();
+//		this.avgCountNotStarted.addSample();
+//		this.avgCountPartiallyStarted.addSample();
+//		this.avgCountStaining.addSample();
+//		this.avgCountAssembling.addSample();
+//		this.avgCountFitInstallation.addSample();
+//		this.avgTimeInNotStarted.addSample();
+//		this.avgTimeInPartiallyStarted.addSample();
+//		this.avgTimeInStaining.addSample();
+//		this.avgTimeInAssembling.addSample();
+//		this.avgTimeInFitInstallation.addSample();
+		SchedulerOrderArrival sch = (SchedulerOrderArrival) agentEnvironment().findAssistant(Id.schedulerOrderArrival);
+		System.out.println("created: "+sch.getCreatedOrdersCount());
+		System.out.println("completed: "+agentEnvironment().getOrdersCompleted());
 	}
 
 	@Override
@@ -112,4 +176,65 @@ public AgentGroupC agentGroupC()
 	public void setAgentGroupC(AgentGroupC agentGroupC)
 	{_agentGroupC = agentGroupC; }
 	//meta! tag="end"
+
+
+	public Stat getStatTimeOrderCompletion() {
+		return avgTimeOrderCompletion;
+	}
+
+	public Stat getStatCountOrdersCompleted() {
+		return avgCountOrdersCompleted;
+	}
+
+	public Stat getStatUtilizationA() {
+		return avgUtilizationA;
+	}
+
+	public Stat getStatUtilizationB() {
+		return avgUtilizationB;
+	}
+
+	public Stat getStatUtilizationC() {
+		return avgUtilizationC;
+	}
+
+	public Stat getStatCountNotStarted() {
+		return avgCountNotStarted;
+	}
+
+	public Stat getStatCountPartiallyStarted() {
+		return avgCountPartiallyStarted;
+	}
+
+	public Stat getStatCountStaining() {
+		return avgCountStaining;
+	}
+
+	public Stat getStatCountAssembling() {
+		return avgCountAssembling;
+	}
+
+	public Stat getStatCountFitInstallation() {
+		return avgCountFitInstallation;
+	}
+
+	public Stat getStatTimeInNotStarted() {
+		return avgTimeInNotStarted;
+	}
+
+	public Stat getStatTimeInPartiallyStarted() {
+		return avgTimeInPartiallyStarted;
+	}
+
+	public Stat getStatTimeInStaining() {
+		return avgTimeInStaining;
+	}
+
+	public Stat getStatTimeInAssembling() {
+		return avgTimeInAssembling;
+	}
+
+	public Stat getStatTimeInFitInstallation() {
+		return avgTimeInFitInstallation;
+	}
 }

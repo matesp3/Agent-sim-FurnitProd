@@ -1,6 +1,7 @@
 package agents.agentfurnitprod;
 
 import OSPABA.*;
+import common.Furniture;
 import simulation.*;
 
 //meta! id="24"
@@ -30,13 +31,27 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	}
 
 	//meta! sender="AgentGroupA", id="57", type="Response"
-	public void processPrepAndCarving(MessageForm message)
+	public void processWoodPrep(MessageForm message)
 	{
 	}
 
 	//meta! sender="AgentModel", id="28", type="Request"
 	public void processOrderProcessing(MessageForm message)
 	{
+		OrderMessage msg = (OrderMessage)message;
+		this.myAgent().getQueueA().add(msg);
+//		// print received order
+//		System.out.println(msg.getOrder());
+//		Furniture f = msg.getOrder().assignUnprocessedProduct();
+//		while (f != null) {
+//			System.out.println(f);
+//			f = msg.getOrder().assignUnprocessedProduct();
+//		}
+//		System.out.println();
+//		// return it back to test communication through AgentModel
+		msg.setCode(Mc.orderProcessing);
+		this.response(message);
+//		// ok...
 	}
 
 	//meta! sender="AgentTransfer", id="33", type="Response"
@@ -87,6 +102,11 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		}
 	}
 
+	//meta! sender="AgentGroupA", id="130", type="Response"
+	public void processCarving(MessageForm message)
+	{
+	}
+
 	//meta! userInfo="Generated code: do not modify", tag="begin"
 	public void init()
 	{
@@ -97,53 +117,57 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.orderProcessing:
-			processOrderProcessing(message);
-		break;
-
-		case Mc.prepAndCarving:
-			processPrepAndCarving(message);
-		break;
-
-		case Mc.assembling:
-			processAssembling(message);
-		break;
-
 		case Mc.fittingsInstallation:
 			switch (message.sender().id())
 			{
-			case Id.agentGroupA:
-				processFittingsInstallationAgentGroupA(message);
-			break;
-
 			case Id.agentGroupC:
 				processFittingsInstallationAgentGroupC(message);
 			break;
+
+			case Id.agentGroupA:
+				processFittingsInstallationAgentGroupA(message);
+			break;
 			}
-		break;
-
-		case Mc.assignCarpenterA:
-			processAssignCarpenterA(message);
-		break;
-
-		case Mc.storageTransfer:
-			processStorageTransfer(message);
 		break;
 
 		case Mc.assignCarpenterB:
 			processAssignCarpenterB(message);
 		break;
 
-		case Mc.assignCarpenterC:
-			processAssignCarpenterC(message);
+		case Mc.woodPrep:
+			processWoodPrep(message);
+		break;
+
+		case Mc.storageTransfer:
+			processStorageTransfer(message);
+		break;
+
+		case Mc.assignCarpenterA:
+			processAssignCarpenterA(message);
+		break;
+
+		case Mc.orderProcessing:
+			processOrderProcessing(message);
+		break;
+
+		case Mc.stainingAndPaintcoat:
+			processStainingAndPaintcoat(message);
 		break;
 
 		case Mc.deskTransfer:
 			processDeskTransfer(message);
 		break;
 
-		case Mc.stainingAndPaintcoat:
-			processStainingAndPaintcoat(message);
+		case Mc.assignCarpenterC:
+			processAssignCarpenterC(message);
+		break;
+
+		case Mc.assembling:
+			processAssembling(message);
+		break;
+
+		case Mc.carving:
+			processCarving(message);
 		break;
 
 		default:

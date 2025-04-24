@@ -47,6 +47,11 @@ public class ManagerGroupB extends OSPABA.Manager
 		}
 	}
 
+	//meta! userInfo="Removed from model"
+	public void processReleaseCarpenterB(MessageForm message)
+	{
+	}
+
 	//meta! userInfo="Generated code: do not modify", tag="begin"
 	public void init()
 	{
@@ -57,16 +62,16 @@ public class ManagerGroupB extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.assignCarpenterB:
-			processAssignCarpenterB(message);
+		case Mc.finish:
+			processFinish(message);
 		break;
 
 		case Mc.assembling:
 			processAssembling(message);
 		break;
 
-		case Mc.finish:
-			processFinish(message);
+		case Mc.assignCarpenterB:
+			processAssignCarpenterB(message);
 		break;
 
 		default:

@@ -62,6 +62,10 @@ public class ManagerTransfer extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
+		case Mc.deskTransfer:
+			processDeskTransfer(message);
+		break;
+
 		case Mc.finish:
 			switch (message.sender().id())
 			{
@@ -77,10 +81,6 @@ public class ManagerTransfer extends OSPABA.Manager
 
 		case Mc.storageTransfer:
 			processStorageTransfer(message);
-		break;
-
-		case Mc.deskTransfer:
-			processDeskTransfer(message);
 		break;
 
 		default:
