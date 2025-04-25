@@ -32,7 +32,7 @@ public class FurnitProdSimController {
         return this.simRunning;
     }
 
-    public void launchSimulation(int groupA, int groupB, int groupC, int experiments, double simulatedDays) {
+    public void launchSimulation(int groupA, int groupB, int groupC, int desksCount, int experiments, double simulatedDays) {
         Runnable r = () -> {
             try {
 //                this.sim = new FurnitureProductionSim(experiments, groupA, groupB, groupC, simulatedDays*8*3600);// 3600s*8hod*sim_dni [secs] OLD
@@ -47,6 +47,8 @@ public class FurnitProdSimController {
 //                this.sim.setDebugMode(this.consoleLogsOn);
 //                this.sim.setSimSpeed(3600, 750);
                 this.changeSimSpeed();
+                this.sim.setAmountOfDesks(desksCount);
+                this.sim.setAmountOfCarpenters(groupA, groupB, groupC);
                 this.sim.onReplicationDidFinish(e -> System.out.println(e.currentReplication()) );
 //                this.sim.setMaxSimSpeed();
                 this.sim.simulate(experiments, simulatedDays*8*3600);

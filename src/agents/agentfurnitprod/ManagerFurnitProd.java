@@ -1,7 +1,6 @@
 package agents.agentfurnitprod;
 
 import OSPABA.*;
-import common.Furniture;
 import simulation.*;
 
 //meta! id="24"
@@ -39,7 +38,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	public void processOrderProcessing(MessageForm message)
 	{
 		OrderMessage msg = (OrderMessage)message;
-		this.myAgent().getQueueA().add(msg);
+		this.myAgent().getqUnprocessed().add(msg);
 //		// print received order
 //		System.out.println(msg.getOrder());
 //		Furniture f = msg.getOrder().assignUnprocessedProduct();

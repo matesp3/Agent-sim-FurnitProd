@@ -49,7 +49,10 @@ public class Furniture {
         return this.order.getOrderID();
     }
 
-    public double getTimeOfItsOrderCreation() {
+    /**
+     * @return time of its corresponding order creating.
+     */
+    public double getMyOrderCreatedAt() {
         return this.order.getCreatedAt();
     }
 

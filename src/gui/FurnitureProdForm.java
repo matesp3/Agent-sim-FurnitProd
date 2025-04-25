@@ -91,7 +91,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         MySimulation s = (MySimulation)simulation;
         this.statsViewer.updateExperimentTime(s.currentTime());
         FurnitProdEventResults r = new FurnitProdEventResults(s.currentReplication(), s.currentTime(), 5,5,5);
-        r.setOrdersA(s.agentFurnitProd().getQueueA());
+        r.setOrdersA(s.agentFurnitProd().getqUnprocessed());
         this.animationViewer.setEventResultsModel(r);
     }
 
@@ -139,8 +139,8 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
                 this.setBtnEnabled(this.btnCancel, true);
                 this.setEnabledInputs(false);
                 this.replicationViewer.setValue(0);
-                this.furnitProdSimController.launchSimulation(this.inputA.getIntValue(), this.inputB.getIntValue(),
-                        this.inputC.getIntValue(), this.inputExperiments.getIntValue(), this.inputSimDur.getDoubleValue());
+//                this.furnitProdSimController.launchSimulation(this.inputA.getIntValue(), this.inputB.getIntValue(),
+//                        this.inputC.getIntValue(), this.inputExperiments.getIntValue(), this.inputSimDur.getDoubleValue());
             }
         }
         else if (cmd.equals("Cancel")) {

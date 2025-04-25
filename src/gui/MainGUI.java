@@ -8,8 +8,6 @@ import javax.swing.plaf.metal.OceanTheme;
 public class MainGUI {
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-           new FurnitureProdForm();
-        });
+        SwingUtilities.invokeLater(FurnitureProdForm::new);
     }
 }

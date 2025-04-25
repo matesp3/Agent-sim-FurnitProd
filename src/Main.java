@@ -16,6 +16,7 @@ public class Main {
 //                (et.getTimeInMillis()-bt.getTimeInMillis()) / 1000 / 3600 / 24
 //                );
         MySimulation sim = new MySimulation();
+        sim.setAmountOfDesks(20);
         sim.simulate(1, 3600*3);
 //        sim.setSimSpeed();
     }

@@ -12,6 +12,7 @@ import agents.agentgroupa.*;
 import agents.agentgroupb.*;
 import agents.agentgroupc.*;
 import agents.agentfurnitprod.*;
+import common.DeskAllocation;
 import utils.SeedGen;
 
 
@@ -236,5 +237,23 @@ public AgentGroupC agentGroupC()
 
 	public Stat getStatTimeInFitInstallation() {
 		return avgTimeInFitInstallation;
+	}
+
+	/**
+	 * Creates new working places and the number of these places is specified by param {@code amount}.
+	 * @param amount amount of working places for carpenters
+	 */
+	public void setAmountOfDesks(int amount) {
+		this.agentFurnitProd().setAmountOfDesks(amount);
+	}
+
+	/**
+	 * Creates {@code amountGroupA} carpenters for group A, {@code amountGroupB} carpenters for group B and
+	 * {@code amountGroupC} carpenters for group C.
+	 */
+	public void setAmountOfCarpenters(int amountGroupA, int amountGroupB, int amountGroupC) {
+		this.agentGroupA().setAmountOfCarpenters(amountGroupA);
+		this.agentGroupB().setAmountOfCarpenters(amountGroupB);
+		this.agentGroupC().setAmountOfCarpenters(amountGroupC);
 	}
 }

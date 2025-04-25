@@ -2,6 +2,9 @@ package agents.agentgroupc;
 
 import OSPABA.*;
 import OSPRNG.RNG;
+import common.Carpenter;
+import common.CarpenterGroup;
+import contracts.ICarpenterGroup;
 import contracts.IFittingsInstaller;
 import simulation.*;
 import agents.agentgroupc.continualassistants.*;
@@ -9,12 +12,15 @@ import agents.agentgroupc.continualassistants.*;
 
 
 //meta! id="85"
-public class AgentGroupC extends OSPABA.Agent implements IFittingsInstaller
+public class AgentGroupC extends OSPABA.Agent implements IFittingsInstaller, ICarpenterGroup
 {
+	private final CarpenterGroup allocator;
+
 	public AgentGroupC(int id, Simulation mySim, Agent parent)
 	{
 		super(id, mySim, parent);
 		init();
+		this.allocator = new CarpenterGroup(Carpenter.GROUP.C);
 	}
 
 	@Override
@@ -40,5 +46,15 @@ public class AgentGroupC extends OSPABA.Agent implements IFittingsInstaller
 	@Override
 	public void setFitInstGenerator(RNG<Double> durationGenerator) {
 		((ProcessFitInstC)this.findAssistant(Id.processFitInstC)).setFitInstGenerator(durationGenerator);
+	}
+
+	@Override
+	public CarpenterGroup getAllocator() {
+		return this.allocator;
+	}
+
+	@Override
+	public void setAmountOfCarpenters(int amount) {
+		this.allocator.initCarpenters(amount);
 	}
 }
