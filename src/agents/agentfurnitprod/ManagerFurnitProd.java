@@ -35,51 +35,10 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	{
 	}
 
-	//meta! sender="AgentModel", id="28", type="Request"
+	//meta! userInfo="Removed from model"
 	public void processOrderProcessing(MessageForm message)
 	{
-		/* NOTES
-			- if there's some free carpenter A, then there's no request for processing Fittings Installation (bcs then,
-			  he would already work on it)
-			- if no desk is free, then there's no reason to do request for carpenter A assign
-		 */
-		OrderMessage msg = (OrderMessage)message;
-		DeskAllocation deskManager = this.myAgent().getDeskManager();
 
-		if (deskManager.hasFreeDesk()) {
-			TechStepMessage tsMsg = new TechStepMessage(this.mySim());
-			tsMsg.setCode(Mc.assignCarpenterA);
-			tsMsg.setAddressee(Id.agentGroupA);
-			this.request(tsMsg);
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-			Carpenter carpenter = null;
-			do {
-				// try to assign carpenter A - request!
-				if (carpenter == null)
-					break;
-				// start work with assigned carpenter A
-//				if (!order.hasUnstartedProduct()) // nothing to process
-					return;
-//				carpenter = null; // for next product, next carpenter
-			} while (deskManager.hasFreeDesk());
-		}
-		else { // this new order must wait as a whole, bcs there's no place where some product can be created
-			this.myAgent().getQUnprocessed().add(msg);
-		}
-
-		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		this.myAgent().getQUnprocessed().add(msg);
-
-		Furniture f = msg.getOrder().assignUnstartedProduct();
-		while (f != null) {
-			System.out.println(f);
-			f = msg.getOrder().assignUnstartedProduct();
-		}
-		System.out.println();
-//		// return it back to test communication through AgentModel
-		msg.setCode(Mc.orderProcessing);
-		this.response(message);
-//		// ok...
 	}
 
 	//meta! sender="AgentTransfer", id="33", type="Response"
@@ -137,6 +96,58 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	{
 	}
 
+	//meta! sender="AgentModel", id="158", type="Notice"
+	public void processOrderProcessingStart(MessageForm message)
+	{
+		message.setCode(Mc.orderProcessingEnd);
+		message.setAddressee(Id.agentModel);
+		this.notice(message); // ok.. posiela to agent prostredia, mozes sa zamerat na implementaciu vyroby
+		// - - - - - - - - - - - - - - - -
+		/* NOTES
+			- if there's some free carpenter A, then there's no request for processing Fittings Installation (bcs then,
+			  he would already work on it)
+			- if no desk is free, then there's no reason to do request for carpenter A assign
+		 */
+		OrderMessage msg = (OrderMessage)message;
+		DeskAllocation deskManager = this.myAgent().getDeskManager();
+
+		if (deskManager.hasFreeDesk()) {
+			TechStepMessage tsMsg = new TechStepMessage(this.mySim());
+			tsMsg.setCode(Mc.assignCarpenterA);
+			tsMsg.setAddressee(Id.agentGroupA);
+			this.request(tsMsg);
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			Carpenter carpenter = null;
+			do {
+				// try to assign carpenter A - request!
+				if (carpenter == null)
+					break;
+				// start work with assigned carpenter A
+//				if (!order.hasUnstartedProduct()) // nothing to process
+				return;
+//				carpenter = null; // for next product, next carpenter
+			} while (deskManager.hasFreeDesk());
+		}
+		else { // this new order must wait as a whole, bcs there's no place where some product can be created
+			this.myAgent().getQUnprocessed().add(msg);
+		}
+
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		this.myAgent().getQUnprocessed().add(msg);
+
+		Furniture f = msg.getOrder().assignUnstartedProduct();
+		while (f != null) {
+			System.out.println(f);
+			f = msg.getOrder().assignUnstartedProduct();
+		}
+		System.out.println();
+//		// return it back to test communication through AgentModel
+//		msg.setCode(Mc.orderProcessing);
+		this.response(message);
+//		// ok...
+
+	}
+
 	//meta! userInfo="Generated code: do not modify", tag="begin"
 	public void init()
 	{
@@ -164,12 +175,12 @@ public class ManagerFurnitProd extends OSPABA.Manager
 			}
 		break;
 
-		case Mc.orderProcessing:
-			processOrderProcessing(message);
-		break;
-
 		case Mc.storageTransfer:
 			processStorageTransfer(message);
+		break;
+
+		case Mc.orderProcessingStart:
+			processOrderProcessingStart(message);
 		break;
 
 		case Mc.woodPrep:
