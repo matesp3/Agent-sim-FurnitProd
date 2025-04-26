@@ -1,6 +1,7 @@
 package agents.agentfurnitprod;
 
 import OSPABA.*;
+import common.*;
 import simulation.*;
 
 //meta! id="24"
@@ -37,16 +38,44 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	//meta! sender="AgentModel", id="28", type="Request"
 	public void processOrderProcessing(MessageForm message)
 	{
+		/* NOTES
+			- if there's some free carpenter A, then there's no request for processing Fittings Installation (bcs then,
+			  he would already work on it)
+			- if no desk is free, then there's no reason to do request for carpenter A assign
+		 */
 		OrderMessage msg = (OrderMessage)message;
-		this.myAgent().getqUnprocessed().add(msg);
-//		// print received order
-//		System.out.println(msg.getOrder());
-//		Furniture f = msg.getOrder().assignUnprocessedProduct();
-//		while (f != null) {
-//			System.out.println(f);
-//			f = msg.getOrder().assignUnprocessedProduct();
-//		}
-//		System.out.println();
+		DeskAllocation deskManager = this.myAgent().getDeskManager();
+
+		if (deskManager.hasFreeDesk()) {
+			TechStepMessage tsMsg = new TechStepMessage(this.mySim());
+			tsMsg.setCode(Mc.assignCarpenterA);
+			tsMsg.setAddressee(Id.agentGroupA);
+			this.request(tsMsg);
+			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			Carpenter carpenter = null;
+			do {
+				// try to assign carpenter A - request!
+				if (carpenter == null)
+					break;
+				// start work with assigned carpenter A
+//				if (!order.hasUnstartedProduct()) // nothing to process
+					return;
+//				carpenter = null; // for next product, next carpenter
+			} while (deskManager.hasFreeDesk());
+		}
+		else { // this new order must wait as a whole, bcs there's no place where some product can be created
+			this.myAgent().getQUnprocessed().add(msg);
+		}
+
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		this.myAgent().getQUnprocessed().add(msg);
+
+		Furniture f = msg.getOrder().assignUnstartedProduct();
+		while (f != null) {
+			System.out.println(f);
+			f = msg.getOrder().assignUnstartedProduct();
+		}
+		System.out.println();
 //		// return it back to test communication through AgentModel
 		msg.setCode(Mc.orderProcessing);
 		this.response(message);
@@ -86,11 +115,13 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	//meta! sender="AgentGroupA", id="59", type="Response"
 	public void processFittingsInstallationAgentGroupA(MessageForm message)
 	{
+	//		this.makeResponseIfOrderCompleted(...);
 	}
 
 	//meta! sender="AgentGroupC", id="92", type="Response"
 	public void processFittingsInstallationAgentGroupC(MessageForm message)
 	{
+//		this.makeResponseIfOrderCompleted(...);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"
@@ -180,6 +211,13 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	public AgentFurnitProd myAgent()
 	{
 		return (AgentFurnitProd)super.myAgent();
+	}
+
+	private void makeResponseIfOrderCompleted(OrderMessage msg) {
+		if (msg.getOrder().isCompleted()) {
+			msg.setCode(Mc.orderCompleted);
+			this.response(msg);
+		}
 	}
 
 }

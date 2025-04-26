@@ -4,25 +4,28 @@ import utils.DoubleComp;
 import utils.Formatter;
 
 public class Furniture {
+
     public enum Type {
-        TABLE, CHAIR, WARDROBE
+        TABLE, CHAIR, WARDROBE;
     }
+
+
     public enum TechStep {
         WOOD_PREPARATION, CARVING, STAINING, PAINTCOAT, ASSEMBLING, FIT_INSTALLATION //, DRYING - if added, need to be fit where it belongs chronologically
+        ;
     }
-
     private final Order order;
+
     private final String productID;
     private final Type productType;
-
     private int deskID;
+
     private double stepBT;
     private double stepET;
     private double processingBT;
     private double waitingBT;
     private double timeCompleted;
     private TechStep step;
-
     /**
      * Technological step is automatically {@code null}.
      * @param order order to which this furniture instance belongs
@@ -155,7 +158,7 @@ public class Furniture {
     }
 
     /**
-     * @return timeCompleted when was product fully completed
+     * @return timeCompleted when was product fully completed, or {@code -1}, it is not completed yet
      */
     public double getTimeCompleted() {
         return this.timeCompleted;
@@ -173,6 +176,13 @@ public class Furniture {
      */
     public double getWaitingBT() {
         return this.waitingBT;
+    }
+
+    /**
+     * @return {@code true} if it has valid time of completion, else {@code false}
+     */
+    public boolean isCompleted() {
+        return DoubleComp.compare(this.timeCompleted, 0) == 1;
     }
 
     @Override

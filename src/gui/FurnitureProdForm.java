@@ -94,7 +94,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         MySimulation s = (MySimulation)simulation;
         this.statsViewer.updateExperimentTime(s.currentTime());
         FurnitProdEventResults r = new FurnitProdEventResults(s.currentReplication(), s.currentTime(), 5,5,5);
-        r.setOrdersA(s.agentFurnitProd().getqUnprocessed());
+        r.setOrdersA(s.agentFurnitProd().getQUnprocessed());
         this.animationViewer.setEventResultsModel(r);
     }
 

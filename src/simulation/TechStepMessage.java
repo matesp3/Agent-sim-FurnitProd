@@ -12,6 +12,8 @@ public class TechStepMessage extends OSPABA.MessageForm {
 
     public TechStepMessage(Simulation mySim) {
         super(mySim);
+        this.carpenter = null;
+        this.product = null;
     }
 
     protected TechStepMessage(TechStepMessage original) {

@@ -2,8 +2,6 @@ package common;
 
 import utils.Formatter;
 
-import java.util.Arrays;
-
 public class Order {
     private final int orderID;
     private final double createdAt;
@@ -49,7 +47,7 @@ public class Order {
      * @return furniture product whose creating hasn't started yet or {@code null} if all products processing already
      * started (or even ended).
      */
-    public Furniture assignUnprocessedProduct() {
+    public Furniture assignUnstartedProduct() {
         return (this.nextToBeProcessed < this.products.length) ? this.products[this.nextToBeProcessed++] : null;
     }
 
@@ -80,6 +78,24 @@ public class Order {
         return this.products;
     }
 
+    /**
+     * @return {@code true} if all furniture products, that it consists of, are completed, else {@code false}
+     */
+    public boolean isCompleted() {
+        for (Furniture product : this.products) {
+            if (!product.isCompleted())
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * @return {@code true} if at least one of order's products creating process has not started yet, else {@code false}
+     */
+    public boolean hasUnstartedProduct() {
+        return this.nextToBeProcessed < this.products.length;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -101,14 +117,14 @@ public class Order {
                 };
         order.setProducts(products);
         System.out.println(order);
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
         // ok
     }
 }

@@ -72,8 +72,29 @@ public class AgentFurnitProd extends OSPABA.Agent
 	//meta! tag="end"
 
 
-	public Queue<OrderMessage> getqUnprocessed() {
+	public Queue<OrderMessage> getQUnprocessed() {
 		return this.qUnprocessed;
+	}
+
+	public Queue<OrderMessage> getQReceived() {
+		return this.qReceived;
+	}
+
+	public Queue<TechStepMessage> getQStaining() {
+		return this.qStaining;
+	}
+
+	public Queue<TechStepMessage> getQAssembling() {
+		return this.qAssembling;
+	}
+
+	public Queue<TechStepMessage> getQFittings() {
+		return this.qFittings;
+
+	}
+
+	public DeskAllocation getDeskManager() {
+		return this.deskManager;
 	}
 
 	/**
