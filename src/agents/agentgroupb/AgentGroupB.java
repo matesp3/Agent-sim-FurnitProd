@@ -33,9 +33,11 @@ public class AgentGroupB extends OSPABA.Agent implements ICarpenterGroup
 	{
 		new ManagerGroupB(Id.managerGroupB, mySim(), this);
 		new ProcessAssembling(Id.processAssembling, mySim(), this);
+		addOwnMessage(Mc.releaseCarpenterB);
 		addOwnMessage(Mc.assembling);
 		addOwnMessage(Mc.assignCarpenterB);
 	}
+	//meta! tag="end"
 
 	@Override
 	public CarpenterGroup getAllocator() {
@@ -46,5 +48,4 @@ public class AgentGroupB extends OSPABA.Agent implements ICarpenterGroup
 	public void setAmountOfCarpenters(int amount) {
 		this.allocator.initCarpenters(amount);
 	}
-	//meta! tag="end"
 }

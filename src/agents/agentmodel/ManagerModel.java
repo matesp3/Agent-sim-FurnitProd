@@ -63,12 +63,12 @@ public class ManagerModel extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.orderArrival:
-			processOrderArrival(message);
-		break;
-
 		case Mc.orderProcessing:
 			processOrderProcessing(message);
+		break;
+
+		case Mc.orderArrival:
+			processOrderArrival(message);
 		break;
 
 		default:

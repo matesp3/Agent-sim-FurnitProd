@@ -11,6 +11,9 @@ public class Mc extends OSPABA.IdList
 	public static final int assignCarpenterB = 1010;
 	public static final int orderArrival = 1003;
 	public static final int assembling = 1011;
+	public static final int releaseCarpenterA = 1016;
+	public static final int releaseCarpenterB = 1017;
+	public static final int releaseCarpenterC = 1018;
 	public static final int assignCarpenterC = 1012;
 	public static final int stainingAndPaintcoat = 1013;
 	public static final int orderProcessing = 1004;

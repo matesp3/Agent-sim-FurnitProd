@@ -12,7 +12,6 @@ import agents.agentgroupa.*;
 import agents.agentgroupb.*;
 import agents.agentgroupc.*;
 import agents.agentfurnitprod.*;
-import common.DeskAllocation;
 import utils.SeedGen;
 
 
