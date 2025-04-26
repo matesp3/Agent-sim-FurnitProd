@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LocalStatsTableModel extends AbstractTableModel {
-    private final List<StatsModel> lResults;
+    private List<StatsModel> lResults;
     private final String[] aColNames = new String[] {
             "Stat name",
             "Value",
@@ -65,9 +65,13 @@ public class LocalStatsTableModel extends AbstractTableModel {
     }
 
     public void setModels(List<StatsModel> lModels) {
-        this.clear();
+//        this.clear();
+//        if (lModels != null)
+//            lResults.addAll(lModels);
         if (lModels != null)
-            lResults.addAll(lModels);
+            this.lResults = lModels;
+        else
+            this.lResults.clear();
         this.fireTableDataChanged();
     }
 

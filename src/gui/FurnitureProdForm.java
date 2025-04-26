@@ -43,6 +43,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
     private InputWithLabel inputA;
     private InputWithLabel inputB;
     private InputWithLabel inputC;
+    private InputWithLabel inputDesksCount;
     private InputWithLabel inputExperiments;
     private InputWithLabel inputSimDur;
     private ResultViewer replicationViewer;
@@ -82,12 +83,14 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
     @Override
     public void simStateChanged(Simulation simulation, SimState simState) {
 //        System.out.println("simStateChanged");
-//        this.statsViewer.updateExperimentTime(simulation.currentTime());
     }
 
     @Override
     public void refresh(Simulation simulation) { // sim time changed
 //        System.out.println("refresh");
+        if (this.checkMaxSpeed.isSelected())
+            return;
+
         MySimulation s = (MySimulation)simulation;
         this.statsViewer.updateExperimentTime(s.currentTime());
         FurnitProdEventResults r = new FurnitProdEventResults(s.currentReplication(), s.currentTime(), 5,5,5);
@@ -139,8 +142,9 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
                 this.setBtnEnabled(this.btnCancel, true);
                 this.setEnabledInputs(false);
                 this.replicationViewer.setValue(0);
-//                this.furnitProdSimController.launchSimulation(this.inputA.getIntValue(), this.inputB.getIntValue(),
-//                        this.inputC.getIntValue(), this.inputExperiments.getIntValue(), this.inputSimDur.getDoubleValue());
+                this.furnitProdSimController.launchSimulation(this.inputA.getIntValue(), this.inputB.getIntValue(),
+                        this.inputC.getIntValue(), this.inputDesksCount.getIntValue(),
+                        this.inputExperiments.getIntValue(), this.inputSimDur.getDoubleValue(), this.checkMaxSpeed.isSelected());
             }
         }
         else if (cmd.equals("Cancel")) {
@@ -245,9 +249,10 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         checkMaxSpeed.setAlignmentX(Component.CENTER_ALIGNMENT);
         checkMaxSpeed.setBackground(COL_BG);
         checkMaxSpeed.addActionListener(this);
+        // ----
         checkMaxSpeed.setSelected(false);
         this.furnitProdSimController.setEnabledMaxSpeed(checkMaxSpeed.isSelected());
-
+        // ----
         checks.add(Box.createRigidArea(new Dimension(0, 5)));
         checks.add(checkMaxSpeed);
         checks.setAlignmentY(Component.BOTTOM_ALIGNMENT);
@@ -287,6 +292,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         this.inputA = new InputWithLabel("Amount A:", 2, "2");
         this.inputB = new InputWithLabel("Amount B:", 2, "2");
         this.inputC = new InputWithLabel("Amount C:", 2, "18");
+        this.inputDesksCount = new InputWithLabel("Nr. of desks:", 2, "10");
         this.inputSimDur = new InputWithLabel("Dur [days]:", 3, "249");
         this.inputExperiments = new InputWithLabel("Experiments:", 6, "10000");
         JLabel lblConf = new JLabel("Params:");
@@ -295,6 +301,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         inputsPanel.add(this.inputA);
         inputsPanel.add(this.inputB);
         inputsPanel.add(this.inputC);
+        inputsPanel.add(this.inputDesksCount);
         inputsPanel.add(this.inputSimDur);
         inputsPanel.add(Box.createRigidArea(new Dimension(0, 3))); // Fixed vertical space
         inputsPanel.add(this.inputExperiments);

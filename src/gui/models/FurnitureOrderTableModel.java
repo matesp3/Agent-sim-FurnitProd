@@ -99,6 +99,8 @@ public class FurnitureOrderTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
+        if (rowIndex < 0 || rowIndex >= this.lResults.size()) // strange bug, without this it throws exceptions while high sim speed
+            return null;
         ProductResults order = this.lResults.get(rowIndex);
         if (columnIndex == 0)
             return order.getOrderID();
