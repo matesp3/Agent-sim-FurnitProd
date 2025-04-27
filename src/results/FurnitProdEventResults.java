@@ -2,6 +2,7 @@ package results;
 
 import common.Carpenter;
 import common.Furniture;
+import common.Order;
 import simulation.OrderMessage;
 
 import java.util.*;
@@ -187,10 +188,10 @@ public class FurnitProdEventResults extends AfterEventResults {
         return ordersA;
     }
 
-    public void setOrdersA(Queue<OrderMessage> queue) {
+    public void setOrdersA(Queue<Order> queue) {
         Queue<Furniture> ordersA = new LinkedList<Furniture>();
-        for (OrderMessage o : queue) {
-            ordersA.addAll(Arrays.asList(o.getOrder().getProducts()));
+        for (Order o : queue) {
+            ordersA.addAll(Arrays.asList(o.getProducts()));
         }
         this.setNewOrders(ordersA, this.ordersA);
     }

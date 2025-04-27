@@ -1,16 +1,28 @@
 package agents.agentfurnitprod;
 
 import OSPABA.*;
-import common.*;
+import common.Carpenter;
+import common.Furniture;
+import common.Order;
 import simulation.*;
 
 //meta! id="24"
 public class ManagerFurnitProd extends OSPABA.Manager
 {
+	private final AssignMessage assignMsg;
+	private final TechStepMessage stepMsgPattern;
+	private final OrderMessage orderMsgPattern;
+
 	public ManagerFurnitProd(int id, Simulation mySim, Agent myAgent)
 	{
 		super(id, mySim, myAgent);
 		init();
+		this.assignMsg = new AssignMessage(this.mySim());
+		this.stepMsgPattern = new TechStepMessage(this.mySim());
+
+		this.orderMsgPattern = new OrderMessage(this.mySim());
+		this.orderMsgPattern.setCode(Mc.orderProcessingEnd);
+		this.orderMsgPattern.setAddressee(Id.agentModel);
 	}
 
 	@Override
@@ -33,12 +45,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	//meta! sender="AgentGroupA", id="57", type="Response"
 	public void processWoodPrep(MessageForm message)
 	{
-	}
-
-	//meta! userInfo="Removed from model"
-	public void processOrderProcessing(MessageForm message)
-	{
-
+		this.noticeIfCompleted( ((TechStepMessage)message).getProduct().getOrder() );
 	}
 
 	//meta! sender="AgentTransfer", id="33", type="Response"
@@ -54,6 +61,15 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	//meta! sender="AgentGroupA", id="54", type="Response"
 	public void processAssignCarpenterA(MessageForm message)
 	{
+		// 2 possibilities: two types -> typecasting ; or additional attribute in one class {due to order BT | tech step)
+		AssignMessage assignMsg = (AssignMessage) message;
+		Carpenter carpenter = assignMsg.getCarpenter();
+		if (assignMsg.getOrder() != null) { // 1. option - product beginning
+			this.processAssignedCarpenterForNewFurniture(assignMsg);
+		}
+		else { // 2. option - tech step processing
+			// todo tech step processing
+		}
 	}
 
 	//meta! sender="AgentGroupB", id="77", type="Response"
@@ -74,13 +90,13 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	//meta! sender="AgentGroupA", id="59", type="Response"
 	public void processFittingsInstallationAgentGroupA(MessageForm message)
 	{
-	//		this.makeResponseIfOrderCompleted(...);
+//		this.noticeIfCompleted(...);
 	}
 
 	//meta! sender="AgentGroupC", id="92", type="Response"
 	public void processFittingsInstallationAgentGroupC(MessageForm message)
 	{
-//		this.makeResponseIfOrderCompleted(...);
+//		this.noticeIfCompleted();...);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"
@@ -99,53 +115,17 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	//meta! sender="AgentModel", id="158", type="Notice"
 	public void processOrderProcessingStart(MessageForm message)
 	{
-		message.setCode(Mc.orderProcessingEnd);
-		message.setAddressee(Id.agentModel);
-		this.notice(message); // ok.. posiela to agent prostredia, mozes sa zamerat na implementaciu vyroby
-		// - - - - - - - - - - - - - - - -
 		/* NOTES
 			- if there's some free carpenter A, then there's no request for processing Fittings Installation (bcs then,
 			  he would already work on it)
 			- if no desk is free, then there's no reason to do request for carpenter A assign
 		 */
-		OrderMessage msg = (OrderMessage)message;
-		DeskAllocation deskManager = this.myAgent().getDeskManager();
-
-		if (deskManager.hasFreeDesk()) {
-			TechStepMessage tsMsg = new TechStepMessage(this.mySim());
-			tsMsg.setCode(Mc.assignCarpenterA);
-			tsMsg.setAddressee(Id.agentGroupA);
-			this.request(tsMsg);
-			// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-			Carpenter carpenter = null;
-			do {
-				// try to assign carpenter A - request!
-				if (carpenter == null)
-					break;
-				// start work with assigned carpenter A
-//				if (!order.hasUnstartedProduct()) // nothing to process
-				return;
-//				carpenter = null; // for next product, next carpenter
-			} while (deskManager.hasFreeDesk());
+		if (this.myAgent().getDeskManager().hasFreeDesk()) {
+			this.sendAssignRequestForOrder( ((OrderMessage)message).getOrder() );
 		}
 		else { // this new order must wait as a whole, bcs there's no place where some product can be created
-			this.myAgent().getQUnprocessed().add(msg);
+			this.myAgent().getQUnstarted().add( ((OrderMessage)message).getOrder() );
 		}
-
-		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		this.myAgent().getQUnprocessed().add(msg);
-
-		Furniture f = msg.getOrder().assignUnstartedProduct();
-		while (f != null) {
-			System.out.println(f);
-			f = msg.getOrder().assignUnstartedProduct();
-		}
-		System.out.println();
-//		// return it back to test communication through AgentModel
-//		msg.setCode(Mc.orderProcessing);
-		this.response(message);
-//		// ok...
-
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"
@@ -224,11 +204,69 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		return (AgentFurnitProd)super.myAgent();
 	}
 
-	private void makeResponseIfOrderCompleted(OrderMessage msg) {
-		if (msg.getOrder().isCompleted()) {
-			msg.setCode(Mc.orderCompleted);
-			this.response(msg);
+	/**
+	 * Check order completion. If it's completed, notice message {@code Mc.orderProcessingEnd} is sent to parent agent
+	 * @param o order
+	 */
+	private void noticeIfCompleted(Order o) {
+//		if (o.isCompleted()) {
+		if (true) {
+			OrderMessage newOrderMsg = (OrderMessage) this.orderMsgPattern.createCopy();
+			newOrderMsg.setOrder(o);
+			this.notice(newOrderMsg);
 		}
 	}
 
+	private void processAssignedCarpenterForNewFurniture(AssignMessage msg) {
+		Carpenter carpenter = msg.getCarpenter();
+		if (carpenter == null) {
+			if (!assignMsg.getOrder().isUnstarted())
+				this.myAgent().getQStarted().add(assignMsg.getOrder());
+			else
+				this.myAgent().getQUnstarted().add(assignMsg.getOrder());
+			return;
+		}
+		Furniture product = assignMsg.getOrder().assignUnstartedProduct();
+		carpenter.receiveProduct(product, this.mySim().currentTime());
+		product.setDeskID(this.myAgent().getDeskManager().occupyDesk(product));
+		product.setProcessingBT(this.mySim().currentTime());
+		// now I know, that I have free desk & free carpenter -> I can start working on new product
+		this.sendTechStepRequest(Mc.woodPrep, Id.agentGroupA, carpenter);
+		// - - - - - -
+		if (assignMsg.getOrder().hasUnassignedProduct() && this.myAgent().getDeskManager().hasFreeDesk()) {
+			this.sendAssignRequestForOrder(assignMsg.getOrder());
+		}
+	}
+
+	/**
+	 * Sends request (of copied TechStepMessage's instance) with specified params
+	 * @param code
+	 * @param addressee
+	 * @param carpenter
+	 */
+	private void sendTechStepRequest(int code, int addressee, Carpenter carpenter) {
+		TechStepMessage stepMsg = (TechStepMessage) this.stepMsgPattern.createCopy(); // need copy, bcs more request can be created in one sim time
+		stepMsg.setCode(code);
+		stepMsg.setAddressee(addressee);
+		stepMsg.setCarpenter(carpenter);
+		this.request(stepMsg);
+	}
+
+	private void sendAssignRequestForOrder(Order order) {
+		// 1 instance of assignMessage is enough, bcs it's used only within messages, which are executed in the current time
+		this.assignMsg.setCode(Mc.assignCarpenterA);
+		this.assignMsg.setAddressee(Id.agentGroupA);
+		this.assignMsg.setOrder(order);
+		this.assignMsg.setProduct(null);
+		this.request(this.assignMsg);
+	}
+
+	private void sendAssignRequestForProduct(int code, int agentGroup, Furniture product) {
+		// 1 instance of assignMessage is enough, bcs it's used only within messages, which are executed in the current time
+		this.assignMsg.setCode(code);
+		this.assignMsg.setAddressee(agentGroup);
+		this.assignMsg.setOrder(null);
+		this.assignMsg.setProduct(product);
+		this.request(this.assignMsg);
+	}
 }

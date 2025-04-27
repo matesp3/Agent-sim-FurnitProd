@@ -25,6 +25,10 @@ public class CarpenterGroup {
         return this.firstFree < this.carpenters.length;
     }
 
+    /**
+     *
+     * @return free carpenter with the lowest ID or {@code null}, if there's no free one.
+     */
     public Carpenter assignCarpenter() {
         if (!this.hasFreeCarpenter())
             return null;
@@ -36,6 +40,11 @@ public class CarpenterGroup {
         return assigned;
     }
 
+    /**
+     * Releases carpenter, if he is not working anymore.
+     * @param c carpenter to be released
+     * @throws RuntimeException if carpenter is still working (has assigned some product)
+     */
     public void releaseCarpenter(Carpenter c) {
         if (c.isWorking())
             throw new RuntimeException("Carpenter is working on some furniture, therefore cannot be released");

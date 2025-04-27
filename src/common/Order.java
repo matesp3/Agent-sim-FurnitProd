@@ -90,10 +90,18 @@ public class Order {
     }
 
     /**
-     * @return {@code true} if at least one of order's products creating process has not started yet, else {@code false}
+     * @return {@code true} if at least one of order's products has not been assigned for work yet, else {@code false}
      */
-    public boolean hasUnstartedProduct() {
+    public boolean hasUnassignedProduct() {
         return this.nextToBeProcessed < this.products.length;
+    }
+
+    /**
+     *
+     * @return {@code true} if no product of this order has started its creating yet, else {@code false}
+     */
+    public boolean isUnstarted() {
+        return this.nextToBeProcessed == 0;
     }
 
     @Override

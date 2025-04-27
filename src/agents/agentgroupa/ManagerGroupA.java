@@ -1,6 +1,7 @@
 package agents.agentgroupa;
 
 import OSPABA.*;
+import common.CarpenterGroup;
 import simulation.*;
 
 //meta! id="39"
@@ -27,11 +28,16 @@ public class ManagerGroupA extends OSPABA.Manager
 	//meta! sender="AgentFurnitProd", id="57", type="Request"
 	public void processWoodPrep(MessageForm message)
 	{
+		message.setAddressee(myAgent().findAssistant(Id.processWoodPrep));
+		this.startContinualAssistant(message);
 	}
 
 	//meta! sender="AgentFurnitProd", id="54", type="Request"
 	public void processAssignCarpenterA(MessageForm message)
 	{
+		AssignMessage assignMsg = (AssignMessage) message;
+		assignMsg.setCarpenter(this.myAgent().getAllocator().assignCarpenter()); // always needs to be updated
+		this.response(assignMsg);
 	}
 
 	//meta! sender="ProcessFitInstA", id="71", type="Finish"
@@ -42,6 +48,8 @@ public class ManagerGroupA extends OSPABA.Manager
 	//meta! sender="ProcessWoodPrep", id="63", type="Finish"
 	public void processFinishProcessWoodPrep(MessageForm message)
 	{
+		message.setCode(Mc.woodPrep);
+		this.response(message);
 	}
 
 	//meta! sender="ProcessCarving", id="68", type="Finish"

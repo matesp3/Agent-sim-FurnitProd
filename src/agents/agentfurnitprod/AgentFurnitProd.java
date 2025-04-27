@@ -2,6 +2,7 @@ package agents.agentfurnitprod;
 
 import OSPABA.*;
 import common.DeskAllocation;
+import common.Order;
 import simulation.*;
 import utils.DoubleComp;
 
@@ -13,8 +14,8 @@ import java.util.Queue;
 //meta! id="24"
 public class AgentFurnitProd extends OSPABA.Agent
 {
-	private final Queue<OrderMessage> qUnprocessed;
-	private final Queue<OrderMessage> qReceived; // at least one furniture product is being processed
+	private final Queue<Order> qUnstarted;
+	private final Queue<Order> qStarted; // at least one furniture product is being processed
 	private final Queue<TechStepMessage> qStaining;
 	private final Queue<TechStepMessage> qAssembling;
 	private final Queue<TechStepMessage> qFittings;
@@ -25,10 +26,10 @@ public class AgentFurnitProd extends OSPABA.Agent
 		super(id, mySim, parent);
 		init();
 
-		// orderMsgCmp is used just for beginning of furniture creating process
-		Comparator<OrderMessage> orderMsgCmp = (o1, o2) -> DoubleComp.compare(o1.getOrder().getCreatedAt(), o2.getOrder().getCreatedAt());
-		this.qUnprocessed = new PriorityQueue<>(orderMsgCmp);
-		this.qReceived = new PriorityQueue<>(orderMsgCmp);
+		// orderCmp is used just for beginning of furniture creating process
+		Comparator<Order> orderCmp = (o1, o2) -> DoubleComp.compare(o1.getCreatedAt(), o2.getCreatedAt());
+		this.qUnstarted = new PriorityQueue<>(orderCmp);
+		this.qStarted = new PriorityQueue<>(orderCmp);
 
 		// stepMsgCmp is used for products that have some tech step already executed -> in case of orderCreation equality, prev step ET is compared
 		Comparator<TechStepMessage> stepMsgCmp = (o1, o2) -> {
@@ -46,8 +47,8 @@ public class AgentFurnitProd extends OSPABA.Agent
 	{
 		super.prepareReplication();
 		// Setup component for the next replication
-		this.qUnprocessed.clear();
-		this.qReceived.clear();
+		this.qUnstarted.clear();
+		this.qStarted.clear();
 		this.qStaining.clear();
 		this.qAssembling.clear();
 		this.qFittings.clear();
@@ -72,12 +73,12 @@ public class AgentFurnitProd extends OSPABA.Agent
 	//meta! tag="end"
 
 
-	public Queue<OrderMessage> getQUnprocessed() {
-		return this.qUnprocessed;
+	public Queue<Order> getQUnstarted() {
+		return this.qUnstarted;
 	}
 
-	public Queue<OrderMessage> getQReceived() {
-		return this.qReceived;
+	public Queue<Order> getQStarted() {
+		return this.qStarted;
 	}
 
 	public Queue<TechStepMessage> getQStaining() {
