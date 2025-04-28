@@ -5,8 +5,8 @@ import OSPABA.SimState;
 import OSPABA.Simulation;
 import controllers.FurnitProdSimController;
 import gui.components.*;
-import results.FurnitProdEventResults;
-import results.FurnitProdExpStats;
+import results.FurnitProdState;
+import results.FurnitProdRepStats;
 import results.OtherEventInfo;
 import results.SimResults;
 import simulation.MySimulation;
@@ -39,7 +39,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
     private final JTabbedPane tabbedContentPane = new JTabbedPane(); // CENTER
     // tabs
     private StatsViewer statsViewer;
-    private FurnitureProdAnim animationViewer;
+    private FurnitureProdDataViewer simDataViewer;
     private CIChartViewer chartCIViewer;
     // custom components
     private InputWithLabel inputA;
@@ -95,43 +95,22 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
 //        System.out.println("refresh");
         if (this.checkMaxSpeed.isSelected())
             return;
-
         MySimulation s = (MySimulation)simulation;
-        this.statsViewer.updateExperimentTime(s.currentTime());
-        FurnitProdEventResults r = new FurnitProdEventResults(s.currentReplication(), s.currentTime(), 5,5,5);
-        r.setOrdersA(s.agentFurnitProd().getQUnstarted());
-        this.animationViewer.setEventResultsModel(r);
+        SwingUtilities.invokeLater(() -> {
+            this.statsViewer.updateExperimentTime(s.currentTime());
+            this.statsViewer.updateLocalStats(s.getSimStateData());
+            this.simDataViewer.setEventResultsModel(s.getSimStateData());
+            this.replicationViewer.setValue(s.currentReplication() > 0 ? s.currentReplication() - 1 : 0);
+        });
     }
 
-    public void update(SimResults res) {
-        if (!this.checkMaxSpeed.isSelected() && res instanceof FurnitProdEventResults) {
-            FurnitProdEventResults r = (FurnitProdEventResults)res;
-            SwingUtilities.invokeLater(() -> {
-                this.animationViewer.setEventResultsModel(r);
-                this.statsViewer.updateLocalStats(r);
-                this.statsViewer.updateExperimentTime(r.getSimTime());
-                this.replicationViewer.setValue(r.getExperimentNum() > 0 ? r.getExperimentNum()-1 : 0);
-            });
-        }
-        else if (res instanceof FurnitProdExpStats) {
-            FurnitProdExpStats r = (FurnitProdExpStats) res;
-            SwingUtilities.invokeLater(() -> {
-                this.statsViewer.updateOverallStats(r);
-                this.replicationViewer.setValue(r.getExperimentNum());
-                this.chartCIViewer.addValue(r.getExperimentNum(), (r.getOrderTimeInSystem().getMean()/TIME_UNIT),
-                        (r.getOrderTimeInSystem().getHalfWidth()/TIME_UNIT));
-            });
-        }
-        else if (res instanceof OtherEventInfo) {
-            OtherEventInfo r = (OtherEventInfo) res;
-            if (r.getMessage() == null)
-                return;
-            if (r.getMessage().equals("Sim:ended")) {
-                this.onSimEnd();
-            }
-        }
-//        else
-//            System.out.println("why");
+    public void updateReplication(FurnitProdRepStats s) {
+        SwingUtilities.invokeLater(() -> {
+            this.statsViewer.updateOverallStats(s);
+            this.replicationViewer.setValue(s.getExperimentNum());
+            this.chartCIViewer.addValue(s.getExperimentNum(), (s.getOrderTimeInSystem().getMean() / TIME_UNIT),
+                    (s.getOrderTimeInSystem().getHalfWidth() / TIME_UNIT));
+        });
     }
 
     @Override
@@ -183,7 +162,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
     @Override
     public void componentResized(ComponentEvent e) {
 //        System.out.println("resized");
-        this.animationViewer.resizeContent(this.getWidth() - 200, this.getHeight() - 150);
+        this.simDataViewer.resizeContent(this.getWidth() - 200, this.getHeight() - 150);
         this.statsViewer.resizeContent(this.getWidth() - 200, this.getHeight() - 150);
         this.chartCIViewer.resizeContent(this.getWidth() - 200, this.getHeight() - 125);
     }
@@ -219,11 +198,11 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
 
     private void createTabs() {
         this.statsViewer = new StatsViewer();
-        this.animationViewer = new FurnitureProdAnim();
+        this.simDataViewer = new FurnitureProdDataViewer();
         this.chartCIViewer = new CIChartViewer();
 
         this.tabbedContentPane.addTab("Statistics", this.statsViewer);
-        this.tabbedContentPane.addTab("Animation", this.animationViewer);
+        this.tabbedContentPane.addTab("Sim. state view", this.simDataViewer);
         this.tabbedContentPane.addTab("Value Stabilization", this.chartCIViewer);
     }
 
@@ -378,6 +357,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         txtField.setColumns( (int)((5.0/7.0)*expectedLettersCount)+1 );
         return txtField;
     }
+
 
 
 }

@@ -3,7 +3,7 @@ package gui.components;
 import gui.FurnitureProdForm;
 import gui.models.CarpenterTableModel;
 import gui.models.FurnitureOrderTableModel;
-import results.FurnitProdEventResults;
+import results.FurnitProdState;
 import utils.Formatter;
 import utils.SwingTableColumnResizer;
 
@@ -11,7 +11,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class FurnitureProdAnim extends JPanel {
+public class FurnitureProdDataViewer extends JPanel {
     private ResultViewer viewSimTime;
     private CarpenterTableModel carpenterTableModelA;
     private CarpenterTableModel carpenterTableModelB;
@@ -31,7 +31,7 @@ public class FurnitureProdAnim extends JPanel {
     private JScrollPane mainScrollPane;
     private JPanel contentPane;
 
-    public FurnitureProdAnim() {
+    public FurnitureProdDataViewer() {
         this.viewSimTime = new ResultViewer("Simulation Time");
         this.contentPane = this.createTables();
         this.mainScrollPane = new JScrollPane(this.contentPane);
@@ -187,15 +187,15 @@ public class FurnitureProdAnim extends JPanel {
         return content;
     }
 
-    public void setEventResultsModel(FurnitProdEventResults r) {
-        this.orderTableModelWaiting.setModels(r.getOrdersA());
-//        this.orderTableModelAssembling.setModels(r.getOrdersB());
-//        this.orderTableModelStaining.setModels(r.getOrdersCLow());
-//        this.orderTableModelFitInst.setModels(r.getOrdersCHigh());
+    public void setEventResultsModel(FurnitProdState r) {
+        this.orderTableModelWaiting.setModels(r.getqUnstarted());
+        this.orderTableModelAssembling.setModels(r.getqAssembling());
+        this.orderTableModelStaining.setModels(r.getqStaining());
+        this.orderTableModelFitInst.setModels(r.getqFittings());
         this.viewSimTime.setValue(Formatter.getStrDateTime(r.getSimTime(), 8, 6));
-//        this.carpenterTableModelA.setModels(r.getCarpentersA());
-//        this.carpenterTableModelB.setModels(r.getCarpentersB());
-//        this.carpenterTableModelC.setModels(r.getCarpentersC());
+        this.carpenterTableModelA.setModels(r.getCarpentersA());
+        this.carpenterTableModelB.setModels(r.getCarpentersB());
+        this.carpenterTableModelC.setModels(r.getCarpentersC());
     }
 
     public static void main(String[] args) {

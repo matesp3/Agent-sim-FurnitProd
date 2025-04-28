@@ -1,7 +1,6 @@
 package gui.models;
 
-import gui.FurnitureProdForm;
-import results.FurnitProdExpStats;
+import results.FurnitProdRepStats;
 import utils.Formatter;
 
 import javax.swing.table.AbstractTableModel;
@@ -35,11 +34,11 @@ public class OverallStatsTableModel extends AbstractTableModel {
         this.fireTableDataChanged();
     }
 
-    public void updateTable(FurnitProdExpStats r) {
+    public void updateTable(FurnitProdRepStats r) {
         lResults.clear();
-        lResults.add(new StatsModel(r.getOrdersWaitingQueueCount().getDescription(),
-                Formatter.getStrCI(r.getOrdersWaitingQueueCount().getHalfWidth(), r.getOrdersWaitingQueueCount().getMean(), 5, 1),
-                r.getOrdersWaitingQueueCount().getUnit()));
+        lResults.add(new StatsModel(r.getUnstartedCount().getDescription(),
+                Formatter.getStrCI(r.getUnstartedCount().getHalfWidth(), r.getUnstartedCount().getMean(), 5, 1),
+                r.getUnstartedCount().getUnit()));
 //        lResults.add(new StatsModel(r.getOrdersStainingQueueCount().getDescription(),
 //                Formatter.getStrCI(r.getOrdersStainingQueueCount().getHalfWidth(), r.getOrdersStainingQueueCount().getMean(), 5, 1),
 //                r.getOrdersStainingQueueCount().getUnit()));

@@ -1,6 +1,6 @@
 package results;
 
-public class CarpenterResults {
+public class CarpenterModel {
     private int carpenterID;
     private int deskID;
     private String assignedProductID = null;
@@ -10,7 +10,7 @@ public class CarpenterResults {
     private boolean working = false;
     private String orderRepresentation;
 
-    public CarpenterResults(int carpenterID, String group) {
+    public CarpenterModel(int carpenterID, String group) {
         this.carpenterID = carpenterID;
         this.group = group;
     }

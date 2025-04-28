@@ -1,6 +1,6 @@
 package gui.models;
 
-import results.ProductResults;
+import results.FurnitureModel;
 import utils.Formatter;
 
 import javax.swing.table.AbstractTableModel;
@@ -19,7 +19,7 @@ public class FurnitureOrderTableModel extends AbstractTableModel {
             "stepBT",
             "stepET",
             "created"};
-    private final List<ProductResults> lResults;
+    private final List<FurnitureModel> lResults;
     private final Class<?>[] aColClasses = new Class<?>[] {
             Integer.class,
             String.class,
@@ -31,31 +31,31 @@ public class FurnitureOrderTableModel extends AbstractTableModel {
             String.class,
             String.class,};
 
-    public FurnitureOrderTableModel(List<ProductResults> lResults) {
+    public FurnitureOrderTableModel(List<FurnitureModel> lResults) {
         this.lResults = lResults;
     }
 
-    public void add(ProductResults model) {
+    public void add(FurnitureModel model) {
         this.lResults.add(model);
         this.fireTableDataChanged();
     }
 
-    public void setModels(List<ProductResults> lModels) {
+    public void setModels(List<FurnitureModel> lModels) {
         this.clear();
         if (lModels != null)
             lResults.addAll(lModels);
         this.fireTableDataChanged();
     }
 
-    public ProductResults getModel(int index) {
+    public FurnitureModel getModel(int index) {
         return this.lResults.get(index);
     }
 
-    public ArrayList<ProductResults> getModels() {
+    public ArrayList<FurnitureModel> getModels() {
         return new ArrayList<>(this.lResults);
     }
 
-    public void setModel(int index, ProductResults model) {
+    public void setModel(int index, FurnitureModel model) {
         if (model == null || index < 0 || index > this.lResults.size())
             return;
         this.lResults.set(index, model);
@@ -101,7 +101,7 @@ public class FurnitureOrderTableModel extends AbstractTableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         if (rowIndex < 0 || rowIndex >= this.lResults.size()) // strange bug, without this it throws exceptions while high sim speed
             return null;
-        ProductResults order = this.lResults.get(rowIndex);
+        FurnitureModel order = this.lResults.get(rowIndex);
         if (columnIndex == 0)
             return order.getOrderID();
         else if (columnIndex == 1)

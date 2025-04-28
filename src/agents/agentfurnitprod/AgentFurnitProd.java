@@ -9,6 +9,7 @@ import utils.DoubleComp;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.concurrent.PriorityBlockingQueue;
 
 
 //meta! id="24"
@@ -28,8 +29,8 @@ public class AgentFurnitProd extends OSPABA.Agent
 
 		// orderCmp is used just for beginning of furniture creating process
 		Comparator<Order> orderCmp = (o1, o2) -> DoubleComp.compare(o1.getCreatedAt(), o2.getCreatedAt());
-		this.qUnstarted = new PriorityQueue<>(orderCmp);
-		this.qStarted = new PriorityQueue<>(orderCmp);
+		this.qUnstarted = new PriorityBlockingQueue<>(50, orderCmp);
+		this.qStarted = new PriorityBlockingQueue<>(50, orderCmp);
 
 		// stepMsgCmp is used for products that have some tech step already executed -> in case of orderCreation equality, prev step ET is compared
 		Comparator<TechStepMessage> stepMsgCmp = (o1, o2) -> {

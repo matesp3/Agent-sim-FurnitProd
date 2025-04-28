@@ -2,6 +2,7 @@ package controllers;
 
 import OSPABA.Simulation;
 import gui.FurnitureProdForm;
+import results.FurnitProdRepStats;
 import simulation.Id;
 import simulation.MySimulation;
 import utils.DoubleComp;
@@ -37,6 +38,7 @@ public class FurnitProdSimController {
             try {
                 this.sim = new MySimulation();// 3600s*8hod*sim_dni [secs] NEW
                 this.sim.registerDelegate(this.gui);
+                this.registerReplicationUpdates(this.sim);
                 // - - - - -
                 this.setEnabledMaxSpeed(withMaxSpeed);
                 // - - - - -
@@ -53,6 +55,28 @@ public class FurnitProdSimController {
         t.setDaemon(true); // if GUI ends, simulation also
         t.start();
         this.simRunning = true;
+    }
+
+    private void registerReplicationUpdates(MySimulation sim) {
+
+        sim.onReplicationDidFinish(e -> {
+            FurnitProdRepStats s = new FurnitProdRepStats(sim.currentReplication());
+            s.setUnstartedCount(sim.getStatCountNotStarted());
+            s.setStartedCount(sim.getStatCountPartiallyStarted());
+            s.setStainingCount(sim.getStatCountStaining());
+            s.setAssemblingCount(sim.getStatCountAssembling());
+            s.setFittingsCount(sim.getStatCountFitInstallation());
+            s.setUnstartedTime(sim.getStatTimeInNotStarted());
+            s.setStartedTime(sim.getStatTimeInPartiallyStarted());
+            s.setStainingTime(sim.getStatTimeInStaining());
+            s.setAssemblingTime(sim.getStatTimeInAssembling());
+            s.setFittingsTime(sim.getStatTimeInFitInstallation());
+            s.setUtilizationGroupA(sim.getStatUtilizationA());
+            s.setUtilizationGroupB(sim.getStatUtilizationB());
+            s.setUtilizationGroupC(sim.getStatUtilizationC());
+            s.setOrderTimeInSystem(sim.getStatTimeOrderCompletion());
+            this.gui.updateReplication(s);
+        } );
     }
 
     public void terminateSimulation() {

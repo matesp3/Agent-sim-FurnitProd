@@ -12,6 +12,9 @@ import agents.agentgroupa.*;
 import agents.agentgroupb.*;
 import agents.agentgroupc.*;
 import agents.agentfurnitprod.*;
+import common.Furniture;
+import common.Order;
+import results.FurnitProdState;
 import utils.SeedGen;
 
 
@@ -35,6 +38,8 @@ public class MySimulation extends OSPABA.Simulation
 	private final Stat avgTimeInStaining = new Stat();
 	private final Stat avgTimeInAssembling = new Stat();
 	private final Stat avgTimeInFitInstallation = new Stat();
+
+	private final FurnitProdState simStateData = new FurnitProdState(0, 0);
 
 	public MySimulation()
 	{
@@ -96,6 +101,7 @@ public class MySimulation extends OSPABA.Simulation
 //		this.avgTimeInStaining.addSample();
 //		this.avgTimeInAssembling.addSample();
 //		this.avgTimeInFitInstallation.addSample();
+
 		SchedulerOrderArrival sch = (SchedulerOrderArrival) agentEnvironment().findAssistant(Id.schedulerOrderArrival);
 		System.out.println("created: "+sch.getCreatedOrdersCount());
 		System.out.println("completed: "+agentEnvironment().getOrdersCompleted());
@@ -254,5 +260,51 @@ public AgentGroupC agentGroupC()
 		this.agentGroupA().setAmountOfCarpenters(amountGroupA);
 		this.agentGroupB().setAmountOfCarpenters(amountGroupB);
 		this.agentGroupC().setAmountOfCarpenters(amountGroupC);
+		// for results --v
+		this.simStateData.carpentersAllocation(amountGroupA, amountGroupB, amountGroupC);
+	}
+
+	public FurnitProdState getSimStateData() {
+		this.updateSimStateModel();
+		return this.simStateData;
+	}
+
+	private void updateSimStateModel() {
+		this.simStateData.setExperimentNum(this.currentReplication());
+		this.simStateData.setSimTime(this.currentTime());
+		// carpenters
+		this.simStateData.setModelsCarpentersA(this.agentGroupA().getAllocator().getCarpenters());
+		this.simStateData.setModelsCarpentersB(this.agentGroupB().getAllocator().getCarpenters());
+		this.simStateData.setModelsCarpentersC(this.agentGroupC().getAllocator().getCarpenters());
+		// orders
+		this.simStateData.clearProducts();
+		for (Order o : this.agentFurnitProd().getQUnstarted()) {
+			for (Furniture f : o.getProducts())
+				this.simStateData.addToqUnstarted(f);
+		}
+		for (Order o : this.agentFurnitProd().getQStarted()) {
+			for (Furniture f : o.getProducts())
+				this.simStateData.addToqStarted(f);
+		}
+		for (TechStepMessage ts : this.agentFurnitProd().getQStaining())
+			this.simStateData.addToqStaining(ts.getProduct());
+		for (TechStepMessage ts : this.agentFurnitProd().getQAssembling())
+			this.simStateData.addToqAssembling(ts.getProduct());
+		for (TechStepMessage ts : this.agentFurnitProd().getQFittings())
+			this.simStateData.addToqFittings(ts.getProduct());
+		// stats
+		this.simStateData.setOrderTimeInSystem(this.getStatTimeOrderCompletion().mean());
+
+		this.simStateData.setUnstartedCount(this.getStatCountNotStarted().mean());
+		this.simStateData.setStartedCount(this.getStatCountPartiallyStarted().mean());
+		this.simStateData.setStainingCount(this.getStatCountStaining().mean());
+		this.simStateData.setAssemblingCount(this.getStatCountAssembling().mean());
+		this.simStateData.setFittingsInstCount(this.getStatCountFitInstallation().mean());
+
+		this.simStateData.setUnstartedTime(this.getStatTimeInNotStarted().mean());
+		this.simStateData.setStartedTime(this.getStatTimeInPartiallyStarted().mean());
+		this.simStateData.setStainingTime(this.getStatTimeInStaining().mean());
+		this.simStateData.setAssemblingTime(this.getStatTimeInAssembling().mean());
+		this.simStateData.setFittingInstTime(this.getStatTimeInFitInstallation().mean());
 	}
 }

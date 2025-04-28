@@ -1,6 +1,6 @@
 package results;
 
-public class ProductResults {
+public class FurnitureModel {
     private int orderID;
     private String productID;
     private int deskID;
@@ -12,7 +12,7 @@ public class ProductResults {
     private double stepEnd = -1;   // of current step
     private double waitingBT = -1;
 
-    public ProductResults(int orderID, int deskID, double created, String productType, String step, String productID) {
+    public FurnitureModel(int orderID, int deskID, double created, String productType, String step, String productID) {
         this.orderID = orderID;
         this.deskID = deskID;
         this.created = created;

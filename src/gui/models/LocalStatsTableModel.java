@@ -1,14 +1,14 @@
 package gui.models;
 
-import gui.FurnitureProdForm;
-import results.FurnitProdEventResults;
+import results.FurnitProdState;
+import results.StatResult;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LocalStatsTableModel extends AbstractTableModel {
-    private List<StatsModel> lResults;
+    private List<StatResult.Simple> lResults;
     private final String[] aColNames = new String[] {
             "Stat name",
             "Value",
@@ -18,56 +18,21 @@ public class LocalStatsTableModel extends AbstractTableModel {
             String.class,
             String.class };
 
-    public LocalStatsTableModel(List<StatsModel> lStats) {
+    public LocalStatsTableModel(List<StatResult.Simple> lStats) {
         this.lResults = lStats;
     }
 
-    public void updateTable(FurnitProdEventResults r) {
-        lResults.clear();
-//        lResults.add(new StatsModel(r.getOrdersWaitingQueueCount().getDescription(),
-//                String.valueOf(r.getOrdersWaitingQueueCount().getValue()),
-//                r.getOrdersWaitingQueueCount().getUnit()));
-//        lResults.add(new StatsModel(r.getOrdersStainingQueueCount().getDescription(),
-//                String.valueOf(r.getOrdersStainingQueueCount().getValue()),
-//                r.getOrdersStainingQueueCount().getUnit()));
-//        lResults.add(new StatsModel(r.getOrdersAssemblingQueueCount().getDescription(),
-//                String.valueOf(r.getOrdersAssemblingQueueCount().getValue()),
-//                r.getOrdersAssemblingQueueCount().getUnit()));
-//        lResults.add(new StatsModel(r.getOrdersFitInstQueueCount().getDescription(),
-//                String.valueOf(r.getOrdersFitInstQueueCount().getValue()),
-//                r.getOrdersFitInstQueueCount().getUnit()));
-//        lResults.add(new StatsModel(r.getOrdersWaitingQueueTime().getDescription(),
-//                String.valueOf(r.getOrdersWaitingQueueTime().getValue()/ FurnitureProdForm.TIME_UNIT),"[h]"));
-//        lResults.add(new StatsModel(r.getOrdersStainingQueueTime().getDescription(),
-//                String.valueOf(r.getOrdersStainingQueueTime().getValue()/ FurnitureProdForm.TIME_UNIT),"[h]"));
-//        lResults.add(new StatsModel(r.getOrdersAssemblingQueueTime().getDescription(),
-//                String.valueOf(r.getOrdersAssemblingQueueTime().getValue()/ FurnitureProdForm.TIME_UNIT),"[h]"));
-//        lResults.add(new StatsModel(r.getOrdersFitInstQueueTime().getDescription(),
-//                String.valueOf(r.getOrdersFitInstQueueTime().getValue()/ FurnitureProdForm.TIME_UNIT), "[h]"));
-//        lResults.add(new StatsModel(r.getUtilizationGroupA().getDescription(),
-//                String.valueOf(r.getUtilizationGroupA().getValue()*100), "%"));
-//        lResults.add(new StatsModel(r.getUtilizationGroupB().getDescription(),
-//                String.valueOf(r.getUtilizationGroupB().getValue()*100),"%"));
-//        lResults.add(new StatsModel(r.getUtilizationGroupC().getDescription(),
-//                String.valueOf(r.getUtilizationGroupC().getValue()*100),"%"));
-//        lResults.add(new StatsModel(r.getOrderTimeInSystem().getDescription(),
-//                String.valueOf(r.getOrderTimeInSystem().getValue()/ FurnitureProdForm.TIME_UNIT),"[h]"));
-//        lResults.add(new StatsModel(r.getAllocatedDesksCount().getDescription(),
-//                String.valueOf(r.getAllocatedDesksCount().getValue()),
-//                r.getAllocatedDesksCount().getUnit()));
-
+    public void updateTable(FurnitProdState r) {
+        this.lResults = r.getStats();
         this.fireTableDataChanged();
     }
 
-    public void add(StatsModel model) {
+    public void add(StatResult.Simple model) {
         this.lResults.add(model);
         this.fireTableDataChanged();
     }
 
-    public void setModels(List<StatsModel> lModels) {
-//        this.clear();
-//        if (lModels != null)
-//            lResults.addAll(lModels);
+    public void setModels(List<StatResult.Simple> lModels) {
         if (lModels != null)
             this.lResults = lModels;
         else
@@ -75,15 +40,15 @@ public class LocalStatsTableModel extends AbstractTableModel {
         this.fireTableDataChanged();
     }
 
-    public StatsModel getModel(int index) {
+    public StatResult.Simple getModel(int index) {
         return this.lResults.get(index);
     }
 
-    public ArrayList<StatsModel> getModels() {
+    public ArrayList<StatResult.Simple> getModels() {
         return new ArrayList<>(this.lResults);
     }
 
-    public void setModel(int index, StatsModel model) {
+    public void setModel(int index, StatResult.Simple model) {
         if (model == null || index < 0 || index > this.lResults.size())
             return;
         this.lResults.set(index, model);
@@ -128,7 +93,7 @@ public class LocalStatsTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        StatsModel stat = this.lResults.get(rowIndex);
+        StatResult.Simple stat = this.lResults.get(rowIndex);
         if (columnIndex == 0)
             return stat.getDescription();
         else if (columnIndex == 1)
