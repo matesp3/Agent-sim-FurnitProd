@@ -30,6 +30,8 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
     public static final Color COL_BORDER = new Color(152, 215, 232);
     public static final Color COL_TEXT_FONT_1 = new Color(3, 2, 108);
     public static final Color COL_TEXT_FONT_2 = new Color(18, 129, 248);
+    // paths
+    private static final String DIR_IMAGES = System.getProperty("user.dir") + "/images/";
     // layout
     private final JPanel mainPane = new JPanel();
     private final JPanel northPane = new JPanel(); // NORTH
@@ -73,6 +75,9 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         this.mainPane.setBackground(COL_BG);
         this.mainPane.setSize(this.getWidth(), this.getHeight());
         this.createLayout();
+//        ----- icon
+        ImageIcon icon = new ImageIcon(DIR_IMAGES+"/app-logo.png");
+        this.setIconImage(icon.getImage());
 //        ----- window: components
         this.createComponents();
 //        ----- window: go live

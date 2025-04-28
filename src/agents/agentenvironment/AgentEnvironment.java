@@ -46,7 +46,7 @@ public class AgentEnvironment extends OSPABA.Agent
 	}
 
 	public int getOrdersCompleted() {
-		return ordersCompleted;
+		return this.ordersCompleted;
 	}
 
 	public Stat getAvgTimeOrderCompletion() {

@@ -78,6 +78,8 @@ public class ManagerGroupA extends OSPABA.Manager
 	//meta! sender="AgentFurnitProd", id="143", type="Notice"
 	public void processReleaseCarpenterA(MessageForm message)
 	{
+		TechStepMessage tsMsg = (TechStepMessage) message;
+		this.myAgent().getAllocator().releaseCarpenter(tsMsg.getCarpenter());
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"

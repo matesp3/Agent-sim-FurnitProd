@@ -1,13 +1,18 @@
 package agents.agenttransfer.continualassistants;
 
 import OSPABA.*;
+import OSPRNG.RNG;
+import OSPRNG.TriangularRNG;
 import agents.agenttransfer.*;
 import simulation.*;
 import OSPABA.Process;
+import utils.SeedGen;
 
 //meta! id="47"
 public class ProcessStorageTransfer extends OSPABA.Process
 {
+	private final RNG<Double> rndTransferDuration = new TriangularRNG(60.0, 120.0, 480.0, SeedGen.getSeedRNG());
+
 	public ProcessStorageTransfer(int id, Simulation mySim, CommonAgent myAgent)
 	{
 		super(id, mySim, myAgent);
@@ -23,6 +28,8 @@ public class ProcessStorageTransfer extends OSPABA.Process
 	//meta! sender="AgentTransfer", id="48", type="Start"
 	public void processStart(MessageForm message)
 	{
+		message.setCode(Mc.storageTransfer);
+		this.hold(this.rndTransferDuration.sample(), message);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"
@@ -30,6 +37,9 @@ public class ProcessStorageTransfer extends OSPABA.Process
 	{
 		switch (message.code())
 		{
+			case Mc.storageTransfer:
+				this.assistantFinished(message);
+				break;
 		}
 	}
 

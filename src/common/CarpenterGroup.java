@@ -61,6 +61,7 @@ public class CarpenterGroup {
         for (Carpenter carpenter : this.carpenters) {
             carpenter.reset();
         }
+        this.firstFree = 0;
     }
 
     public Carpenter[] getCarpenters() {

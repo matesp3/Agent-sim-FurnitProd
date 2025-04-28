@@ -28,6 +28,7 @@ public class AgentGroupA extends OSPABA.Agent implements IFittingsInstaller, ICa
 	{
 		super.prepareReplication();
 		// Setup component for the next replication
+		this.allocator.resetCarpenters();
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"

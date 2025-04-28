@@ -1,10 +1,14 @@
 package agents.agentfurnitprod;
 
 import OSPABA.*;
+import OSPDataStruct.SimQueue;
 import common.Carpenter;
 import common.Furniture;
 import common.Order;
 import simulation.*;
+
+import static common.Furniture.TechStep.CARVING;
+import static common.Furniture.TechStep.WOOD_PREPARATION;
 
 //meta! id="24"
 public class ManagerFurnitProd extends OSPABA.Manager
@@ -45,12 +49,40 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	//meta! sender="AgentGroupA", id="57", type="Response"
 	public void processWoodPrep(MessageForm message)
 	{
-		this.noticeIfCompleted( ((TechStepMessage)message).getProduct().getOrder() );
+		TechStepMessage tsMsg = (TechStepMessage) message;
+		this.executeEnd(tsMsg); // todo iba kontrola, riadok odstranit
+//		tsMsg.getProduct().setStep(CARVING);
+//		this.sendStorageTransferRequest(tsMsg);
 	}
 
 	//meta! sender="AgentTransfer", id="33", type="Response"
 	public void processStorageTransfer(MessageForm message)
 	{
+		TechStepMessage tsMsg = (TechStepMessage) message;
+		tsMsg.getCarpenter().setCurrentDeskID(
+				tsMsg.getProduct().getStep() == WOOD_PREPARATION ? Carpenter.IN_STORAGE : tsMsg.getProduct().getDeskID()
+		); // location after storage transfer is IN_STORAGE just for WOOD_PREP step, because other steps are done on desk places
+
+		switch (tsMsg.getProduct().getStep()) {
+			case WOOD_PREPARATION:
+				this.sendTechStepRequest(Mc.woodPrep, Id.agentGroupA, tsMsg);
+				break;
+			case CARVING:
+				this.sendTechStepRequest(Mc.carving, Id.agentGroupA, tsMsg);
+				break;
+			case STAINING:
+				this.sendTechStepRequest(Mc.stainingAndPaintcoat, Id.agentGroupC, tsMsg);
+				break;
+			case ASSEMBLING:
+				this.sendTechStepRequest(Mc.assembling, Id.agentGroupB, tsMsg);
+				break;
+			case FIT_INSTALLATION:
+				this.sendTechStepRequest(Mc.fittingsInstallation,
+						tsMsg.getCarpenter().getGroup() == Carpenter.GROUP.A ? Id.agentGroupA : Id.agentGroupC, tsMsg);
+				break;
+			default:
+				throw new RuntimeException("Unknown tech step or null");
+		}
 	}
 
 	//meta! sender="AgentGroupB", id="79", type="Response"
@@ -212,7 +244,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 //		if (o.isCompleted()) {
 		if (true) {
 			OrderMessage newOrderMsg = (OrderMessage) this.orderMsgPattern.createCopy();
-			newOrderMsg.setOrder(o);
+			newOrderMsg.setOrder(o); // other params are set in pattern
 			this.notice(newOrderMsg);
 		}
 	}
@@ -229,9 +261,14 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		Furniture product = assignMsg.getOrder().assignUnstartedProduct();
 		carpenter.receiveProduct(product, this.mySim().currentTime());
 		product.setDeskID(this.myAgent().getDeskManager().occupyDesk(product));
+		product.setStep(Furniture.TechStep.WOOD_PREPARATION);
 		product.setProcessingBT(this.mySim().currentTime());
+		if (carpenter.isInStorage())
+			this.sendTechStepRequest(Mc.woodPrep, Id.agentGroupA, carpenter);
+		else {
+			this.sendStorageTransferRequest(carpenter);
+		}
 		// now I know, that I have free desk & free carpenter -> I can start working on new product
-		this.sendTechStepRequest(Mc.woodPrep, Id.agentGroupA, carpenter);
 		// - - - - - -
 		if (assignMsg.getOrder().hasUnassignedProduct() && this.myAgent().getDeskManager().hasFreeDesk()) {
 			this.sendAssignRequestForOrder(assignMsg.getOrder());
@@ -246,10 +283,20 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	 */
 	private void sendTechStepRequest(int code, int addressee, Carpenter carpenter) {
 		TechStepMessage stepMsg = (TechStepMessage) this.stepMsgPattern.createCopy(); // need copy, bcs more request can be created in one sim time
-		stepMsg.setCode(code);
-		stepMsg.setAddressee(addressee);
 		stepMsg.setCarpenter(carpenter);
-		this.request(stepMsg);
+		this.sendTechStepRequest(code, addressee, stepMsg);
+	}
+
+	/**
+	 * Sends request (of provided TechStepMessage's instance) with specified params
+	 * @param code
+	 * @param addressee
+	 * @param msgToReuse
+	 */
+	private void sendTechStepRequest(int code, int addressee, TechStepMessage msgToReuse) {
+		msgToReuse.setCode(code);
+		msgToReuse.setAddressee(addressee);
+		this.request(msgToReuse);
 	}
 
 	private void sendAssignRequestForOrder(Order order) {
@@ -259,6 +306,13 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		this.assignMsg.setOrder(order);
 		this.assignMsg.setProduct(null);
 		this.request(this.assignMsg);
+
+//		AssignMessage msg = (AssignMessage) this.assignMsg.createCopy();
+//		msg.setCode(Mc.assignCarpenterA);
+//		msg.setAddressee(Id.agentGroupA);
+//		msg.setOrder(order);
+//		msg.setProduct(null);
+//		this.request(msg);
 	}
 
 	private void sendAssignRequestForProduct(int code, int agentGroup, Furniture product) {
@@ -268,5 +322,43 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		this.assignMsg.setOrder(null);
 		this.assignMsg.setProduct(product);
 		this.request(this.assignMsg);
+	}
+
+	/**
+	 * Creates new request for storage transfer with assigned {@code carpenter}
+	 * @param carpenter
+	 */
+	private void sendStorageTransferRequest(Carpenter carpenter) {
+		TechStepMessage tsMsg = (TechStepMessage) this.stepMsgPattern.createCopy();
+		tsMsg.setCarpenter(carpenter);
+		this.sendStorageTransferRequest(tsMsg);
+	}
+
+	/**
+	 * Creates new request for storage transfer with already assigned {@code carpenter}
+	 */
+	private void sendStorageTransferRequest(TechStepMessage tsMsg) {
+		tsMsg.setCode(Mc.storageTransfer);
+		tsMsg.setAddressee(Id.agentTransfer);
+		this.request(tsMsg);
+	}
+
+	/**
+	 * Release of desk + carpenter -> then end notice
+	 */
+	private void executeEnd(TechStepMessage tsMsg) {
+		Carpenter c = tsMsg.getCarpenter();
+		Furniture f = c.returnProduct(this.mySim().currentTime());
+		this.myAgent().getDeskManager().setDeskFree(f.getDeskID(), f);
+		// todo update carpenter stats - asi si vytvorim SimPrQueue wrapper
+		// todo dorob si statistiky na gui
+		this.releaseCarpenter(Mc.releaseCarpenterA, Id.agentGroupA, tsMsg);
+		this.noticeIfCompleted( f.getOrder() );
+	}
+
+	private void releaseCarpenter(int code, int agentId, TechStepMessage tsMsg) {
+		tsMsg.setCode(code);
+		tsMsg.setAddressee(agentId);
+		this.notice(tsMsg);
 	}
 }

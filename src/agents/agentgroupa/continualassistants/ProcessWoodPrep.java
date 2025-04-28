@@ -30,7 +30,7 @@ public class ProcessWoodPrep extends OSPABA.Process
 	public void processStart(MessageForm message)
 	{
 		TechStepMessage tsMsg = (TechStepMessage) message;
-		tsMsg.getProduct().setStepBT(Furniture.TechStep.WOOD_PREPARATION, this.mySim().currentTime());
+		tsMsg.getProduct().setStepBT(this.mySim().currentTime());
 		tsMsg.setCode(Mc.woodPrep);
 		this.hold(this.rndPrepDuration.sample(), tsMsg); // addressee is set automatically to itself
 	}

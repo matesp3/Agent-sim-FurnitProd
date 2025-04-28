@@ -1,13 +1,18 @@
 package agents.agenttransfer.continualassistants;
 
 import OSPABA.*;
+import OSPRNG.RNG;
+import OSPRNG.TriangularRNG;
 import agents.agenttransfer.*;
 import simulation.*;
 import OSPABA.Process;
+import utils.SeedGen;
 
 //meta! id="45"
 public class ProcessDeskTransfer extends OSPABA.Process
 {
+	private final RNG<Double> rndTransferDuration = new TriangularRNG(120.0, 150.0, 500.0, SeedGen.getSeedRNG());
+
 	public ProcessDeskTransfer(int id, Simulation mySim, CommonAgent myAgent)
 	{
 		super(id, mySim, myAgent);
@@ -23,6 +28,8 @@ public class ProcessDeskTransfer extends OSPABA.Process
 	//meta! sender="AgentTransfer", id="46", type="Start"
 	public void processStart(MessageForm message)
 	{
+		message.setCode(Mc.deskTransfer);
+		this.hold(this.rndTransferDuration.sample(), message);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"
@@ -30,6 +37,9 @@ public class ProcessDeskTransfer extends OSPABA.Process
 	{
 		switch (message.code())
 		{
+			case Mc.deskTransfer:
+				this.assistantFinished(message);
+				break;
 		}
 	}
 

@@ -19,7 +19,7 @@ public class AgentModel extends OSPABA.Agent
 	{
 		super.prepareReplication();
 		// Setup component for the next replication
-		this.startSimulation();
+		this.startReplication();
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"
@@ -31,7 +31,7 @@ public class AgentModel extends OSPABA.Agent
 	}
 	//meta! tag="end"
 
-	private void startSimulation() {
+	private void startReplication() {
 		OrderMessage msg = new OrderMessage(this.mySim());
 		msg.setCode(Mc.init);
 		msg.setAddressee(this);

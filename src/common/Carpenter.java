@@ -3,6 +3,7 @@ package common;
 import utils.DoubleComp;
 
 public class Carpenter {
+
     public enum GROUP {
         A,B,C;
     }
@@ -165,6 +166,13 @@ public class Carpenter {
     public double getSumOfWorkingTime(double simEndTime) {
         return this.isWorking() ? (this.sumOfWorkingTime + (simEndTime-this.productProcessingBT)) // trim last working duration
                                 : this.sumOfWorkingTime;
+    }
+
+    /**
+     * @return {@code true}, if {@code deskID} of carpenter = {@code Carpenter.IN_STORAGE}
+     */
+    public boolean isInStorage() {
+        return this.deskID == IN_STORAGE;
     }
 
     /**

@@ -26,6 +26,7 @@ public class AgentGroupB extends OSPABA.Agent implements ICarpenterGroup
 	{
 		super.prepareReplication();
 		// Setup component for the next replication
+		this.allocator.resetCarpenters();
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"

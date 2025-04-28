@@ -52,6 +52,7 @@ public class AgentFurnitProd extends OSPABA.Agent
 		this.qStaining.clear();
 		this.qAssembling.clear();
 		this.qFittings.clear();
+		this.deskManager.freeAllDesks();
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"
