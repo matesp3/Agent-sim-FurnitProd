@@ -11,7 +11,7 @@ import static common.Furniture.TechStep.*;
 //meta! id="24"
 public class ManagerFurnitProd extends OSPABA.Manager
 {
-	private final AssignMessage assignMsg;
+	private final AssignMessage assignMsgPattern;
 	private final TechStepMessage stepMsgPattern;
 	private final OrderMessage orderMsgPattern;
 
@@ -19,7 +19,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	{
 		super(id, mySim, myAgent);
 		init();
-		this.assignMsg = new AssignMessage(this.mySim());
+		this.assignMsgPattern = new AssignMessage(this.mySim());
 		this.stepMsgPattern = new TechStepMessage(this.mySim());
 
 		this.orderMsgPattern = new OrderMessage(this.mySim());
@@ -93,11 +93,10 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	{
 		// 2 possibilities: two types -> typecasting ; or additional attribute in one class {due to order BT | tech step)
 		AssignMessage assignMsg = (AssignMessage) message;
-		Carpenter carpenter = assignMsg.getCarpenter();
 		if (assignMsg.getOrder() != null) { // 1. option - product beginning
 			this.processAssignedCarpenterForNewFurniture(assignMsg);
 		}
-		else { // 2. option - tech step processing (assignMsg.getProduct != null) must be true
+		else { // 2. option - tech step processing (assignMsg.getProduct != null) must be true && step == ASSEMBLING must be true??
 			// todo tech step processing
 		}
 	}
@@ -110,6 +109,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	//meta! sender="AgentGroupC", id="88", type="Response"
 	public void processAssignCarpenterC(MessageForm message)
 	{
+		// todo, allocate C and check his position -> deskTransfer or staining BT
 	}
 
 	//meta! sender="AgentGroupC", id="90", type="Response"
@@ -140,17 +140,21 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	//meta! sender="AgentGroupA", id="130", type="Response"
 	public void processCarving(MessageForm message)
 	{
-		TechStepMessage tsMsg = (TechStepMessage) message;
-		Furniture f = tsMsg.getCarpenter().returnProduct(this.mySim().currentTime());
-		f.setStep(STAINING);
-		/*
+		/* notes:
+			+ CONTINUE WORKING ON CURRENT PRODUCT WITH NEXT STEP (STAINING)
 			+ PLAN NEXT JOB FOR CARPENTER 'A'
 				1. check at first qStarted, because date of order's creation here must be older than in qUnstarted
 				2. check if there's some product to be processed in one of these queues
 			  	2.1 if yes, start transfer of carpenter or staining process
 			  	2.2 else, release carpenter A
-			+ CONTINUE WORKING ON CURRENT PRODUCT WITH NEXT STEP (STAINING)
 		 */
+		// CONTINUE WORKING ON CURRENT PRODUCT WITH NEXT STEP (STAINING)
+		TechStepMessage tsMsg = (TechStepMessage) message;
+		Furniture f = tsMsg.getCarpenter().returnProduct(this.mySim().currentTime());
+		f.setStep(STAINING);
+		this.sendAssignRequestForProduct(Mc.assignCarpenterC, Id.agentGroupC, f);
+		// todo pridane docasne
+		this.myAgent().getDeskManager().setDeskFree(f.getDeskID(), f);
 		// PLAN NEXT JOB FOR CARPENTER 'A'
 		if (false) { // todo at first, check if there's some fittings montage work
 			throw new UnsupportedOperationException("Not implemented yet");
@@ -169,8 +173,6 @@ public class ManagerFurnitProd extends OSPABA.Manager
 				this.releaseCarpenter(Mc.releaseCarpenterA, Id.agentGroupA, tsMsg);
 			}
 		}
-		// CONTINUE WORKING ON CURRENT PRODUCT WITH NEXT STEP (STAINING)
-		// todo, allocate C and check his position -> deskTransfer or staining BT
 	}
 
 	//meta! sender="AgentModel", id="158", type="Notice"
@@ -280,18 +282,40 @@ public class ManagerFurnitProd extends OSPABA.Manager
 
 	private void processAssignedCarpenterForNewFurniture(AssignMessage msg) {
 		Carpenter carpenter = msg.getCarpenter();
+		Order order = msg.getOrder();
+		boolean wasOrderUnstarted = msg.getOrder().isUnstarted();
+		boolean isOrderEnqueued = wasOrderUnstarted ? order == this.myAgent().getQUnstarted().peek() : true;
 		if (carpenter == null) {
-//			if (!assignMsg.getOrder().isUnstarted()) // todo toto by sa teoreticky nemalo nikdy stat, lebo do tejto metody sa dostanem iba cez novu objednavku
-//				this.myAgent().getQStarted().add(assignMsg.getOrder());
-//			else
-			this.myAgent().getQUnstarted().add(assignMsg.getOrder());
+		// - - - - - - CARPENTER WASN'T ASSIGNED
+			if (!isOrderEnqueued) {
+				if (wasOrderUnstarted)
+					this.myAgent().getQUnstarted().add(order);
+//				else // cannot happen, bcs if it's not unstarted, then it must be enqueued in qStarted
+			}
 			return;
 		}
-		Furniture product = assignMsg.getOrder().assignUnstartedProduct();
+		// - - - - - - START WORKING
+		Furniture product = order.assignUnstartedProduct();
 		this.startCreatingNextFurniture(carpenter, product);
-		// - - - - - -
-		if (assignMsg.getOrder().hasUnassignedProduct() && this.myAgent().getDeskManager().hasFreeDesk()) {
-			this.sendAssignRequestForOrder(assignMsg.getOrder());
+		// - - - - - - QUEUE UPDATES
+		if (order.hasUnassignedProduct()) { // after assigning next one
+			if (!isOrderEnqueued)
+				this.myAgent().getQStarted().add(order);
+		}
+		else { // nothing to assign from current order -> need to dequeue it, if it was previously enqueued
+			if (isOrderEnqueued) {
+				if (wasOrderUnstarted)
+					this.myAgent().getQUnstarted().remove();
+				else
+					this.myAgent().getQStarted().remove();
+			}
+		}
+		// - - - - - - NEXT WORK PLANNING
+		if (this.myAgent().getDeskManager().hasFreeDesk()) {
+			if (!this.myAgent().getQStarted().isEmpty())
+				this.sendAssignRequestForOrder( this.myAgent().getQStarted().peek() );
+			else if (!myAgent().getQUnstarted().isEmpty())
+				this.sendAssignRequestForOrder( this.myAgent().getQUnstarted().peek() );
 		}
 	}
 
@@ -319,13 +343,16 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		this.request(msgToReuse);
 	}
 
+	/**
+	 * @param order is going to be processed by potentially assigned carpenter of group {@code Id.agentGroupA}
+	 */
 	private void sendAssignRequestForOrder(Order order) {
 		// 1 instance of assignMessage is enough, bcs it's used only within messages, which are executed in the current time
-		this.assignMsg.setCode(Mc.assignCarpenterA);
-		this.assignMsg.setAddressee(Id.agentGroupA);
-		this.assignMsg.setOrder(order);
-		this.assignMsg.setProduct(null);
-		this.request(this.assignMsg);
+		this.assignMsgPattern.setCode(Mc.assignCarpenterA);
+		this.assignMsgPattern.setAddressee(Id.agentGroupA);
+		this.assignMsgPattern.setOrder(order);
+		this.assignMsgPattern.setProduct(null);
+		this.request(this.assignMsgPattern);
 
 //		AssignMessage msg = (AssignMessage) this.assignMsg.createCopy();
 //		msg.setCode(Mc.assignCarpenterA);
@@ -335,13 +362,19 @@ public class ManagerFurnitProd extends OSPABA.Manager
 //		this.request(msg);
 	}
 
+	/**
+	 *
+	 * @param code valid options: {@code Mc.assignCarpenterA}, {@code Mc.assignCarpenterB}, {@code Mc.assignCarpenterC}
+	 * @param agentGroup valid options: {@code Id.agentGroupA}, {@code Id.agentGroupB}, {@code Id.agentGroupC},
+	 * @param product furniture that is to be processed with potentially assigned carpenter of group {@code agentGroup}
+	 */
 	private void sendAssignRequestForProduct(int code, int agentGroup, Furniture product) {
 		// 1 instance of assignMessage is enough, bcs it's used only within messages, which are executed in the current time
-		this.assignMsg.setCode(code);
-		this.assignMsg.setAddressee(agentGroup);
-		this.assignMsg.setOrder(null);
-		this.assignMsg.setProduct(product);
-		this.request(this.assignMsg);
+		this.assignMsgPattern.setCode(code);
+		this.assignMsgPattern.setAddressee(agentGroup);
+		this.assignMsgPattern.setOrder(null);
+		this.assignMsgPattern.setProduct(product);
+		this.request(this.assignMsgPattern);
 	}
 
 	/**
@@ -407,7 +440,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 
 	/**
 	 * Tries to assign the oldest product of received order. If such doesn't exist, then tries to assign the oldest
-	 * product from completely unstarted order.
+	 * product from completely unstarted order. It automatically handles queues 'qUnstarted' and 'qStarted'.
 	 * @return product instance of the oldest order or {@code null}.
 	 */
 	private Furniture getUnstartedProduct() {

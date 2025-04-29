@@ -108,12 +108,13 @@ public class Furniture {
 
     public void setStepBT(double time) {
         this.stepBT = time;
+        this.stepET = -1;
     }
 
     public void setStepBT(TechStep next, double time) {
         this.stepCheck(next);
         this.step = next;
-        this.stepBT = time;
+        this.setStepBT(time);
     }
 
     public void setStepET(double time) {
@@ -194,7 +195,7 @@ public class Furniture {
 
     @Override
     public String toString() {
-        return String.format("Product: [productID=%7s, orderID=%5d ;desk=%5d; step=%-16s ;waitingBT=%s; stepBT=%s; setET=%s; %-8s; [started=%s => completed=%s]",
+        return String.format("Product: [productID=%7s, orderID=%5d ;desk=%5d; step=%-16s ;%-8s ;waitingBT=%s; stepBT=%s; setET=%s; [started=%s => completed=%s]",
                 this.productID, this.order.getOrderID(), this.deskID, this.step, this.productType,
                 Formatter.getStrDateTime(this.waitingBT, 8, 6),
                 Formatter.getStrDateTime(this.stepBT, 8, 6),
