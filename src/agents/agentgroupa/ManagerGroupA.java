@@ -43,6 +43,8 @@ public class ManagerGroupA extends OSPABA.Manager
 	//meta! sender="ProcessFitInstA", id="71", type="Finish"
 	public void processFinishProcessFitInstA(MessageForm message)
 	{
+		message.setCode(Mc.fittingsInstallation);
+		this.response(message);
 	}
 
 	//meta! sender="ProcessWoodPrep", id="63", type="Finish"
@@ -55,11 +57,15 @@ public class ManagerGroupA extends OSPABA.Manager
 	//meta! sender="ProcessCarving", id="68", type="Finish"
 	public void processFinishProcessCarving(MessageForm message)
 	{
+		message.setCode(Mc.carving);
+		this.response(message);
 	}
 
 	//meta! sender="AgentFurnitProd", id="59", type="Request"
 	public void processFittingsInstallation(MessageForm message)
 	{
+		message.setAddressee(this.myAgent().findAssistant(Id.processFitInstA));
+		this.startContinualAssistant(message);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"
@@ -73,6 +79,8 @@ public class ManagerGroupA extends OSPABA.Manager
 	//meta! sender="AgentFurnitProd", id="130", type="Request"
 	public void processCarving(MessageForm message)
 	{
+		message.setAddressee(myAgent().findAssistant(Id.processCarving));
+		this.startContinualAssistant(message);
 	}
 
 	//meta! sender="AgentFurnitProd", id="143", type="Notice"

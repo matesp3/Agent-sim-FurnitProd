@@ -42,7 +42,6 @@ public class ManagerEnvironment extends OSPABA.Manager
 		this.myAgent().updateStats(
 				((OrderMessage)message).getOrder()
 		);
-//		System.out.println("jre");
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"

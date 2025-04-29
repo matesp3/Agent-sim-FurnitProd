@@ -50,9 +50,9 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	public void processWoodPrep(MessageForm message)
 	{
 		TechStepMessage tsMsg = (TechStepMessage) message;
-		this.executeEnd(tsMsg); // todo iba kontrola, riadok odstranit
-//		tsMsg.getProduct().setStep(CARVING);
-//		this.sendStorageTransferRequest(tsMsg);
+//		this.executeEnd(tsMsg); // todo iba kontrola, riadok odstranit
+		tsMsg.getProduct().setStep(CARVING);
+		this.sendStorageTransferRequest(tsMsg);
 	}
 
 	//meta! sender="AgentTransfer", id="33", type="Response"
