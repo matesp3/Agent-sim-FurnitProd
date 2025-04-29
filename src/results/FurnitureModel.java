@@ -11,6 +11,7 @@ public class FurnitureModel {
     private double stepStart = -1; // of current step
     private double stepEnd = -1;   // of current step
     private double waitingBT = -1;
+    private double orderCreatedAt = -1;
 
     public FurnitureModel(int orderID, int deskID, double created, String productType, String step, String productID) {
         this.orderID = orderID;
@@ -19,6 +20,14 @@ public class FurnitureModel {
         this.step = step;
         this.productType = productType;
         this.productID = productID;
+    }
+
+    public double getMyOrderCreatedAt() {
+        return orderCreatedAt;
+    }
+
+    public void setMyOrderCreatedAt(double orderCreatedAt) {
+        this.orderCreatedAt = orderCreatedAt;
     }
 
     public int getOrderID() {

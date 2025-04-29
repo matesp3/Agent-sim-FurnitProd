@@ -1,14 +1,12 @@
 package agents.agentfurnitprod;
 
 import OSPABA.*;
-import OSPDataStruct.SimQueue;
 import common.Carpenter;
 import common.Furniture;
 import common.Order;
 import simulation.*;
 
-import static common.Furniture.TechStep.CARVING;
-import static common.Furniture.TechStep.WOOD_PREPARATION;
+import static common.Furniture.TechStep.*;
 
 //meta! id="24"
 public class ManagerFurnitProd extends OSPABA.Manager
@@ -99,7 +97,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		if (assignMsg.getOrder() != null) { // 1. option - product beginning
 			this.processAssignedCarpenterForNewFurniture(assignMsg);
 		}
-		else { // 2. option - tech step processing
+		else { // 2. option - tech step processing (assignMsg.getProduct != null) must be true
 			// todo tech step processing
 		}
 	}
@@ -142,6 +140,37 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	//meta! sender="AgentGroupA", id="130", type="Response"
 	public void processCarving(MessageForm message)
 	{
+		TechStepMessage tsMsg = (TechStepMessage) message;
+		Furniture f = tsMsg.getCarpenter().returnProduct(this.mySim().currentTime());
+		f.setStep(STAINING);
+		/*
+			+ PLAN NEXT JOB FOR CARPENTER 'A'
+				1. check at first qStarted, because date of order's creation here must be older than in qUnstarted
+				2. check if there's some product to be processed in one of these queues
+			  	2.1 if yes, start transfer of carpenter or staining process
+			  	2.2 else, release carpenter A
+			+ CONTINUE WORKING ON CURRENT PRODUCT WITH NEXT STEP (STAINING)
+		 */
+		// PLAN NEXT JOB FOR CARPENTER 'A'
+		if (false) { // todo at first, check if there's some fittings montage work
+			throw new UnsupportedOperationException("Not implemented yet");
+		}
+		else { // no fittings montage work -> try to start creating new furniture product
+			if (this.myAgent().getDeskManager().hasFreeDesk()) {
+				Furniture fNext = this.getUnstartedProduct();
+				if (fNext != null) {
+					this.startCreatingNextFurniture(tsMsg, fNext);
+				}
+				else { // carpenter A has no potential work
+					this.releaseCarpenter(Mc.releaseCarpenterA, Id.agentGroupA, tsMsg);
+				}
+			}
+			else { // carpenter A has no potential work
+				this.releaseCarpenter(Mc.releaseCarpenterA, Id.agentGroupA, tsMsg);
+			}
+		}
+		// CONTINUE WORKING ON CURRENT PRODUCT WITH NEXT STEP (STAINING)
+		// todo, allocate C and check his position -> deskTransfer or staining BT
 	}
 
 	//meta! sender="AgentModel", id="158", type="Notice"
@@ -252,23 +281,14 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	private void processAssignedCarpenterForNewFurniture(AssignMessage msg) {
 		Carpenter carpenter = msg.getCarpenter();
 		if (carpenter == null) {
-			if (!assignMsg.getOrder().isUnstarted())
-				this.myAgent().getQStarted().add(assignMsg.getOrder());
-			else
-				this.myAgent().getQUnstarted().add(assignMsg.getOrder());
+//			if (!assignMsg.getOrder().isUnstarted()) // todo toto by sa teoreticky nemalo nikdy stat, lebo do tejto metody sa dostanem iba cez novu objednavku
+//				this.myAgent().getQStarted().add(assignMsg.getOrder());
+//			else
+			this.myAgent().getQUnstarted().add(assignMsg.getOrder());
 			return;
 		}
 		Furniture product = assignMsg.getOrder().assignUnstartedProduct();
-		carpenter.receiveProduct(product, this.mySim().currentTime());
-		product.setDeskID(this.myAgent().getDeskManager().occupyDesk(product));
-		product.setStep(Furniture.TechStep.WOOD_PREPARATION);
-		product.setProcessingBT(this.mySim().currentTime());
-		if (carpenter.isInStorage())
-			this.sendTechStepRequest(Mc.woodPrep, Id.agentGroupA, carpenter);
-		else {
-			this.sendStorageTransferRequest(carpenter);
-		}
-		// now I know, that I have free desk & free carpenter -> I can start working on new product
+		this.startCreatingNextFurniture(carpenter, product);
 		// - - - - - -
 		if (assignMsg.getOrder().hasUnassignedProduct() && this.myAgent().getDeskManager().hasFreeDesk()) {
 			this.sendAssignRequestForOrder(assignMsg.getOrder());
@@ -349,16 +369,63 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	private void executeEnd(TechStepMessage tsMsg) {
 		Carpenter c = tsMsg.getCarpenter();
 		Furniture f = c.returnProduct(this.mySim().currentTime());
-		this.myAgent().getDeskManager().setDeskFree(f.getDeskID(), f);
+		this.myAgent().getDeskManager().setDeskFree(f.getDeskID(), f); // todo zatial pri kontrolovani staci uvolnit miesto pre chod simulacie
 		// todo update carpenter stats - asi si vytvorim SimPrQueue wrapper
 		// todo dorob si statistiky na gui
-		this.releaseCarpenter(Mc.releaseCarpenterA, Id.agentGroupA, tsMsg);
-		this.noticeIfCompleted( f.getOrder() );
+//		this.releaseCarpenter(Mc.releaseCarpenterA, Id.agentGroupA, tsMsg);
+//		this.noticeIfCompleted( f.getOrder() );
 	}
 
 	private void releaseCarpenter(int code, int agentId, TechStepMessage tsMsg) {
 		tsMsg.setCode(code);
 		tsMsg.setAddressee(agentId);
 		this.notice(tsMsg);
+	}
+
+	private void startCreatingNextFurniture(Carpenter carpenter, Furniture product) {
+		TechStepMessage tsMsg = (TechStepMessage) this.stepMsgPattern.createCopy(); // need copy, bcs more request can be created in one sim time
+		tsMsg.setCarpenter(carpenter);
+		this.startCreatingNextFurniture(tsMsg, product);
+	}
+
+	/**
+	 * Carpenter must be already set in {@code tsMsg}
+	 * @param tsMsg
+	 * @param product
+	 */
+	private void startCreatingNextFurniture(TechStepMessage tsMsg, Furniture product) {
+		tsMsg.getCarpenter().receiveProduct(product, this.mySim().currentTime());
+		product.setDeskID(this.myAgent().getDeskManager().occupyDesk(product));
+		product.setStep(Furniture.TechStep.WOOD_PREPARATION);
+		product.setProcessingBT(this.mySim().currentTime());
+		if (tsMsg.getCarpenter().isInStorage())
+			this.sendTechStepRequest(Mc.woodPrep, Id.agentGroupA, tsMsg);
+		else {
+			this.sendStorageTransferRequest(tsMsg);
+		}
+	}
+
+	/**
+	 * Tries to assign the oldest product of received order. If such doesn't exist, then tries to assign the oldest
+	 * product from completely unstarted order.
+	 * @return product instance of the oldest order or {@code null}.
+	 */
+	private Furniture getUnstartedProduct() {
+		Order o = this.myAgent().getQStarted().peek(); // here are the oldest orders with some unstarted products
+		Furniture f = null;
+		if (o != null) {
+			f = o.assignUnstartedProduct();
+			if (!o.hasUnassignedProduct()) // this was last unstarted product in queue
+				this.myAgent().getQStarted().remove(); // removes the oldest order
+		}
+		else { // nothing in qStarted, trying to get something from qUnstarted
+			o = this.myAgent().getQUnstarted().poll(); // always removed from qUnstarted, because it is not unstarted from now
+			if (o != null) {
+				f = o.assignUnstartedProduct();
+				if (o.hasUnassignedProduct())
+					this.myAgent().getQStarted().add(o); // something remains in order unstarted, so it is enqueued for remaining products
+			}
+		}
+		return f;
 	}
 }

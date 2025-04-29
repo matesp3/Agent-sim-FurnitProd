@@ -14,11 +14,13 @@ public class FurnitureOrderTableModel extends AbstractTableModel {
             "ProductID",
             "DeskID",
             "Product",
-            "step",
-            "waitingBT",
-            "stepBT",
-            "stepET",
-            "created"};
+            "Step",
+            "WaitingBT",
+            "StepBT",
+            "StepET",
+            "Started",
+            "Order created at"
+    };
     private final List<FurnitureModel> lResults;
     private final Class<?>[] aColClasses = new Class<?>[] {
             Integer.class,
@@ -29,7 +31,9 @@ public class FurnitureOrderTableModel extends AbstractTableModel {
             String.class,
             String.class,
             String.class,
-            String.class,};
+            String.class,
+            String.class
+    };
 
     public FurnitureOrderTableModel(List<FurnitureModel> lResults) {
         this.lResults = lResults;
@@ -120,6 +124,8 @@ public class FurnitureOrderTableModel extends AbstractTableModel {
             return Formatter.getStrDateTime(order.getStepEnd(), 8, 6);
         else if (columnIndex == 8)
             return Formatter.getStrDateTime(order.getCreated(), 8, 6);
+        else if (columnIndex == 9)
+            return Formatter.getStrDateTime(order.getMyOrderCreatedAt(), 8, 6);
         return null;
     }
 }

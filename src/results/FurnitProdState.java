@@ -285,6 +285,7 @@ public class FurnitProdState extends AfterChangeResults {
         r.setWaitingBT(raw.getWaitingBT());
         r.setStepStart(raw.getStepBT());
         r.setStepEnd(raw.getStepET());
+        r.setMyOrderCreatedAt(raw.getMyOrderCreatedAt());
         return r;
     }
 
