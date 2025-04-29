@@ -1,9 +1,7 @@
 package controllers;
 
-import OSPABA.Simulation;
 import gui.FurnitureProdForm;
 import results.FurnitProdRepStats;
-import simulation.Id;
 import simulation.MySimulation;
 import utils.DoubleComp;
 
@@ -38,13 +36,12 @@ public class FurnitProdSimController {
             try {
                 this.sim = new MySimulation();// 3600s*8hod*sim_dni [secs] NEW
                 this.sim.registerDelegate(this.gui);
-                this.registerReplicationUpdates(this.sim);
+                this.sim.onReplicationDidFinish(s -> this.afterReplicationUpdate(this.sim));
                 // - - - - -
                 this.setEnabledMaxSpeed(withMaxSpeed);
                 // - - - - -
                 this.sim.setAmountOfDesks(desksCount);
                 this.sim.setAmountOfCarpenters(groupA, groupB, groupC);
-                this.sim.onReplicationDidFinish(e -> System.out.println(e.currentReplication()) );
                 this.sim.simulate(experiments, simulatedDays*8*3600);
                 this.simRunning = false;
             } catch (Exception e) {
@@ -57,26 +54,26 @@ public class FurnitProdSimController {
         this.simRunning = true;
     }
 
-    private void registerReplicationUpdates(MySimulation sim) {
-
-        sim.onReplicationDidFinish(e -> {
-            FurnitProdRepStats s = new FurnitProdRepStats(sim.currentReplication());
-            s.setUnstartedCount(sim.getStatCountNotStarted());
-            s.setStartedCount(sim.getStatCountPartiallyStarted());
-            s.setStainingCount(sim.getStatCountStaining());
-            s.setAssemblingCount(sim.getStatCountAssembling());
-            s.setFittingsCount(sim.getStatCountFitInstallation());
-            s.setUnstartedTime(sim.getStatTimeInNotStarted());
-            s.setStartedTime(sim.getStatTimeInPartiallyStarted());
-            s.setStainingTime(sim.getStatTimeInStaining());
-            s.setAssemblingTime(sim.getStatTimeInAssembling());
-            s.setFittingsTime(sim.getStatTimeInFitInstallation());
-            s.setUtilizationGroupA(sim.getStatUtilizationA());
-            s.setUtilizationGroupB(sim.getStatUtilizationB());
-            s.setUtilizationGroupC(sim.getStatUtilizationC());
-            s.setOrderTimeInSystem(sim.getStatTimeOrderCompletion());
-            this.gui.updateReplication(s);
-        } );
+    private void afterReplicationUpdate(MySimulation sim) {
+            if (sim.currentReplication() < 30)
+                return;
+            // todo only uncomment, when stats will be ready
+            FurnitProdRepStats stats = new FurnitProdRepStats(sim.currentReplication());
+//            stats.setUnstartedCount(sim.getStatCountNotStarted());
+//            stats.setStartedCount(sim.getStatCountPartiallyStarted());
+//            stats.setStainingCount(sim.getStatCountStaining());
+//            stats.setAssemblingCount(sim.getStatCountAssembling());
+//            stats.setFittingsCount(sim.getStatCountFitInstallation());
+//            stats.setUnstartedTime(sim.getStatTimeInNotStarted());
+//            stats.setStartedTime(sim.getStatTimeInPartiallyStarted());
+//            stats.setStainingTime(sim.getStatTimeInStaining());
+//            stats.setAssemblingTime(sim.getStatTimeInAssembling());
+//            stats.setFittingsTime(sim.getStatTimeInFitInstallation());
+//            stats.setUtilizationGroupA(sim.getStatUtilizationA());
+//            stats.setUtilizationGroupB(sim.getStatUtilizationB());
+//            stats.setUtilizationGroupC(sim.getStatUtilizationC());
+//            stats.setOrderTimeInSystem(sim.getStatTimeOrderCompletion());
+            this.gui.updateAfterReplication(stats);
     }
 
     public void terminateSimulation() {

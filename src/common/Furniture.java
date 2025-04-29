@@ -185,14 +185,20 @@ public class Furniture {
         return DoubleComp.compare(this.timeCompleted, 0) == 1;
     }
 
+    /**
+     * @return {@code true} if processing of this furniture product has not started yet, else {@code false}
+     */
+    public boolean isUnstarted() {
+        return DoubleComp.compare(this.processingBT, 0) == -1;
+    }
+
     @Override
     public String toString() {
-        return String.format("Product: [productID=%7s, orderID=%5d ;desk=%5d; waitingBT=%s; stepBT=%s; setET=%s; step=%-16s ;%-8s; [started=%s => completed=%s]",
-                this.productID, this.order.getOrderID(), this.deskID,
+        return String.format("Product: [productID=%7s, orderID=%5d ;desk=%5d; step=%-16s ;waitingBT=%s; stepBT=%s; setET=%s; %-8s; [started=%s => completed=%s]",
+                this.productID, this.order.getOrderID(), this.deskID, this.step, this.productType,
                 Formatter.getStrDateTime(this.waitingBT, 8, 6),
                 Formatter.getStrDateTime(this.stepBT, 8, 6),
                 Formatter.getStrDateTime(this.stepET, 8, 6),
-                this.step, this.productType,
                 Formatter.getStrDateTime(this.processingBT, 8, 6),
                 Formatter.getStrDateTime(this.timeCompleted, 8, 6)
         );

@@ -5,10 +5,7 @@ import OSPABA.SimState;
 import OSPABA.Simulation;
 import controllers.FurnitProdSimController;
 import gui.components.*;
-import results.FurnitProdState;
 import results.FurnitProdRepStats;
-import results.OtherEventInfo;
-import results.SimResults;
 import simulation.MySimulation;
 
 import javax.swing.*;
@@ -67,8 +64,8 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         this.furnitProdSimController = new FurnitProdSimController(this);
         this.simPaused = false;
 //        ---- window: size, layout and behavior
-        this.setSize(new Dimension(1500,700));
-        this.setMinimumSize(new Dimension(1300, 500));
+        this.setSize(new Dimension(1800,1000));
+        this.setMinimumSize(new Dimension(1300, 1000));
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.add(this.mainPane);
@@ -104,7 +101,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         });
     }
 
-    public void updateReplication(FurnitProdRepStats s) {
+    public void updateAfterReplication(FurnitProdRepStats s) {
         SwingUtilities.invokeLater(() -> {
             this.statsViewer.updateOverallStats(s);
             this.replicationViewer.setValue(s.getExperimentNum());

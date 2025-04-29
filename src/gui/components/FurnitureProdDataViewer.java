@@ -13,21 +13,23 @@ import java.util.ArrayList;
 
 public class FurnitureProdDataViewer extends JPanel {
     private ResultViewer viewSimTime;
-    private CarpenterTableModel carpenterTableModelA;
-    private CarpenterTableModel carpenterTableModelB;
-    private CarpenterTableModel carpenterTableModelC;
-    private FurnitureOrderTableModel orderTableModelWaiting;
-    private FurnitureOrderTableModel orderTableModelStaining;
-    private FurnitureOrderTableModel orderTableModelAssembling;
-    private FurnitureOrderTableModel orderTableModelFitInst;
+    private CarpenterTableModel carpTabModelA;
+    private CarpenterTableModel carpTabModelB;
+    private CarpenterTableModel carpTabModelC;
+    private FurnitureOrderTableModel tabModelUnstarted;
+    private FurnitureOrderTableModel tabModelStarted;
+    private FurnitureOrderTableModel tabModelStaining;
+    private FurnitureOrderTableModel tabModelAssembling;
+    private FurnitureOrderTableModel tabModelFittings;
 
-    private JTable carpenterTableA;
-    private JTable carpenterTableB;
-    private JTable carpenterTableC;
-    private JTable orderTableWaiting;
-    private JTable orderTableStaining;
-    private JTable orderTableAssembling;
-    private JTable orderTableFitInst;
+    private JTable carpTabA;
+    private JTable carpTabB;
+    private JTable carpTabC;
+    private JTable tabUnstarted;
+    private JTable tabStarted;
+    private JTable tabStaining;
+    private JTable tabAssembling;
+    private JTable tabFittings;
     private JScrollPane mainScrollPane;
     private JPanel contentPane;
 
@@ -41,19 +43,21 @@ public class FurnitureProdDataViewer extends JPanel {
 
     public void resizeContent(int width, int height) {
         this.mainScrollPane.setPreferredSize(new Dimension(width, height));
-        SwingTableColumnResizer.setJTableColsWidth(this.orderTableWaiting, (width-25)/2,
+        SwingTableColumnResizer.setJTableColsWidth(this.tabUnstarted, (width-25)/2,
                 new double[] {5,5,5,15,19,17,17,17});
-        SwingTableColumnResizer.setJTableColsWidth(this.orderTableStaining, (width-25)/2,
+        SwingTableColumnResizer.setJTableColsWidth(this.tabStarted, (width-25)/2,
                 new double[] {5,5,5,15,19,17,17,17});
-        SwingTableColumnResizer.setJTableColsWidth(this.orderTableAssembling, (width-25)/2,
+        SwingTableColumnResizer.setJTableColsWidth(this.tabStaining, (width-25)/2,
                 new double[] {5,5,5,15,19,17,17,17});
-        SwingTableColumnResizer.setJTableColsWidth(this.orderTableFitInst, (width-25)/2,
+        SwingTableColumnResizer.setJTableColsWidth(this.tabAssembling, (width-25)/2,
                 new double[] {5,5,5,15,19,17,17,17});
-        SwingTableColumnResizer.setJTableColsWidth(this.carpenterTableA, width,
+        SwingTableColumnResizer.setJTableColsWidth(this.tabFittings, (width-25)/2,
+                new double[] {5,5,5,15,19,17,17,17});
+        SwingTableColumnResizer.setJTableColsWidth(this.carpTabA, width,
                 new double[] {5,5,5,5,10,15,15,40});
-        SwingTableColumnResizer.setJTableColsWidth(this.carpenterTableB, width,
+        SwingTableColumnResizer.setJTableColsWidth(this.carpTabB, width,
                 new double[] {5,5,5,5,10,15,15,40});
-        SwingTableColumnResizer.setJTableColsWidth(this.carpenterTableC, width,
+        SwingTableColumnResizer.setJTableColsWidth(this.carpTabC, width,
                 new double[] {5,5,5,5,10,15,15,40});
     }
 
@@ -74,70 +78,80 @@ public class FurnitureProdDataViewer extends JPanel {
         p3.setLayout(new BoxLayout(p3, BoxLayout.Y_AXIS));
         p3.setBackground(FurnitureProdForm.COL_BG_TAB);
 
-        this.carpenterTableModelA = new CarpenterTableModel(new ArrayList<>());
-        this.carpenterTableA = new JTable(this.carpenterTableModelA);
-        carpenterTableA.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane carpenterScrollPaneA = new JScrollPane(carpenterTableA);
+        this.carpTabModelA = new CarpenterTableModel(new ArrayList<>());
+        this.carpTabA = new JTable(this.carpTabModelA);
+        carpTabA.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane carpenterScrollPaneA = new JScrollPane(carpTabA);
         carpenterScrollPaneA.setPreferredSize(new Dimension(1000,150));
         carpenterScrollPaneA.setMinimumSize(new Dimension(500, 150));
         carpenterScrollPaneA.setMaximumSize(new Dimension(2000, 200));
 
-        this.carpenterTableModelB = new CarpenterTableModel(new ArrayList<>());
-        this.carpenterTableB = new JTable(this.carpenterTableModelB);
-        carpenterTableB.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane carpenterScrollPaneB = new JScrollPane(carpenterTableB);
+        this.carpTabModelB = new CarpenterTableModel(new ArrayList<>());
+        this.carpTabB = new JTable(this.carpTabModelB);
+        carpTabB.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane carpenterScrollPaneB = new JScrollPane(carpTabB);
         carpenterScrollPaneB.setPreferredSize(new Dimension(1000,150));
         carpenterScrollPaneB.setMinimumSize(new Dimension(500, 150));
         carpenterScrollPaneB.setMaximumSize(new Dimension(2000, 200));
 
-        this.carpenterTableModelC = new CarpenterTableModel(new ArrayList<>());
-        this.carpenterTableC = new JTable(this.carpenterTableModelC);
-        carpenterTableC.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane carpenterScrollPaneC = new JScrollPane(carpenterTableC);
+        this.carpTabModelC = new CarpenterTableModel(new ArrayList<>());
+        this.carpTabC = new JTable(this.carpTabModelC);
+        carpTabC.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane carpenterScrollPaneC = new JScrollPane(carpTabC);
         carpenterScrollPaneC.setPreferredSize(new Dimension(1000,150));
         carpenterScrollPaneC.setMinimumSize(new Dimension(500, 150));
         carpenterScrollPaneC.setMaximumSize(new Dimension(2000, 200));
 
-        this.orderTableModelWaiting = new FurnitureOrderTableModel(new ArrayList<>());
-        this.orderTableWaiting = new JTable(this.orderTableModelWaiting);
-        orderTableWaiting.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane orderScrollPaneWaiting = new JScrollPane(orderTableWaiting);
-        orderScrollPaneWaiting.setPreferredSize(new Dimension(500,150));
-        orderScrollPaneWaiting.setMinimumSize(new Dimension(500, 150));
-        orderScrollPaneWaiting.setMaximumSize(new Dimension(1000, 200));
+        this.tabModelUnstarted = new FurnitureOrderTableModel(new ArrayList<>());
+        this.tabUnstarted = new JTable(this.tabModelUnstarted);
+        tabUnstarted.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane orderScrollPaneUnstarted = new JScrollPane(tabUnstarted);
+        orderScrollPaneUnstarted.setPreferredSize(new Dimension(500,150));
+        orderScrollPaneUnstarted.setMinimumSize(new Dimension(500, 150));
+        orderScrollPaneUnstarted.setMaximumSize(new Dimension(1000, 200));
 
-        this.orderTableModelStaining = new FurnitureOrderTableModel(new ArrayList<>());
-        this.orderTableStaining = new JTable(this.orderTableModelStaining);
-        orderTableStaining.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane orderScrollPaneStaining = new JScrollPane(orderTableStaining);
+        this.tabModelStarted = new FurnitureOrderTableModel(new ArrayList<>());
+        this.tabStarted = new JTable(this.tabModelStarted);
+        tabStarted.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane orderScrollPaneStarted = new JScrollPane(tabStarted);
+        orderScrollPaneStarted.setPreferredSize(new Dimension(500,150));
+        orderScrollPaneStarted.setMinimumSize(new Dimension(500, 150));
+        orderScrollPaneStarted.setMaximumSize(new Dimension(1000, 200));
+
+        this.tabModelStaining = new FurnitureOrderTableModel(new ArrayList<>());
+        this.tabStaining = new JTable(this.tabModelStaining);
+        tabStaining.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane orderScrollPaneStaining = new JScrollPane(tabStaining);
         orderScrollPaneStaining.setPreferredSize(new Dimension(500,150));
         orderScrollPaneStaining.setMinimumSize(new Dimension(500, 150));
         orderScrollPaneStaining.setMaximumSize(new Dimension(1000, 200));
 
-        this.orderTableModelAssembling = new FurnitureOrderTableModel(new ArrayList<>());
-        this.orderTableAssembling = new JTable(this.orderTableModelAssembling);
-        orderTableAssembling.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane orderScrollPaneAssembling = new JScrollPane(orderTableAssembling);
+        this.tabModelAssembling = new FurnitureOrderTableModel(new ArrayList<>());
+        this.tabAssembling = new JTable(this.tabModelAssembling);
+        tabAssembling.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane orderScrollPaneAssembling = new JScrollPane(tabAssembling);
         orderScrollPaneAssembling.setPreferredSize(new Dimension(500,150));
         orderScrollPaneAssembling.setMinimumSize(new Dimension(500, 150));
         orderScrollPaneAssembling.setMaximumSize(new Dimension(1000, 200));
 
-        this.orderTableModelFitInst = new FurnitureOrderTableModel(new ArrayList<>());
-        this.orderTableFitInst = new JTable(this.orderTableModelFitInst);
-        orderTableFitInst.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JScrollPane orderScrollPaneFitInst = new JScrollPane(orderTableFitInst);
+        this.tabModelFittings = new FurnitureOrderTableModel(new ArrayList<>());
+        this.tabFittings = new JTable(this.tabModelFittings);
+        tabFittings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane orderScrollPaneFitInst = new JScrollPane(tabFittings);
         orderScrollPaneFitInst.setPreferredSize(new Dimension(500,150));
         orderScrollPaneFitInst.setMinimumSize(new Dimension(500, 150));
         orderScrollPaneFitInst.setMaximumSize(new Dimension(1000, 200));
 
-        JLabel jl1A = new JLabel("Order queue for Waiting");
+        JLabel jl1A = new JLabel("Queue 'Unstarted'");
         jl1A.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
-        JLabel jl1B = new JLabel("Order queue for Staining");
+        JLabel jl1B = new JLabel("Queue 'Started'");
         jl1B.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
-        JLabel jl2A = new JLabel("Order queue for Assembling");
+        JLabel jl2A = new JLabel("Queue 'Staining'");
         jl2A.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
-        JLabel jl2B = new JLabel("Order queue for Fit installation");
+        JLabel jl2B = new JLabel("Queue 'Assembling'");
         jl2B.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
+        JLabel jl2C = new JLabel("Queue 'Fittings inst.'");
+        jl2C.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
         JLabel jl3A = new JLabel("Carpenter's group A");
         jl3A.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
         JLabel jl3B = new JLabel("Carpenter's group B");
@@ -148,18 +162,23 @@ public class FurnitureProdDataViewer extends JPanel {
         p1.add(Box.createRigidArea(new Dimension(0, 7)));
         p1.add(jl1A);
         p1.add(Box.createRigidArea(new Dimension(0, 7)));
-        p1.add(orderScrollPaneWaiting);
+        p1.add(orderScrollPaneUnstarted);
         p1.add(Box.createRigidArea(new Dimension(0, 7)));
         p1.add(jl1B);
         p1.add(Box.createRigidArea(new Dimension(0, 7)));
-        p1.add(orderScrollPaneStaining);
+        p1.add(orderScrollPaneStarted);
+        p1.add(Box.createRigidArea(new Dimension(0, 7)));
 
         p2.add(Box.createRigidArea(new Dimension(0, 7)));
         p2.add(jl2A);
         p2.add(Box.createRigidArea(new Dimension(0, 7)));
-        p2.add(orderScrollPaneAssembling);
+        p2.add(orderScrollPaneStaining);
         p2.add(Box.createRigidArea(new Dimension(0, 7)));
         p2.add(jl2B);
+        p2.add(Box.createRigidArea(new Dimension(0, 7)));
+        p2.add(orderScrollPaneAssembling);
+        p2.add(Box.createRigidArea(new Dimension(0, 7)));
+        p2.add(jl2C);
         p2.add(Box.createRigidArea(new Dimension(0, 7)));
         p2.add(orderScrollPaneFitInst);
 
@@ -188,14 +207,15 @@ public class FurnitureProdDataViewer extends JPanel {
     }
 
     public void setEventResultsModel(FurnitProdState r) {
-        this.orderTableModelWaiting.setModels(r.getqUnstarted());
-        this.orderTableModelAssembling.setModels(r.getqAssembling());
-        this.orderTableModelStaining.setModels(r.getqStaining());
-        this.orderTableModelFitInst.setModels(r.getqFittings());
+        this.tabModelUnstarted.setModels(r.getqUnstarted());
+        this.tabModelStarted.setModels(r.getqStarted());
+        this.tabModelAssembling.setModels(r.getqAssembling());
+        this.tabModelStaining.setModels(r.getqStaining());
+        this.tabModelFittings.setModels(r.getqFittings());
         this.viewSimTime.setValue(Formatter.getStrDateTime(r.getSimTime(), 8, 6));
-        this.carpenterTableModelA.setModels(r.getCarpentersA());
-        this.carpenterTableModelB.setModels(r.getCarpentersB());
-        this.carpenterTableModelC.setModels(r.getCarpentersC());
+        this.carpTabModelA.setModels(r.getCarpentersA());
+        this.carpTabModelB.setModels(r.getCarpentersB());
+        this.carpTabModelC.setModels(r.getCarpentersC());
     }
 
     public static void main(String[] args) {

@@ -284,7 +284,8 @@ public AgentGroupC agentGroupC()
 		}
 		for (Order o : this.agentFurnitProd().getQStarted()) {
 			for (Furniture f : o.getProducts())
-				this.simStateData.addToqStarted(f);
+				if (f.isUnstarted()) // order processing started, but some products are still unstarted
+					this.simStateData.addToqStarted(f);
 		}
 		for (TechStepMessage ts : this.agentFurnitProd().getQStaining())
 			this.simStateData.addToqStaining(ts.getProduct());

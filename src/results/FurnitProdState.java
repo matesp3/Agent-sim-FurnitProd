@@ -214,7 +214,7 @@ public class FurnitProdState extends AfterChangeResults {
     }
 
     public List<FurnitureModel> getqStarted() {
-        return qUnstarted;
+        return qStarted;
     }
 
     public void addToqStarted(Furniture f) {
