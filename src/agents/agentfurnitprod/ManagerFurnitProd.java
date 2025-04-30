@@ -1,6 +1,7 @@
 package agents.agentfurnitprod;
 
 import OSPABA.*;
+import OSPDataStruct.SimQueue;
 import OSPStat.Stat;
 import common.Carpenter;
 import common.Furniture;

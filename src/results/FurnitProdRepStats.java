@@ -8,17 +8,17 @@ import java.util.List;
 public class FurnitProdRepStats extends SimResults {
     private final List<StatResult.ConfInterval> stats = new ArrayList<>(17);
 
-    private StatResult.ConfInterval unstartedCount = new StatResult.ConfInterval("Length of queue 'unstarted'", -1, -1, "[qty]");
-    private StatResult.ConfInterval startedCount = new StatResult.ConfInterval("Length of queue 'started'", -1, -1, "[qty]");
-    private StatResult.ConfInterval stainingCount = new StatResult.ConfInterval("Length of queue 'staining'", -1, -1, "[qty]");
-    private StatResult.ConfInterval assemblingCount = new StatResult.ConfInterval("Length of queue 'assembling'", -1, -1, "[qty]");
-    private StatResult.ConfInterval fittingsCount = new StatResult.ConfInterval("Length of queue 'fittings'", -1, -1, "[qty]");
+    private StatResult.ConfInterval unsOrdersCount = new StatResult.ConfInterval("Amount of waiting for 'order processing'", -1, -1, "[qty]");
+    private StatResult.ConfInterval unsProductsCount = new StatResult.ConfInterval("Amount of waiting for 'furniture processing'", -1, -1, "[qty]");
+    private StatResult.ConfInterval stainingCount = new StatResult.ConfInterval("Amount of waiting for 'staining'", -1, -1, "[qty]");
+    private StatResult.ConfInterval assemblingCount = new StatResult.ConfInterval("Amount of waiting for 'assembling'", -1, -1, "[qty]");
+    private StatResult.ConfInterval fittingsCount = new StatResult.ConfInterval("Amount of waiting for 'fittings inst.'", -1, -1, "[qty]");
 
-    private StatResult.ConfInterval unstartedTime = new StatResult.ConfInterval("Waiting in queue 'unstarted'", -1, -1, "[s]");
-    private StatResult.ConfInterval startedTime = new StatResult.ConfInterval("Waiting in queue 'started'", -1, -1, "[s]");
-    private StatResult.ConfInterval stainingTime = new StatResult.ConfInterval("Waiting in queue 'staining'", -1, -1, "[s]");
-    private StatResult.ConfInterval assemblingTime = new StatResult.ConfInterval("Waiting in queue 'assembling'", -1, -1, "[s]");
-    private StatResult.ConfInterval fittingsTime = new StatResult.ConfInterval("Waiting in queue 'fittings'", -1, -1, "[s]");
+    private StatResult.ConfInterval unsOrdersTime = new StatResult.ConfInterval("Waiting time for 'order processing'", -1, -1, "[s]");
+    private StatResult.ConfInterval unsProductsTime = new StatResult.ConfInterval("Waiting time for 'furniture processing'", -1, -1, "[s]");
+    private StatResult.ConfInterval stainingTime = new StatResult.ConfInterval("Waiting time for 'staining'", -1, -1, "[s]");
+    private StatResult.ConfInterval assemblingTime = new StatResult.ConfInterval("Waiting time for 'assembling'", -1, -1, "[s]");
+    private StatResult.ConfInterval fittingsTime = new StatResult.ConfInterval("Waiting time for 'fittings inst.'", -1, -1, "[s]");
 
     private StatResult.ConfInterval utilizationGroupA = new StatResult.ConfInterval("Utilization of group A:", -1, -1, "%");
     private StatResult.ConfInterval utilizationGroupB = new StatResult.ConfInterval("Utilization of group B:", -1, -1, "%");
@@ -29,14 +29,14 @@ public class FurnitProdRepStats extends SimResults {
 
     public FurnitProdRepStats(long experimentNum) {
         super(experimentNum);
-        this.stats.add(this.unstartedCount);
-        this.stats.add(this.startedCount);
+        this.stats.add(this.unsOrdersCount);
+        this.stats.add(this.unsProductsCount);
         this.stats.add(this.stainingCount);
         this.stats.add(this.assemblingCount);
         this.stats.add(this.fittingsCount);
 
-        this.stats.add(this.unstartedTime);
-        this.stats.add(this.startedTime);
+        this.stats.add(this.unsOrdersTime);
+        this.stats.add(this.unsProductsTime);
         this.stats.add(this.stainingTime);
         this.stats.add(this.assemblingTime);
         this.stats.add(this.fittingsTime);
@@ -48,24 +48,24 @@ public class FurnitProdRepStats extends SimResults {
         this.stats.add(orderTimeInSystem);
     }
 
-    public StatResult.ConfInterval getStartedCount() {
-        return startedCount;
+    public StatResult.ConfInterval getUnsProductsCount() {
+        return unsProductsCount;
     }
 
     public List<StatResult.ConfInterval> getStats() {
         return this.stats;
     }
 
-    public void setStartedCount(Stat s) {
-        this.startedCount.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
+    public void setUnsProductsCount(Stat s) {
+        this.unsProductsCount.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
     }
 
-    public StatResult.ConfInterval getUnstartedCount() {
-        return unstartedCount;
+    public StatResult.ConfInterval getUnsOrdersCount() {
+        return unsOrdersCount;
     }
 
-    public void setUnstartedCount(Stat s) {
-        this.unstartedCount.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
+    public void setUnsOrdersCount(Stat s) {
+        this.unsOrdersCount.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
     }
 
     public StatResult.ConfInterval getAssemblingCount() {
@@ -92,20 +92,20 @@ public class FurnitProdRepStats extends SimResults {
         this.fittingsCount.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
     }
 
-    public StatResult.ConfInterval getUnstartedTime() {
-        return unstartedTime;
+    public StatResult.ConfInterval getUnsOrdersTime() {
+        return unsOrdersTime;
     }
 
-    public void setUnstartedTime(Stat s) {
-        this.unstartedTime.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
+    public void setUnsOrdersTime(Stat s) {
+        this.unsOrdersTime.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
     }
 
-    public StatResult.ConfInterval getStartedTime() {
-        return startedTime;
+    public StatResult.ConfInterval getUnsProductsTime() {
+        return unsProductsTime;
     }
 
-    public void setStartedTime(Stat s) {
-        this.startedTime.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
+    public void setUnsProductsTime(Stat s) {
+        this.unsProductsTime.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
     }
 
     public StatResult.ConfInterval getAssemblingTime() {

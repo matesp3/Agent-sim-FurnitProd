@@ -2,6 +2,7 @@ package agents.agentfurnitprod;
 
 import OSPABA.*;
 import OSPStat.Stat;
+import OSPStat.WStat;
 import common.DeskAllocation;
 import common.Order;
 import simulation.*;
@@ -23,15 +24,17 @@ public class AgentFurnitProd extends OSPABA.Agent
 	private final Queue<TechStepMessage> qFittings;
 	private DeskAllocation deskManager;
 	// statistics: 'WT' - WaitingTime
-	private final Stat statProcBeginWT = new Stat();
+	private final Stat statBtOrderWT = new Stat();
+	private final Stat statBtProductWT = new Stat();
 	private final Stat statStainingWT = new Stat();
 	private final Stat statAssemblingWT = new Stat();
 	private final Stat statFittingsWT = new Stat();
 	// statistics: 'QL' - QueueLength
-	private final Stat statProcBeginQL = new Stat();
-	private final Stat statStainingQL = new Stat();
-	private final Stat statAssemblingQL = new Stat();
-	private final Stat statFittingsQL = new Stat();
+	private final WStat statUnsOrdersQL = new WStat(this.mySim());
+	private final WStat statUnsProductsQL = new WStat(this.mySim());
+	private final WStat statStainingQL = new WStat(this.mySim());
+	private final WStat statAssemblingQL = new WStat(this.mySim());
+	private final WStat statFittingsQL = new WStat(this.mySim());
 
 	public AgentFurnitProd(int id, Simulation mySim, Agent parent)
 	{
@@ -66,12 +69,14 @@ public class AgentFurnitProd extends OSPABA.Agent
 		this.qFittings.clear();
 		this.deskManager.freeAllDesks();
 		// statistics: 'WT' - WaitingTime
-		this.statProcBeginWT.clear();
+		this.statBtOrderWT.clear();
+		this.statBtProductWT.clear();
 		this.statStainingWT.clear();
 		this.statAssemblingWT.clear();
 		this.statFittingsWT.clear();
 		// statistics: 'QL' - QueueLength
-		this.statProcBeginQL.clear();
+		this.statUnsOrdersQL.clear();
+		this.statUnsProductsQL.clear();
 		this.statStainingQL.clear();
 		this.statAssemblingQL.clear();
 		this.statFittingsQL.clear();
@@ -114,7 +119,76 @@ public class AgentFurnitProd extends OSPABA.Agent
 
 	public Queue<TechStepMessage> getQFittings() {
 		return this.qFittings;
+	}
 
+	/**
+	 * @return waiting time of unstarted orders
+	 */
+	public Stat getStatUnsOrdersWT() {
+		return statBtOrderWT;
+	}
+
+	/**
+	 * @return waiting time of unstarted products
+	 */
+	public Stat getStatUnsProductsWT() {
+		return statBtProductWT;
+	}
+
+	/**
+	 * @return waiting time for staining
+	 */
+	public Stat getStatStainingWT() {
+		return statStainingWT;
+	}
+
+	/**
+	 * @return waiting time for assembling
+	 */
+	public Stat getStatAssemblingWT() {
+		return statAssemblingWT;
+	}
+
+	/**
+	 * @return waiting time for fittings installation
+	 */
+	public Stat getStatFittingsWT() {
+		return statFittingsWT;
+	}
+
+	/**
+	 * @return unstarted orders queue length
+	 */
+	public WStat getStatUnsOrdersQL() {
+		return statUnsOrdersQL;
+	}
+
+	/**
+	 * @return unstarted products queue length
+	 */
+	public WStat getStatUnsProductsQL() {
+		return statUnsProductsQL;
+	}
+
+	/**
+	 * @return waiting for staining queue length
+	 */
+	public WStat getStatStainingQL() {
+		return statStainingQL;
+	}
+
+	/**
+	 * @return waiting for assembling queue length
+	 */
+	public WStat getStatAssemblingQL() {
+		return statAssemblingQL;
+	}
+
+	/**
+	 * @return waiting for fittings installation queue length
+	 */
+	public WStat getStatFittingsQL() {
+		return statFittingsQL;
 	}
 
 	public DeskAllocation getDeskManager() {

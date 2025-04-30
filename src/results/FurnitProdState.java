@@ -17,17 +17,17 @@ public class FurnitProdState extends AfterChangeResults {
     private final List<FurnitureModel> qFittings = new ArrayList<>();
     private final List<StatResult.Simple> stats = new ArrayList<>(17);
 
-    private StatResult.Simple unstartedCount = new StatResult.Simple("Length of queue 'unstarted'", -1, "[qty]");
-    private StatResult.Simple startedCount = new StatResult.Simple("Length of queue 'started'", -1, "[qty]");
-    private StatResult.Simple assemblingCount = new StatResult.Simple("Length of queue 'assembling'", -1, "[qty]");
-    private StatResult.Simple stainingCount = new StatResult.Simple("Length of queue 'staining'", -1, "[qty]");
-    private StatResult.Simple fittingsInstCount = new StatResult.Simple("Length of queue 'fittings inst.'", -1, "[qty]");
+    private StatResult.Simple unsOrdersCount = new StatResult.Simple("Amount of waiting for 'order processing'", -1, "[qty]");
+    private StatResult.Simple unsProductsCount = new StatResult.Simple("Amount of waiting for 'furniture processing'", -1, "[qty]");
+    private StatResult.Simple stainingCount = new StatResult.Simple("Amount of waiting for 'staining", -1, "[qty]");
+    private StatResult.Simple assemblingCount = new StatResult.Simple("Amount of waiting for 'assembling'", -1, "[qty]");
+    private StatResult.Simple fittingsInstCount = new StatResult.Simple("Amount of waiting for 'fittings inst.'", -1, "[qty]");
 
-    private StatResult.Simple unstartedTime = new StatResult.Simple("Waiting in queue 'unstarted'", -1, "[s]");
-    private StatResult.Simple startedTime = new StatResult.Simple("Waiting in queue 'started'", -1, "[s]");
-    private StatResult.Simple stainingTime = new StatResult.Simple("Waiting in queue 'staining'", -1, "[s]");
-    private StatResult.Simple assemblingTime = new StatResult.Simple("Waiting in queue 'assembling'", -1, "[s]");
-    private StatResult.Simple fittingInstTime = new StatResult.Simple("Waiting in queue 'fittings inst.'", -1, "[s]");
+    private StatResult.Simple unsOrdersTime = new StatResult.Simple("Waiting time for 'order processing'", -1, "[s]");
+    private StatResult.Simple unsProductsTime = new StatResult.Simple("Waiting time for 'furniture processing'", -1, "[s]");
+    private StatResult.Simple stainingTime = new StatResult.Simple("Waiting time for 'staining'", -1, "[s]");
+    private StatResult.Simple assemblingTime = new StatResult.Simple("Waiting time for 'assembling'", -1, "[s]");
+    private StatResult.Simple fittingInstTime = new StatResult.Simple("Waiting time for 'fittings inst.'", -1, "[s]");
 
     private StatResult.Simple utilzA = new StatResult.Simple("Utilization of group A:", -1, "%");
     private StatResult.Simple utilzB = new StatResult.Simple("Utilization of group B:", -1, "%");
@@ -37,13 +37,13 @@ public class FurnitProdState extends AfterChangeResults {
 
     public FurnitProdState(long experimentNum, double simTime) {
         super(experimentNum, simTime);
-        this.stats.add(unstartedCount);
-        this.stats.add(startedCount);
+        this.stats.add(unsOrdersCount);
+        this.stats.add(unsProductsCount);
         this.stats.add(assemblingCount);
         this.stats.add(stainingCount);
         this.stats.add(fittingsInstCount);
-        this.stats.add(unstartedTime);
-        this.stats.add(startedTime);
+        this.stats.add(unsOrdersTime);
+        this.stats.add(unsProductsTime);
         this.stats.add(stainingTime);
         this.stats.add(assemblingTime);
         this.stats.add(fittingInstTime);
@@ -69,28 +69,28 @@ public class FurnitProdState extends AfterChangeResults {
         return stats;
     }
 
-    public StatResult.Simple getStartedTime() {
-        return startedTime;
+    public StatResult.Simple getUnsProductsTime() {
+        return unsProductsTime;
     }
 
-    public void setStartedTime(double startedTime) {
-        this.startedTime.setValue(startedTime);
+    public void setUnsProductsTime(double unsProductsTime) {
+        this.unsProductsTime.setValue(unsProductsTime);
     }
 
-    public StatResult.Simple getUnstartedCount() {
-        return unstartedCount;
+    public StatResult.Simple getUnsOrdersCount() {
+        return unsOrdersCount;
     }
 
-    public void setUnstartedCount(double unstartedCount) {
-        this.unstartedCount.setValue(unstartedCount);
+    public void setUnsOrdersCount(double unsOrdersCount) {
+        this.unsOrdersCount.setValue(unsOrdersCount);
     }
 
-    public StatResult.Simple getStartedCount() {
-        return startedCount;
+    public StatResult.Simple getUnsProductsCount() {
+        return unsProductsCount;
     }
 
-    public void setStartedCount(double startedCount) {
-        this.startedCount.setValue(startedCount);
+    public void setUnsProductsCount(double unsProductsCount) {
+        this.unsProductsCount.setValue(unsProductsCount);
     }
 
     public StatResult.Simple getAssemblingCount() {
@@ -117,12 +117,12 @@ public class FurnitProdState extends AfterChangeResults {
         this.fittingsInstCount.setValue(fittingsInstCount);
     }
 
-    public StatResult.Simple getUnstartedTime() {
-        return unstartedTime;
+    public StatResult.Simple getUnsOrdersTime() {
+        return unsOrdersTime;
     }
 
-    public void setUnstartedTime(double unstartedTime) {
-        this.unstartedTime.setValue(unstartedTime);
+    public void setUnsOrdersTime(double unsOrdersTime) {
+        this.unsOrdersTime.setValue(unsOrdersTime);
     }
 
     public StatResult.Simple getAssemblingTime() {

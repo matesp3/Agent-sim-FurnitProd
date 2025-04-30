@@ -57,23 +57,7 @@ public class FurnitProdSimController {
     private void afterReplicationUpdate(MySimulation sim) {
             if (sim.currentReplication() < 30)
                 return;
-            // todo only uncomment, when stats will be ready
-            FurnitProdRepStats stats = new FurnitProdRepStats(sim.currentReplication());
-//            stats.setUnstartedCount(sim.getStatCountNotStarted());
-//            stats.setStartedCount(sim.getStatCountPartiallyStarted());
-//            stats.setStainingCount(sim.getStatCountStaining());
-//            stats.setAssemblingCount(sim.getStatCountAssembling());
-//            stats.setFittingsCount(sim.getStatCountFitInstallation());
-//            stats.setUnstartedTime(sim.getStatTimeInNotStarted());
-//            stats.setStartedTime(sim.getStatTimeInPartiallyStarted());
-//            stats.setStainingTime(sim.getStatTimeInStaining());
-//            stats.setAssemblingTime(sim.getStatTimeInAssembling());
-//            stats.setFittingsTime(sim.getStatTimeInFitInstallation());
-            stats.setUtilizationGroupA(sim.getStatUtilizationA());
-            stats.setUtilizationGroupB(sim.getStatUtilizationB());
-            stats.setUtilizationGroupC(sim.getStatUtilizationC());
-//            stats.setOrderTimeInSystem(sim.getStatTimeOrderCompletion());
-            this.gui.updateAfterReplication(stats);
+            this.gui.updateAfterReplication(sim.getReplicationResults());
     }
 
     public void terminateSimulation() {

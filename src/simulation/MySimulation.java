@@ -1,9 +1,9 @@
 package simulation;
 
-import OSPABA.*;
 import OSPRNG.RNG;
 import OSPRNG.UniformContinuousRNG;
 import OSPStat.Stat;
+import OSPStat.WStat;
 import agents.agentenvironment.continualassistants.SchedulerOrderArrival;
 import agents.agenttransfer.*;
 import agents.agentmodel.*;
@@ -28,14 +28,14 @@ public class MySimulation extends OSPABA.Simulation
 	private final Stat avgUtilizationB  = new Stat();
 	private final Stat avgUtilizationC  = new Stat();
 
-	private final Stat avgCountNotStarted = new Stat();
-	private final Stat avgCountPartiallyStarted = new Stat();
-	private final Stat avgCountStaining = new Stat();
-	private final Stat avgCountAssembling = new Stat();
-	private final Stat avgCountFitInstallation = new Stat();
+	private final WStat avgCountUnsOrders = new WStat(this);
+	private final WStat avgCountUnsProducts = new WStat(this);
+	private final WStat avgCountStaining = new WStat(this);
+	private final WStat avgCountAssembling = new WStat(this);
+	private final WStat avgCountFitInstallation = new WStat(this);
 
-	private final Stat avgTimeInNotStarted = new Stat();
-	private final Stat avgTimeInPartiallyStarted = new Stat();
+	private final Stat avgTimeInUnsOrders = new Stat();
+	private final Stat avgTimeInUnsProducts = new Stat();
 	private final Stat avgTimeInStaining = new Stat();
 	private final Stat avgTimeInAssembling = new Stat();
 	private final Stat avgTimeInFitInstallation = new Stat();
@@ -63,13 +63,13 @@ public class MySimulation extends OSPABA.Simulation
 		this.avgUtilizationA.clear();
 		this.avgUtilizationB.clear();
 		this.avgUtilizationC.clear();
-		this.avgCountNotStarted.clear();
-		this.avgCountPartiallyStarted.clear();
+		this.avgCountUnsOrders.clear();
+		this.avgCountUnsProducts.clear();
 		this.avgCountStaining.clear();
 		this.avgCountAssembling.clear();
 		this.avgCountFitInstallation.clear();
-		this.avgTimeInNotStarted.clear();
-		this.avgTimeInPartiallyStarted.clear();
+		this.avgTimeInUnsOrders.clear();
+		this.avgTimeInUnsProducts.clear();
 		this.avgTimeInStaining.clear();
 		this.avgTimeInAssembling.clear();
 		this.avgTimeInFitInstallation.clear();
@@ -92,14 +92,14 @@ public class MySimulation extends OSPABA.Simulation
 		this.avgUtilizationA.addSample(this.agentGroupA().getGroupUtilization());
 		this.avgUtilizationB.addSample(this.agentGroupB().getGroupUtilization());
 		this.avgUtilizationC.addSample(this.agentGroupC().getGroupUtilization());
+		this.avgCountUnsOrders.addSample(this.agentFurnitProd().getStatUnsOrdersQL().mean());
+		this.avgCountUnsProducts.addSample(this.agentFurnitProd().getStatUnsProductsQL().mean());
 //		 todo remaining stats updating
-//		this.avgCountNotStarted.addSample();
-//		this.avgCountPartiallyStarted.addSample();
 //		this.avgCountStaining.addSample();
 //		this.avgCountAssembling.addSample();
 //		this.avgCountFitInstallation.addSample();
-//		this.avgTimeInNotStarted.addSample();
-//		this.avgTimeInPartiallyStarted.addSample();
+		this.avgTimeInUnsOrders.addSample(this.agentFurnitProd().getStatUnsOrdersWT().mean());
+		this.avgTimeInUnsProducts.addSample(this.agentFurnitProd().getStatUnsProductsWT().mean());
 //		this.avgTimeInStaining.addSample();
 //		this.avgTimeInAssembling.addSample();
 //		this.avgTimeInFitInstallation.addSample();
@@ -206,12 +206,12 @@ public AgentGroupC agentGroupC()
 		return avgUtilizationC;
 	}
 
-	public Stat getStatCountNotStarted() {
-		return avgCountNotStarted;
+	public Stat getStatCountUnsOrders() {
+		return avgCountUnsOrders;
 	}
 
-	public Stat getStatCountPartiallyStarted() {
-		return avgCountPartiallyStarted;
+	public Stat getStatCountUnstartedProducts() {
+		return avgCountUnsProducts;
 	}
 
 	public Stat getStatCountStaining() {
@@ -226,12 +226,12 @@ public AgentGroupC agentGroupC()
 		return avgCountFitInstallation;
 	}
 
-	public Stat getStatTimeInNotStarted() {
-		return avgTimeInNotStarted;
+	public Stat getStatTimeInUnstartedOrders() {
+		return avgTimeInUnsOrders;
 	}
 
-	public Stat getStatTimeInPartiallyStarted() {
-		return avgTimeInPartiallyStarted;
+	public Stat getStatTimeInUnstartedProducts() {
+		return avgTimeInUnsProducts;
 	}
 
 	public Stat getStatTimeInStaining() {
@@ -285,15 +285,15 @@ public AgentGroupC agentGroupC()
 		this.repResults.setUtilizationGroupA(this.avgUtilizationA);
 		this.repResults.setUtilizationGroupB(this.avgUtilizationB);
 		this.repResults.setUtilizationGroupC(this.avgUtilizationC);
+		this.repResults.setUnsOrdersCount(this.avgCountUnsOrders);
+		this.repResults.setUnsProductsCount(this.avgCountUnsProducts);
 		// todo
-//		this.repResults.setUnstartedCount(this.avgCountNotStarted);
-//		this.repResults.setStartedCount(this.avgCountPartiallyStarted);
 //		this.repResults.setStainingCount(this.avgCountStaining);
 //		this.repResults.setAssemblingCount(this.avgCountAssembling);
 //		this.repResults.setFittingsCount(this.avgCountFitInstallation);
 
-//		this.repResults.setUnstartedTime(this.avgTimeInNotStarted);
-//		this.repResults.setStartedTime(this.avgTimeInPartiallyStarted);
+		this.repResults.setUnsOrdersTime(this.avgTimeInUnsOrders);
+		this.repResults.setUnsProductsTime(this.avgTimeInUnsProducts);
 //		this.repResults.setStainingTime(this.avgTimeInStaining);
 //		this.repResults.setAssemblingTime(this.avgTimeInAssembling);
 //		this.repResults.setFittingsTime(this.avgTimeInFitInstallation);
@@ -326,14 +326,14 @@ public AgentGroupC agentGroupC()
 		// stats
 		this.simStateData.setOrderTimeInSystem(this.getStatTimeOrderCompletion().mean());
 
-//		this.simStateData.setUnstartedCount(...);
-//		this.simStateData.setStartedCount(...);
+		this.simStateData.setUnsOrdersCount(this.agentFurnitProd().getStatUnsOrdersQL().mean());
+		this.simStateData.setUnsProductsCount(this.agentFurnitProd().getStatUnsProductsQL().mean());
 //		this.simStateData.setStainingCount(...);
 //		this.simStateData.setAssemblingCount(...);
 //		this.simStateData.setFittingsInstCount(...);
 
-//		this.simStateData.setUnstartedTime(...);
-//		this.simStateData.setStartedTime(...);
+		this.simStateData.setUnsOrdersTime(this.agentFurnitProd().getStatUnsOrdersWT().mean());
+		this.simStateData.setUnsProductsTime(this.agentFurnitProd().getStatUnsProductsWT().mean());
 //		this.simStateData.setStainingTime(...);
 //		this.simStateData.setAssemblingTime(...);
 //		this.simStateData.setFittingInstTime(...);
