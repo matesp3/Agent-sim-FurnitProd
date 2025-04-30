@@ -49,4 +49,11 @@ public class AgentGroupB extends OSPABA.Agent implements ICarpenterGroup
 	public void setAmountOfCarpenters(int amount) {
 		this.allocator.initCarpenters(amount);
 	}
+
+	/**
+	 * @return number from interval <0,1>
+	 */
+	public double getGroupUtilization() {
+		return this.allocator.getGroupUtilization(this.mySim().currentTime());
+	}
 }

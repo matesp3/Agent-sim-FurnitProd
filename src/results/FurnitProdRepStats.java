@@ -2,7 +2,12 @@ package results;
 
 import OSPStat.Stat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FurnitProdRepStats extends SimResults {
+    private final List<StatResult.ConfInterval> stats = new ArrayList<>(17);
+
     private StatResult.ConfInterval unstartedCount = new StatResult.ConfInterval("Length of queue 'unstarted'", -1, -1, "[qty]");
     private StatResult.ConfInterval startedCount = new StatResult.ConfInterval("Length of queue 'started'", -1, -1, "[qty]");
     private StatResult.ConfInterval stainingCount = new StatResult.ConfInterval("Length of queue 'staining'", -1, -1, "[qty]");
@@ -24,10 +29,31 @@ public class FurnitProdRepStats extends SimResults {
 
     public FurnitProdRepStats(long experimentNum) {
         super(experimentNum);
+        this.stats.add(this.unstartedCount);
+        this.stats.add(this.startedCount);
+        this.stats.add(this.stainingCount);
+        this.stats.add(this.assemblingCount);
+        this.stats.add(this.fittingsCount);
+
+        this.stats.add(this.unstartedTime);
+        this.stats.add(this.startedTime);
+        this.stats.add(this.stainingTime);
+        this.stats.add(this.assemblingTime);
+        this.stats.add(this.fittingsTime);
+
+        this.stats.add(this.utilizationGroupA);
+        this.stats.add(this.utilizationGroupB);
+        this.stats.add(this.utilizationGroupC);
+
+        this.stats.add(orderTimeInSystem);
     }
 
     public StatResult.ConfInterval getStartedCount() {
         return startedCount;
+    }
+
+    public List<StatResult.ConfInterval> getStats() {
+        return this.stats;
     }
 
     public void setStartedCount(Stat s) {
@@ -111,7 +137,7 @@ public class FurnitProdRepStats extends SimResults {
     }
 
     public void setUtilizationGroupA(Stat s) {
-        this.utilizationGroupA.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
+        this.utilizationGroupA.setCI(s.mean()*100, (s.confidenceInterval_95()[1] - s.mean())*100);
     }
 
     public StatResult.ConfInterval getUtilizationGroupB() {
@@ -119,7 +145,7 @@ public class FurnitProdRepStats extends SimResults {
     }
 
     public void setUtilizationGroupB(Stat s) {
-        this.utilizationGroupB.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
+        this.utilizationGroupB.setCI(s.mean()*100, (s.confidenceInterval_95()[1] - s.mean())*100);
     }
 
     public StatResult.ConfInterval getUtilizationGroupC() {
@@ -127,7 +153,7 @@ public class FurnitProdRepStats extends SimResults {
     }
 
     public void setUtilizationGroupC(Stat s) {
-        this.utilizationGroupC.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
+        this.utilizationGroupC.setCI(s.mean()*100, (s.confidenceInterval_95()[1] - s.mean())*100);
     }
 
     public StatResult.ConfInterval getOrderTimeInSystem() {

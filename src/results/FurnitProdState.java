@@ -149,26 +149,44 @@ public class FurnitProdState extends AfterChangeResults {
         this.fittingInstTime.setValue(fittingInstTime);
     }
 
+    /**
+     * @return utilization in %
+     */
     public StatResult.Simple getUtilzA() {
         return utilzA;
     }
 
+    /**
+     * @param utilzA in %
+     */
     public void setUtilzA(double utilzA) {
         this.utilzA.setValue(utilzA);
     }
 
+    /**
+     * @return utilization in %
+     */
     public StatResult.Simple getUtilzB() {
         return utilzB;
     }
 
+    /**
+     * @param utilzB in %
+     */
     public void setUtilzB(double utilzB) {
         this.utilzB.setValue(utilzB);
     }
 
+    /**
+     * @return utilization in %
+     */
     public StatResult.Simple getUtilzC() {
         return utilzC;
     }
 
+    /**
+     * @param utilzC in %
+     */
     public void setUtilzC(double utilzC) {
         this.utilzC.setValue(utilzC);
     }

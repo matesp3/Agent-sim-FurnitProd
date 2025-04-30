@@ -104,6 +104,16 @@ public class Order {
         return this.nextToBeProcessed == 0;
     }
 
+    /**
+     * Sets waitingBT time to all its products, which are still unassigned
+     * @param time begin time of waiting
+     */
+    public void setWaitingBT(double time) {
+        for (int i = this.nextToBeProcessed; i < this.products.length; i++) {
+            this.products[i].setWaitingBT(time);
+        }
+    }
+
     @Override
     public String toString() {
         return "Order{" +

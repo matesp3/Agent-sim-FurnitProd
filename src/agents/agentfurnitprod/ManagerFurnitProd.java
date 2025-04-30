@@ -1,6 +1,7 @@
 package agents.agentfurnitprod;
 
 import OSPABA.*;
+import OSPStat.Stat;
 import common.Carpenter;
 import common.Furniture;
 import common.Order;
@@ -48,7 +49,6 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	public void processWoodPrep(MessageForm message)
 	{
 		TechStepMessage tsMsg = (TechStepMessage) message;
-//		this.executeEnd(tsMsg); // todo iba kontrola, riadok odstranit
 		tsMsg.getProduct().setStep(CARVING);
 		this.sendStorageTransferRequest(tsMsg);
 	}
@@ -153,8 +153,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		Furniture f = tsMsg.getCarpenter().returnProduct(this.mySim().currentTime());
 		f.setStep(STAINING);
 		this.sendAssignRequestForProduct(Mc.assignCarpenterC, Id.agentGroupC, f);
-		// todo pridane docasne
-		this.myAgent().getDeskManager().setDeskFree(f.getDeskID(), f);
+
 		// PLAN NEXT JOB FOR CARPENTER 'A'
 		if (false) { // todo at first, check if there's some fittings montage work
 			throw new UnsupportedOperationException("Not implemented yet");
@@ -183,11 +182,14 @@ public class ManagerFurnitProd extends OSPABA.Manager
 			  he would already work on it)
 			- if no desk is free, then there's no reason to do request for carpenter A assign
 		 */
+		Order o = ((OrderMessage)message).getOrder();
+		o.setWaitingBT(this.mySim().currentTime()); /* sets waitingBT to all its products, bcs order is new. Must be set
+		 here, bcs carpenter may not be assigned to product, even if some desk is free */
 		if (this.myAgent().getDeskManager().hasFreeDesk()) {
-			this.sendAssignRequestForOrder( ((OrderMessage)message).getOrder() );
+			this.sendAssignRequestForOrder(o);
 		}
 		else { // this new order must wait as a whole, bcs there's no place where some product can be created
-			this.myAgent().getQUnstarted().add( ((OrderMessage)message).getOrder() );
+			this.myAgent().getQUnstarted().add(o);
 		}
 	}
 
@@ -353,13 +355,6 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		this.assignMsgPattern.setOrder(order);
 		this.assignMsgPattern.setProduct(null);
 		this.request(this.assignMsgPattern);
-
-//		AssignMessage msg = (AssignMessage) this.assignMsg.createCopy();
-//		msg.setCode(Mc.assignCarpenterA);
-//		msg.setAddressee(Id.agentGroupA);
-//		msg.setOrder(order);
-//		msg.setProduct(null);
-//		this.request(msg);
 	}
 
 	/**
@@ -460,5 +455,16 @@ public class ManagerFurnitProd extends OSPABA.Manager
 			}
 		}
 		return f;
+	}
+
+	/**
+	 * Should be called in moment of next technological step start.
+	 * It adds new sample to stat and invalidates product's waitingBT.
+	 * @param f product, whose waitingBT is observed
+	 * @param stat stat, to which new sample will be added
+	 */
+	private void addToWaitingStat(Furniture f, Stat stat) {
+		stat.addSample(this.mySim().currentTime() - f.getWaitingBT());
+		f.setWaitingBT(-1);
 	}
 }

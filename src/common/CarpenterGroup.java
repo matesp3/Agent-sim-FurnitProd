@@ -68,6 +68,34 @@ public class CarpenterGroup {
         return this.carpenters;
     }
 
+
+    /**
+     * @return sum of working times of works of all carpenters (within group) that are already completed.
+     */
+    public double getCompletedWorkingTime() {
+        double sum = 0;
+        for (Carpenter carpenter : this.carpenters) {
+            sum += carpenter.getSumOfCompletedWorkingTime();
+        }
+        return sum;
+    }
+
+    /**
+     * @param time simulation moment, which is end threshold for utilization computing
+     * @return number from interval <0,1> which means group utilization based on time its carpenters have worked on
+     * completed orders until this simulation moment.
+     */
+    public double getGroupUtilization(double time) {
+        return this.getCompletedWorkingTime() / (this.carpenters.length * time);
+    }
+
+    /**
+     * @return amount of carpenters in the group
+     */
+    public int getCarpentersCount() {
+        return this.carpenters.length;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("CarpenterGroup[groupID=");

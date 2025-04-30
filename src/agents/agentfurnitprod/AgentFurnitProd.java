@@ -1,6 +1,7 @@
 package agents.agentfurnitprod;
 
 import OSPABA.*;
+import OSPStat.Stat;
 import common.DeskAllocation;
 import common.Order;
 import simulation.*;
@@ -21,6 +22,16 @@ public class AgentFurnitProd extends OSPABA.Agent
 	private final Queue<TechStepMessage> qAssembling;
 	private final Queue<TechStepMessage> qFittings;
 	private DeskAllocation deskManager;
+	// statistics: 'WT' - WaitingTime
+	private final Stat statProcBeginWT = new Stat();
+	private final Stat statStainingWT = new Stat();
+	private final Stat statAssemblingWT = new Stat();
+	private final Stat statFittingsWT = new Stat();
+	// statistics: 'QL' - QueueLength
+	private final Stat statProcBeginQL = new Stat();
+	private final Stat statStainingQL = new Stat();
+	private final Stat statAssemblingQL = new Stat();
+	private final Stat statFittingsQL = new Stat();
 
 	public AgentFurnitProd(int id, Simulation mySim, Agent parent)
 	{
@@ -54,6 +65,16 @@ public class AgentFurnitProd extends OSPABA.Agent
 		this.qAssembling.clear();
 		this.qFittings.clear();
 		this.deskManager.freeAllDesks();
+		// statistics: 'WT' - WaitingTime
+		this.statProcBeginWT.clear();
+		this.statStainingWT.clear();
+		this.statAssemblingWT.clear();
+		this.statFittingsWT.clear();
+		// statistics: 'QL' - QueueLength
+		this.statProcBeginQL.clear();
+		this.statStainingQL.clear();
+		this.statAssemblingQL.clear();
+		this.statFittingsQL.clear();
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"

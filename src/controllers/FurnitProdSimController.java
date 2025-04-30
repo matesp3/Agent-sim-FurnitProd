@@ -69,9 +69,9 @@ public class FurnitProdSimController {
 //            stats.setStainingTime(sim.getStatTimeInStaining());
 //            stats.setAssemblingTime(sim.getStatTimeInAssembling());
 //            stats.setFittingsTime(sim.getStatTimeInFitInstallation());
-//            stats.setUtilizationGroupA(sim.getStatUtilizationA());
-//            stats.setUtilizationGroupB(sim.getStatUtilizationB());
-//            stats.setUtilizationGroupC(sim.getStatUtilizationC());
+            stats.setUtilizationGroupA(sim.getStatUtilizationA());
+            stats.setUtilizationGroupB(sim.getStatUtilizationB());
+            stats.setUtilizationGroupC(sim.getStatUtilizationC());
 //            stats.setOrderTimeInSystem(sim.getStatTimeOrderCompletion());
             this.gui.updateAfterReplication(stats);
     }

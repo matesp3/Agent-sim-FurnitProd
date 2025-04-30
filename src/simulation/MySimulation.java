@@ -14,6 +14,7 @@ import agents.agentgroupc.*;
 import agents.agentfurnitprod.*;
 import common.Furniture;
 import common.Order;
+import results.FurnitProdRepStats;
 import results.FurnitProdState;
 import utils.SeedGen;
 
@@ -40,6 +41,7 @@ public class MySimulation extends OSPABA.Simulation
 	private final Stat avgTimeInFitInstallation = new Stat();
 
 	private final FurnitProdState simStateData = new FurnitProdState(0, 0);
+	private final FurnitProdRepStats repResults = new FurnitProdRepStats(0);
 
 	public MySimulation()
 	{
@@ -87,10 +89,10 @@ public class MySimulation extends OSPABA.Simulation
 		super.replicationFinished();
 		this.avgTimeOrderCompletion.addSample(this.agentEnvironment().getAvgTimeOrderCompletion().mean());
 		this.avgCountOrdersCompleted.addSample(this.agentEnvironment().getOrdersCompleted());
+		this.avgUtilizationA.addSample(this.agentGroupA().getGroupUtilization());
+		this.avgUtilizationB.addSample(this.agentGroupB().getGroupUtilization());
+		this.avgUtilizationC.addSample(this.agentGroupC().getGroupUtilization());
 //		 todo remaining stats updating
-//		this.avgUtilizationA.addSample();
-//		this.avgUtilizationB.addSample();
-//		this.avgUtilizationC.addSample();
 //		this.avgCountNotStarted.addSample();
 //		this.avgCountPartiallyStarted.addSample();
 //		this.avgCountStaining.addSample();
@@ -264,9 +266,37 @@ public AgentGroupC agentGroupC()
 		this.simStateData.carpentersAllocation(amountGroupA, amountGroupB, amountGroupC);
 	}
 
+	public FurnitProdRepStats getReplicationResults() {
+		this.updateRepResults();
+		return this.repResults;
+	}
+
 	public FurnitProdState getSimStateData() {
 		this.updateSimStateModel();
 		return this.simStateData;
+	}
+
+	private void updateRepResults() {
+		this.repResults.setExperimentNum(this.currentReplication());
+
+		this.repResults.setOrderTimeInSystem(avgTimeOrderCompletion);
+//		this.repResults.set... avgCountOrdersCompleted);
+
+		this.repResults.setUtilizationGroupA(this.avgUtilizationA);
+		this.repResults.setUtilizationGroupB(this.avgUtilizationB);
+		this.repResults.setUtilizationGroupC(this.avgUtilizationC);
+		// todo
+//		this.repResults.setUnstartedCount(this.avgCountNotStarted);
+//		this.repResults.setStartedCount(this.avgCountPartiallyStarted);
+//		this.repResults.setStainingCount(this.avgCountStaining);
+//		this.repResults.setAssemblingCount(this.avgCountAssembling);
+//		this.repResults.setFittingsCount(this.avgCountFitInstallation);
+
+//		this.repResults.setUnstartedTime(this.avgTimeInNotStarted);
+//		this.repResults.setStartedTime(this.avgTimeInPartiallyStarted);
+//		this.repResults.setStainingTime(this.avgTimeInStaining);
+//		this.repResults.setAssemblingTime(this.avgTimeInAssembling);
+//		this.repResults.setFittingsTime(this.avgTimeInFitInstallation);
 	}
 
 	private void updateSimStateModel() {
@@ -296,16 +326,20 @@ public AgentGroupC agentGroupC()
 		// stats
 		this.simStateData.setOrderTimeInSystem(this.getStatTimeOrderCompletion().mean());
 
-		this.simStateData.setUnstartedCount(this.getStatCountNotStarted().mean());
-		this.simStateData.setStartedCount(this.getStatCountPartiallyStarted().mean());
-		this.simStateData.setStainingCount(this.getStatCountStaining().mean());
-		this.simStateData.setAssemblingCount(this.getStatCountAssembling().mean());
-		this.simStateData.setFittingsInstCount(this.getStatCountFitInstallation().mean());
+//		this.simStateData.setUnstartedCount(...);
+//		this.simStateData.setStartedCount(...);
+//		this.simStateData.setStainingCount(...);
+//		this.simStateData.setAssemblingCount(...);
+//		this.simStateData.setFittingsInstCount(...);
 
-		this.simStateData.setUnstartedTime(this.getStatTimeInNotStarted().mean());
-		this.simStateData.setStartedTime(this.getStatTimeInPartiallyStarted().mean());
-		this.simStateData.setStainingTime(this.getStatTimeInStaining().mean());
-		this.simStateData.setAssemblingTime(this.getStatTimeInAssembling().mean());
-		this.simStateData.setFittingInstTime(this.getStatTimeInFitInstallation().mean());
+//		this.simStateData.setUnstartedTime(...);
+//		this.simStateData.setStartedTime(...);
+//		this.simStateData.setStainingTime(...);
+//		this.simStateData.setAssemblingTime(...);
+//		this.simStateData.setFittingInstTime(...);
+
+		this.simStateData.setUtilzA(this.agentGroupA().getGroupUtilization()*100);
+		this.simStateData.setUtilzB(this.agentGroupB().getGroupUtilization()*100);
+		this.simStateData.setUtilzC(this.agentGroupC().getGroupUtilization()*100);
 	}
 }
