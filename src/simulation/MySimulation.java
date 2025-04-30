@@ -28,11 +28,11 @@ public class MySimulation extends OSPABA.Simulation
 	private final Stat avgUtilizationB  = new Stat();
 	private final Stat avgUtilizationC  = new Stat();
 
-	private final WStat avgCountUnsOrders = new WStat(this);
-	private final WStat avgCountUnsProducts = new WStat(this);
-	private final WStat avgCountStaining = new WStat(this);
-	private final WStat avgCountAssembling = new WStat(this);
-	private final WStat avgCountFitInstallation = new WStat(this);
+	private final Stat avgCountUnsOrders = new Stat();
+	private final Stat avgCountUnsProducts = new Stat();
+	private final Stat avgCountStaining = new Stat();
+	private final Stat avgCountAssembling = new Stat();
+	private final Stat avgCountFitInstallation = new Stat();
 
 	private final Stat avgTimeInUnsOrders = new Stat();
 	private final Stat avgTimeInUnsProducts = new Stat();

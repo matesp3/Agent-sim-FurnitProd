@@ -27,7 +27,6 @@ public class Formatter {
      * @return formatted confidence interval representation
      */
     public static String getStrCI(double h, double mean, int p, double divisor) {
-        p = Math.max(0, p);
         h /= divisor;
         mean /= divisor;
         return p < 0 ? String.format(("< %f | %f | %f >"), mean-h, mean, mean+h)

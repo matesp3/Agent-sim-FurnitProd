@@ -36,7 +36,12 @@ public class FurnitProdSimController {
             try {
                 this.sim = new MySimulation();// 3600s*8hod*sim_dni [secs] NEW
                 this.sim.registerDelegate(this.gui);
-                this.sim.onReplicationDidFinish(s -> this.afterReplicationUpdate(this.sim));
+                this.sim.onReplicationDidFinish(s ->
+                {
+                    if (this.sim.currentReplication() > 30)
+                        this.gui.updateAfterReplication(sim.getReplicationResults());
+                }
+                );
                 // - - - - -
                 this.setEnabledMaxSpeed(withMaxSpeed);
                 // - - - - -
@@ -52,12 +57,6 @@ public class FurnitProdSimController {
         t.setDaemon(true); // if GUI ends, simulation also
         t.start();
         this.simRunning = true;
-    }
-
-    private void afterReplicationUpdate(MySimulation sim) {
-            if (sim.currentReplication() < 30)
-                return;
-            this.gui.updateAfterReplication(sim.getReplicationResults());
     }
 
     public void terminateSimulation() {

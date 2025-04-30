@@ -24,8 +24,8 @@ public class AgentFurnitProd extends OSPABA.Agent
 	private final Queue<TechStepMessage> qFittings;
 	private DeskAllocation deskManager;
 	// statistics: 'WT' - WaitingTime
-	private final Stat statBtOrderWT = new Stat();
-	private final Stat statBtProductWT = new Stat();
+	private final Stat statUnsOrdersWT = new Stat();
+	private final Stat statUnsProductsWT = new Stat();
 	private final Stat statStainingWT = new Stat();
 	private final Stat statAssemblingWT = new Stat();
 	private final Stat statFittingsWT = new Stat();
@@ -69,8 +69,8 @@ public class AgentFurnitProd extends OSPABA.Agent
 		this.qFittings.clear();
 		this.deskManager.freeAllDesks();
 		// statistics: 'WT' - WaitingTime
-		this.statBtOrderWT.clear();
-		this.statBtProductWT.clear();
+		this.statUnsOrdersWT.clear();
+		this.statUnsProductsWT.clear();
 		this.statStainingWT.clear();
 		this.statAssemblingWT.clear();
 		this.statFittingsWT.clear();
@@ -125,14 +125,14 @@ public class AgentFurnitProd extends OSPABA.Agent
 	 * @return waiting time of unstarted orders
 	 */
 	public Stat getStatUnsOrdersWT() {
-		return statBtOrderWT;
+		return statUnsOrdersWT;
 	}
 
 	/**
 	 * @return waiting time of unstarted products
 	 */
 	public Stat getStatUnsProductsWT() {
-		return statBtProductWT;
+		return statUnsProductsWT;
 	}
 
 	/**

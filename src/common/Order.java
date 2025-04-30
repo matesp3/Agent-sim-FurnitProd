@@ -114,6 +114,13 @@ public class Order {
         }
     }
 
+    /**
+     * @return amount of products, of which order consists
+     */
+    public int getProductsCount() {
+        return this.products.length;
+    }
+
     @Override
     public String toString() {
         return "Order{" +
