@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FurnitProdRepStats extends SimResults {
+    private static final double TIME_UNIT = 3600.0;
     private final List<StatResult.ConfInterval> stats = new ArrayList<>(17);
 
     private StatResult.ConfInterval unsOrdersCount = new StatResult.ConfInterval("Amount of waiting for 'order processing'", -1, -1, "[qty]");
@@ -14,17 +15,17 @@ public class FurnitProdRepStats extends SimResults {
     private StatResult.ConfInterval assemblingCount = new StatResult.ConfInterval("Amount of waiting for 'assembling'", -1, -1, "[qty]");
     private StatResult.ConfInterval fittingsCount = new StatResult.ConfInterval("Amount of waiting for 'fittings inst.'", -1, -1, "[qty]");
 
-    private StatResult.ConfInterval unsOrdersTime = new StatResult.ConfInterval("Waiting time for 'order processing'", -1, -1, "[s]");
-    private StatResult.ConfInterval unsProductsTime = new StatResult.ConfInterval("Waiting time for 'furniture processing'", -1, -1, "[s]");
-    private StatResult.ConfInterval stainingTime = new StatResult.ConfInterval("Waiting time for 'staining'", -1, -1, "[s]");
-    private StatResult.ConfInterval assemblingTime = new StatResult.ConfInterval("Waiting time for 'assembling'", -1, -1, "[s]");
-    private StatResult.ConfInterval fittingsTime = new StatResult.ConfInterval("Waiting time for 'fittings inst.'", -1, -1, "[s]");
+    private StatResult.ConfInterval unsOrdersTime = new StatResult.ConfInterval("Waiting time for 'order processing'", -1, -1, "[h]");
+    private StatResult.ConfInterval unsProductsTime = new StatResult.ConfInterval("Waiting time for 'furniture processing'", -1, -1, "[h]");
+    private StatResult.ConfInterval stainingTime = new StatResult.ConfInterval("Waiting time for 'staining'", -1, -1, "[h]");
+    private StatResult.ConfInterval assemblingTime = new StatResult.ConfInterval("Waiting time for 'assembling'", -1, -1, "[h]");
+    private StatResult.ConfInterval fittingsTime = new StatResult.ConfInterval("Waiting time for 'fittings inst.'", -1, -1, "[h]");
 
     private StatResult.ConfInterval utilizationGroupA = new StatResult.ConfInterval("Utilization of group A:", -1, -1, "%");
     private StatResult.ConfInterval utilizationGroupB = new StatResult.ConfInterval("Utilization of group B:", -1, -1, "%");
     private StatResult.ConfInterval utilizationGroupC = new StatResult.ConfInterval("Utilization of group C:", -1, -1, "%");
 
-    private StatResult.ConfInterval orderTimeInSystem = new StatResult.ConfInterval("Order's time in system", -1, -1, "[s]");
+    private StatResult.ConfInterval orderTimeInSystem = new StatResult.ConfInterval("Order's time in system", -1, -1, "[h]");
     private StatResult.ConfInterval allocatedDesksCount;
 
     public FurnitProdRepStats(long experimentNum) {
@@ -97,7 +98,7 @@ public class FurnitProdRepStats extends SimResults {
     }
 
     public void setUnsOrdersTime(Stat s) {
-        this.unsOrdersTime.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
+        this.unsOrdersTime.setCI(s.mean()/TIME_UNIT, (s.confidenceInterval_95()[1] - s.mean())/TIME_UNIT);
     }
 
     public StatResult.ConfInterval getUnsProductsTime() {
@@ -105,7 +106,7 @@ public class FurnitProdRepStats extends SimResults {
     }
 
     public void setUnsProductsTime(Stat s) {
-        this.unsProductsTime.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
+        this.unsProductsTime.setCI(s.mean()/TIME_UNIT, (s.confidenceInterval_95()[1] - s.mean())/TIME_UNIT);
     }
 
     public StatResult.ConfInterval getAssemblingTime() {
@@ -113,7 +114,7 @@ public class FurnitProdRepStats extends SimResults {
     }
 
     public void setAssemblingTime(Stat s) {
-        this.assemblingTime.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
+        this.assemblingTime.setCI(s.mean()/TIME_UNIT, (s.confidenceInterval_95()[1] - s.mean())/TIME_UNIT);
     }
 
     public StatResult.ConfInterval getStainingTime() {
@@ -121,7 +122,7 @@ public class FurnitProdRepStats extends SimResults {
     }
 
     public void setStainingTime(Stat s) {
-        this.stainingTime.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
+        this.stainingTime.setCI(s.mean()/TIME_UNIT, (s.confidenceInterval_95()[1] - s.mean())/TIME_UNIT);
     }
 
     public StatResult.ConfInterval getFittingsTime() {
@@ -129,7 +130,7 @@ public class FurnitProdRepStats extends SimResults {
     }
 
     public void setFittingsTime(Stat s) {
-        this.fittingsTime.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
+        this.fittingsTime.setCI(s.mean()/TIME_UNIT, (s.confidenceInterval_95()[1] - s.mean())/TIME_UNIT);
     }
 
     public StatResult.ConfInterval getUtilizationGroupA() {
@@ -161,7 +162,7 @@ public class FurnitProdRepStats extends SimResults {
     }
 
     public void setOrderTimeInSystem(Stat s) {
-        this.orderTimeInSystem.setCI(s.mean(), s.confidenceInterval_95()[1] - s.mean());
+        this.orderTimeInSystem.setCI(s.mean()/TIME_UNIT, (s.confidenceInterval_95()[1] - s.mean())/TIME_UNIT);
     }
 
 }

@@ -7,6 +7,7 @@ import common.Order;
 import java.util.*;
 
 public class FurnitProdState extends AfterChangeResults {
+    private static final double TIME_UNIT = 3600.0;
     private final List<CarpenterModel> carpentersA = new ArrayList<>();
     private final List<CarpenterModel> carpentersB = new ArrayList<>();
     private final List<CarpenterModel> carpentersC = new ArrayList<>();
@@ -23,17 +24,17 @@ public class FurnitProdState extends AfterChangeResults {
     private StatResult.Simple assemblingCount = new StatResult.Simple("Amount of waiting for 'assembling'", -1, "[qty]");
     private StatResult.Simple fittingsInstCount = new StatResult.Simple("Amount of waiting for 'fittings inst.'", -1, "[qty]");
 
-    private StatResult.Simple unsOrdersTime = new StatResult.Simple("Waiting time for 'order processing'", -1, "[s]");
-    private StatResult.Simple unsProductsTime = new StatResult.Simple("Waiting time for 'furniture processing'", -1, "[s]");
-    private StatResult.Simple stainingTime = new StatResult.Simple("Waiting time for 'staining'", -1, "[s]");
-    private StatResult.Simple assemblingTime = new StatResult.Simple("Waiting time for 'assembling'", -1, "[s]");
-    private StatResult.Simple fittingInstTime = new StatResult.Simple("Waiting time for 'fittings inst.'", -1, "[s]");
+    private StatResult.Simple unsOrdersTime = new StatResult.Simple("Waiting time for 'order processing'", -1, "[h]");
+    private StatResult.Simple unsProductsTime = new StatResult.Simple("Waiting time for 'furniture processing'", -1, "[h]");
+    private StatResult.Simple stainingTime = new StatResult.Simple("Waiting time for 'staining'", -1, "[h]");
+    private StatResult.Simple assemblingTime = new StatResult.Simple("Waiting time for 'assembling'", -1, "[h]");
+    private StatResult.Simple fittingInstTime = new StatResult.Simple("Waiting time for 'fittings inst.'", -1, "[h]");
 
     private StatResult.Simple utilzA = new StatResult.Simple("Utilization of group A:", -1, "%");
     private StatResult.Simple utilzB = new StatResult.Simple("Utilization of group B:", -1, "%");
     private StatResult.Simple utilzC = new StatResult.Simple("Utilization of group C:", -1, "%");
 
-    private StatResult.Simple orderTimeInSystem = new StatResult.Simple("Order's time in system", -1, "[s]");
+    private StatResult.Simple orderTimeInSystem = new StatResult.Simple("Order's time in system", -1, "[h]");
 
     public FurnitProdState(long experimentNum, double simTime) {
         super(experimentNum, simTime);
@@ -74,7 +75,7 @@ public class FurnitProdState extends AfterChangeResults {
     }
 
     public void setUnsProductsTime(double unsProductsTime) {
-        this.unsProductsTime.setValue(unsProductsTime);
+        this.unsProductsTime.setValue(unsProductsTime/TIME_UNIT);
     }
 
     public StatResult.Simple getUnsOrdersCount() {
@@ -122,7 +123,7 @@ public class FurnitProdState extends AfterChangeResults {
     }
 
     public void setUnsOrdersTime(double unsOrdersTime) {
-        this.unsOrdersTime.setValue(unsOrdersTime);
+        this.unsOrdersTime.setValue(unsOrdersTime/TIME_UNIT);
     }
 
     public StatResult.Simple getAssemblingTime() {
@@ -130,7 +131,7 @@ public class FurnitProdState extends AfterChangeResults {
     }
 
     public void setAssemblingTime(double assemblingTime) {
-        this.assemblingTime.setValue(assemblingTime);
+        this.assemblingTime.setValue(assemblingTime/TIME_UNIT);
     }
 
     public StatResult.Simple getStainingTime() {
@@ -138,7 +139,7 @@ public class FurnitProdState extends AfterChangeResults {
     }
 
     public void setStainingTime(double stainingTime) {
-        this.stainingTime.setValue(stainingTime);
+        this.stainingTime.setValue(stainingTime/TIME_UNIT);
     }
 
     public StatResult.Simple getFittingInstTime() {
@@ -146,7 +147,7 @@ public class FurnitProdState extends AfterChangeResults {
     }
 
     public void setFittingInstTime(double fittingInstTime) {
-        this.fittingInstTime.setValue(fittingInstTime);
+        this.fittingInstTime.setValue(fittingInstTime/TIME_UNIT);
     }
 
     /**
@@ -196,7 +197,7 @@ public class FurnitProdState extends AfterChangeResults {
     }
 
     public void setOrderTimeInSystem(double orderTimeInSystem) {
-        this.orderTimeInSystem.setValue(orderTimeInSystem);
+        this.orderTimeInSystem.setValue(orderTimeInSystem/TIME_UNIT);
     }
 
     public List<CarpenterModel> getCarpentersA() {

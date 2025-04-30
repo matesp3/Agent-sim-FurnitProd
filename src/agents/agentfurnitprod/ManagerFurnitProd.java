@@ -179,7 +179,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 			this.sendAssignRequestForOrder(o);
 		}
 		else { // this new order must wait as a whole, bcs there's no place where some product can be created
-			this.myAgent().getQUnstarted().add(o);
+			this.addToQUnstartedOrders(o);
 		}
 	}
 
@@ -276,13 +276,13 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	private void processAssignedCarpenterForNewFurniture(AssignMessage msg) {
 		Carpenter carpenter = msg.getCarpenter();
 		Order order = msg.getOrder();
-		boolean wasOrderUnstarted = msg.getOrder().isUnstarted();
-		boolean isOrderEnqueued = wasOrderUnstarted ? order == this.myAgent().getQUnstarted().peek() : true;
+		final boolean wasOrderUnstarted = msg.getOrder().isUnstarted();
+		final boolean isOrderEnqueued = !wasOrderUnstarted || order == this.myAgent().getQUnstarted().peek();
 		if (carpenter == null) {
 		// - - - - - - CARPENTER WASN'T ASSIGNED
 			if (!isOrderEnqueued) {
 				if (wasOrderUnstarted)
-					this.myAgent().getQUnstarted().add(order);
+					this.addToQUnstartedOrders(order);
 //				else // cannot happen, bcs if it's not unstarted, then it must be enqueued in qStarted
 			}
 			return;
@@ -294,16 +294,25 @@ public class ManagerFurnitProd extends OSPABA.Manager
 
 		// - - - - - - QUEUE UPDATES
 		if (order.hasUnassignedProduct()) { // after assigning next one
-			if (!isOrderEnqueued)
+			if (isOrderEnqueued) {
+				if (wasOrderUnstarted) { // moving from queue to queue
+					this.myAgent().getQStarted().add( this.pollFromQUnstartedOrders() );
+				}
+			}
+			else { // direct moving to next queue
 				this.myAgent().getQStarted().add(order);
+				this.myAgent().getStatUnsOrdersWT().addSample(this.mySim().currentTime() - order.getCreatedAt()); // 0
+			}
 		}
 		else { // nothing to assign from current order -> need to dequeue it, if it was previously enqueued
 			if (isOrderEnqueued) {
 				if (wasOrderUnstarted)
-					this.myAgent().getQUnstarted().remove();
+					this.pollFromQUnstartedOrders(); // not adding to qStarted, bcs there's nothing to assign
 				else
 					this.myAgent().getQStarted().remove();
 			}
+			else
+				this.myAgent().getStatUnsOrdersWT().addSample(this.mySim().currentTime() - order.getCreatedAt()); // 0
 		}
 		// - - - - - - NEXT WORK PLANNING
 		if (this.myAgent().getDeskManager().hasFreeDesk()) {
@@ -421,8 +430,9 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		product.setDeskID(this.myAgent().getDeskManager().occupyDesk(product));
 		product.setStep(Furniture.TechStep.WOOD_PREPARATION);
 		product.setProcessingBT(this.mySim().currentTime());
-		if (tsMsg.getCarpenter().isInStorage())
+		if (tsMsg.getCarpenter().isInStorage()) {
 			this.sendTechStepRequest(Mc.woodPrep, Id.agentGroupA, tsMsg);
+		}
 		else {
 			this.sendStorageTransferRequest(tsMsg);
 		}
@@ -439,7 +449,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 			throw new UnsupportedOperationException("Not implemented yet");
 		}
 		else { // no fittings montage work -> try to start creating new furniture product
-			if (this.myAgent().getDeskManager().hasFreeDesk() && this.getOrderToProcess() != null) {
+			if (this.myAgent().getDeskManager().hasFreeDesk()) {
 				Furniture f = this.getUnstartedProduct();
 				if (f != null) {
 					this.startCreatingNextFurniture(tsMsg, f);
@@ -469,7 +479,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 				this.myAgent().getQStarted().remove(); // removes the oldest order
 		}
 		else { // nothing in qStarted, trying to get something from qUnstarted
-			o = this.myAgent().getQUnstarted().poll(); // always removed from qUnstarted, because it is not unstarted from now
+			o = this.pollFromQUnstartedOrders(); // always removed from qUnstarted, because it is not unstarted from now
 			if (o != null) {
 				f = o.assignUnstartedProduct();
 				this.updateWStatUnsProductsCount(-1);
@@ -480,15 +490,15 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		return f;
 	}
 
-	/**
-	 * WARNING!!! THIS METHOD DOES NOT MODIFY QUEUES qUnstarted and qStarted!
-	 * @return product instance of the oldest order (order with the highest priority to process) or {@code null}.
-	 */
-	private Order getOrderToProcess() {
-		Order o = this.myAgent().getQStarted().peek(); // here are the oldest orders with some unstarted products
-		return (o != null) ? o : this.myAgent().getQUnstarted().peek();
-	}
-
+//	/**
+//	 * WARNING!!! THIS METHOD DOES NOT MODIFY QUEUES qUnstarted and qStarted!
+//	 * @return product instance of the oldest order (order with the highest priority to process) or {@code null}.
+//	 */
+//	private Order getOrderToProcess() {
+//		Order o = this.myAgent().getQStarted().peek(); // here are the oldest orders with some unstarted products
+//		return (o != null) ? o : this.myAgent().getQUnstarted().peek();
+//	}
+//	-	-	-	-	-	-	-	S T A T S   M A N A G E M E N T 	-	-	-	-	-	-	-	-
 	/**
 	 * Should be called in moment of next technological step start.
 	 * It adds new sample to stat and invalidates product's waitingBT.
@@ -508,4 +518,23 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		this.unsProductsCount += change;
 		this.myAgent().getStatUnsProductsQL().addSample(this.unsProductsCount);
 	}
+	// qUnstarted
+	private void addToQUnstartedOrders(Order o) {
+		this.myAgent().getQUnstarted().add(o);
+		this.myAgent().getStatUnsOrdersQL().addSample( this.myAgent().getQUnstarted().size() );
+	}
+	/**
+	 * Polls Order with the highest priority and updates wstat of queue length and stat of waiting in queue.
+	 * This method is recommended to use instead of 'remove'.
+	 * @return polled order or {@code null}, if empty
+	 */
+	private Order pollFromQUnstartedOrders() {
+		Order o = this.myAgent().getQUnstarted().poll();
+		if (o != null) {
+			this.myAgent().getStatUnsOrdersQL().addSample( this.myAgent().getQUnstarted().size() );
+			this.myAgent().getStatUnsOrdersWT().addSample( this.mySim().currentTime() - o.getCreatedAt() );
+		}
+		return o;
+	}
+
 }
