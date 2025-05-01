@@ -277,41 +277,40 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		Carpenter carpenter = msg.getCarpenter();
 		Order order = msg.getOrder();
 		final boolean wasOrderUnstarted = msg.getOrder().isUnstarted();
-		final boolean isOrderEnqueued = !wasOrderUnstarted || order == this.myAgent().getQUnstarted().peek();
+		final boolean wasOrderEnqueued = !wasOrderUnstarted || order == this.myAgent().getQUnstarted().peek(); // was new if (wasOrderEnqueued=false)
 		if (carpenter == null) {
 		// - - - - - - CARPENTER WASN'T ASSIGNED
-			if (!isOrderEnqueued) {
-				if (wasOrderUnstarted)
-					this.addToQUnstartedOrders(order);
-//				else // cannot happen, bcs if it's not unstarted, then it must be enqueued in qStarted
+			if (!wasOrderEnqueued) {
+				this.addToQUnstartedOrders(order);
 			}
 			return;
 		}
 		// - - - - - - START WORKING
 		Furniture product = order.assignUnstartedProduct(); // todo mozno bude treba kontrolovat ci skutocne priradilo nejaky produkt. Ak nie, uvolnim znova carpentera
 		this.updateWStatUnsProductsCount(-1);
+		this.updateStatUnsProductsWaitTime(product, this.myAgent().getStatUnsProductsWT());
 		this.startCreatingNextFurniture(carpenter, product);
 
 		// - - - - - - QUEUE UPDATES
 		if (order.hasUnassignedProduct()) { // after assigning next one
-			if (isOrderEnqueued) {
+			if (wasOrderEnqueued) {
 				if (wasOrderUnstarted) { // moving from queue to queue
 					this.myAgent().getQStarted().add( this.pollFromQUnstartedOrders() );
 				}
 			}
-			else { // direct moving to next queue
+			else { // order was new, direct moving to next queue
 				this.myAgent().getQStarted().add(order);
 				this.myAgent().getStatUnsOrdersWT().addSample(this.mySim().currentTime() - order.getCreatedAt()); // 0
 			}
 		}
 		else { // nothing to assign from current order -> need to dequeue it, if it was previously enqueued
-			if (isOrderEnqueued) {
-				if (wasOrderUnstarted)
+			if (wasOrderEnqueued) {
+				if (wasOrderUnstarted) // had only 1 product and qStarted must have been empty
 					this.pollFromQUnstartedOrders(); // not adding to qStarted, bcs there's nothing to assign
 				else
 					this.myAgent().getQStarted().remove();
 			}
-			else
+			else // new order with just one product
 				this.myAgent().getStatUnsOrdersWT().addSample(this.mySim().currentTime() - order.getCreatedAt()); // 0
 		}
 		// - - - - - - NEXT WORK PLANNING
@@ -351,7 +350,6 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	 * @param order is going to be processed by potentially assigned carpenter of group {@code Id.agentGroupA}
 	 */
 	private void sendAssignRequestForOrder(Order order) {
-		// 1 instance of assignMessage is enough, bcs it's used only within messages, which are executed in the current time
 		AssignMessage assignMsg = (AssignMessage) this.assignMsgPattern.createCopy();
 		assignMsg.setCode(Mc.assignCarpenterA);
 		assignMsg.setAddressee(Id.agentGroupA);
@@ -475,6 +473,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		if (o != null) {
 			f = o.assignUnstartedProduct();
 			this.updateWStatUnsProductsCount(-1);
+			this.updateStatUnsProductsWaitTime(f, this.myAgent().getStatUnsProductsWT());
 			if (!o.hasUnassignedProduct()) // this was last unstarted product in queue
 				this.myAgent().getQStarted().remove(); // removes the oldest order
 		}
@@ -483,6 +482,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 			if (o != null) {
 				f = o.assignUnstartedProduct();
 				this.updateWStatUnsProductsCount(-1);
+				this.updateStatUnsProductsWaitTime(f, this.myAgent().getStatUnsProductsWT());
 				if (o.hasUnassignedProduct())
 					this.myAgent().getQStarted().add(o); // something remains in order unstarted, so it is enqueued for remaining products
 			}
@@ -505,7 +505,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	 * @param f product, whose waitingBT is observed
 	 * @param stat stat, to which new sample will be added
 	 */
-	private void addToWaitingStat(Furniture f, Stat stat) {
+	private void updateStatUnsProductsWaitTime(Furniture f, Stat stat) {
 		stat.addSample(this.mySim().currentTime() - f.getWaitingBT());
 		f.setWaitingBT(-1);
 	}
