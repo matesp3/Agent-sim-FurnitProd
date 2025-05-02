@@ -46,13 +46,23 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	//meta! sender="AgentTransfer", id="35", type="Response"
 	public void processDeskTransfer(MessageForm message)
 	{
+		TechStepMessage tsMsg = (TechStepMessage) message;
+		tsMsg.getCarpenter().setCurrentDeskID(tsMsg.getProductToProcess().getDeskID());
+
+		switch (tsMsg.getProductToProcess().getStep()) {
+			case STAINING			-> this.sendTechStepRequest(Mc.stainingAndPaintcoat, Id.agentGroupC, tsMsg);
+			case ASSEMBLING			-> this.sendTechStepRequest(Mc.assembling, Id.agentGroupB, tsMsg);
+			case FIT_INSTALLATION	-> this.sendTechStepRequest(Mc.fittingsInstallation,
+					tsMsg.getCarpenter().getGroup() == Carpenter.GROUP.A ? Id.agentGroupA : Id.agentGroupC, tsMsg);
+			default					-> throw new RuntimeException("Invalid tech step or null");
+		}
 	}
 
 	//meta! sender="AgentGroupA", id="57", type="Response"
 	public void processWoodPrep(MessageForm message)
 	{
 		TechStepMessage tsMsg = (TechStepMessage) message;
-		tsMsg.getProduct().setStep(CARVING);
+		tsMsg.getProductToProcess().setStep(CARVING);
 		this.sendStorageTransferRequest(tsMsg);
 	}
 
@@ -61,10 +71,10 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	{
 		TechStepMessage tsMsg = (TechStepMessage) message;
 		tsMsg.getCarpenter().setCurrentDeskID(
-				tsMsg.getProduct().getStep() == WOOD_PREPARATION ? Carpenter.IN_STORAGE : tsMsg.getProduct().getDeskID()
+				tsMsg.getProductToProcess().getStep() == WOOD_PREPARATION ? Carpenter.IN_STORAGE : tsMsg.getProductToProcess().getDeskID()
 		); // location after storage transfer is IN_STORAGE just for WOOD_PREP step, because other steps are done on desk places
 
-		switch (tsMsg.getProduct().getStep()) {
+		switch (tsMsg.getProductToProcess().getStep()) {
 			case WOOD_PREPARATION:
 				this.sendTechStepRequest(Mc.woodPrep, Id.agentGroupA, tsMsg);
 				break;
@@ -113,11 +123,25 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	public void processAssignCarpenterC(MessageForm message)
 	{
 		AssignMessage asgMsg = (AssignMessage) message;
+		Furniture f = asgMsg.getProduct();
 		if (asgMsg.getCarpenter() == null) {
-
+		// ENQUEUE
+			f.setWaitingBT(this.mySim().currentTime());
+			this.myAgent().getQStaining().add(f);
+			this.myAgent().getStatStainingQL().addSample(this.myAgent().getQStaining().size());
 			return;
 		}
-		// todo, allocate C and check his position -> deskTransfer or staining BT
+		// START WORK
+		asgMsg.getCarpenter().receiveProduct(f, this.mySim().currentTime());
+		if (asgMsg.getCarpenter().getCurrentDeskID() == f.getDeskID()) { // same desk
+			this.sendTechStepRequest(Mc.stainingAndPaintcoat, Id.agentGroupC, asgMsg.getCarpenter());
+		}
+		else if (asgMsg.getCarpenter().getCurrentDeskID() != Carpenter.IN_STORAGE) { // other desk
+			this.sendDeskTransferRequest(asgMsg.getCarpenter());
+		}
+		else { // he's in storage - hasn't worked yet
+			this.sendStorageTransferRequest(asgMsg.getCarpenter());
+		}
 	}
 
 	//meta! sender="AgentGroupC", id="90", type="Response"
@@ -164,9 +188,9 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		Furniture f = tsMsg.getCarpenter().returnProduct(this.mySim().currentTime());
 		f.setStep(STAINING);
 		this.sendAssignRequestForProduct(Mc.assignCarpenterC, Id.agentGroupC, f);
+
 		// PLAN NEXT JOB FOR CARPENTER 'A'
 		tryAssignNextWorkForCarpenterA(tsMsg);
-		this.myAgent().getDeskManager().setDeskFree(f.getDeskID(), f);
 	}
 
 	//meta! sender="AgentModel", id="158", type="Notice"
@@ -380,7 +404,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	}
 
 	/**
-	 * Creates new request for storage transfer with assigned {@code carpenter}
+	 * Creates new request for storage transfer with specified {@code carpenter} and assigned furniture product
 	 * @param carpenter
 	 */
 	private void sendStorageTransferRequest(Carpenter carpenter) {
@@ -393,7 +417,28 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	 * Creates new request for storage transfer with already assigned {@code carpenter}
 	 */
 	private void sendStorageTransferRequest(TechStepMessage tsMsg) {
+		tsMsg.getCarpenter().setCurrentDeskID(Carpenter.TRANSFER_STORAGE);
 		tsMsg.setCode(Mc.storageTransfer);
+		tsMsg.setAddressee(Id.agentTransfer);
+		this.request(tsMsg);
+	}
+
+	/**
+	 * Creates new request for desks transfer with specified {@code carpenter} and assigned furniture product
+	 * @param carpenter
+	 */
+	private void sendDeskTransferRequest(Carpenter carpenter) {
+		TechStepMessage tsMsg = (TechStepMessage) this.stepMsgPattern.createCopy();
+		tsMsg.setCarpenter(carpenter);
+		this.sendDeskTransferRequest(tsMsg);
+	}
+
+	/**
+	 * Creates new request for desks transfer with already assigned {@code carpenter}
+	 */
+	private void sendDeskTransferRequest(TechStepMessage tsMsg) {
+		tsMsg.getCarpenter().setCurrentDeskID(Carpenter.TRANSFER_DESKS);
+		tsMsg.setCode(Mc.deskTransfer);
 		tsMsg.setAddressee(Id.agentTransfer);
 		this.request(tsMsg);
 	}
@@ -424,7 +469,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	}
 
 	/**
-	 * Carpenter must be already set in {@code tsMsg}
+	 * Carpenter A must be already set in {@code tsMsg}
 	 * @param tsMsg
 	 * @param product
 	 */

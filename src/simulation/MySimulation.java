@@ -317,12 +317,12 @@ public AgentGroupC agentGroupC()
 				if (f.isUnstarted()) // order processing started, but some products are still unstarted
 					this.simStateData.addToqStarted(f);
 		}
-		for (TechStepMessage ts : this.agentFurnitProd().getQStaining())
-			this.simStateData.addToqStaining(ts.getProduct());
-		for (TechStepMessage ts : this.agentFurnitProd().getQAssembling())
-			this.simStateData.addToqAssembling(ts.getProduct());
-		for (TechStepMessage ts : this.agentFurnitProd().getQFittings())
-			this.simStateData.addToqFittings(ts.getProduct());
+		for (Furniture f : this.agentFurnitProd().getQStaining())
+			this.simStateData.addToqStaining(f);
+		for (Furniture f : this.agentFurnitProd().getQAssembling())
+			this.simStateData.addToqAssembling(f);
+		for (Furniture f : this.agentFurnitProd().getQFittings())
+			this.simStateData.addToqFittings(f);
 		// stats
 		this.simStateData.setOrderTimeInSystem(this.getStatTimeOrderCompletion().mean());
 

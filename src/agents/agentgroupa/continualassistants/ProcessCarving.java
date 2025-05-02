@@ -7,7 +7,6 @@ import OSPRNG.RNG;
 import OSPRNG.UniformContinuousRNG;
 import simulation.*;
 import agents.agentgroupa.*;
-import OSPABA.Process;
 import utils.SeedGen;
 
 //meta! id="67"
@@ -36,10 +35,10 @@ public class ProcessCarving extends OSPABA.Process
 	public void processStart(MessageForm message)
 	{
 		TechStepMessage tsMsg = (TechStepMessage) message;
-		tsMsg.getProduct().setStepBT(this.mySim().currentTime());
+		tsMsg.getProductToProcess().setStepBT(this.mySim().currentTime());
 		tsMsg.setCode(Mc.carving);
-		switch (tsMsg.getProduct().getProductType()) {
-			case TABLE		-> this.hold((Double) this.rndCarvingTable.sample(), tsMsg);
+		switch (tsMsg.getProductToProcess().getProductType()) {
+			case TABLE		-> this.hold((double) this.rndCarvingTable.sample(), tsMsg);
 			case CHAIR		-> this.hold(this.rndCarvingChair.sample(), tsMsg);
 			case WARDROBE	-> this.hold(this.rndCarvingWardrobe.sample(), tsMsg);
 		}
@@ -52,7 +51,7 @@ public class ProcessCarving extends OSPABA.Process
 		{
 			case Mc.carving -> {
 				TechStepMessage tsMsg = (TechStepMessage) message;
-				tsMsg.getProduct().setStepET(this.mySim().currentTime());
+				tsMsg.getProductToProcess().setStepET(this.mySim().currentTime());
 				this.assistantFinished(tsMsg);
 			}
 		}

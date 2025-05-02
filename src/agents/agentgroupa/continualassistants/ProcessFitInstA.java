@@ -2,17 +2,14 @@ package agents.agentgroupa.continualassistants;
 
 import OSPABA.*;
 import OSPRNG.RNG;
-import OSPRNG.UniformContinuousRNG;
 import contracts.IFittingsInstaller;
 import simulation.*;
 import agents.agentgroupa.*;
-import OSPABA.Process;
-import utils.SeedGen;
 
 //meta! id="70"
 public class ProcessFitInstA extends OSPABA.Process implements IFittingsInstaller
 {
-	private RNG<Double> rndFitInstA = new UniformContinuousRNG(15.0, 25.0, SeedGen.getSeedRNG());
+	private RNG<Double> rndFitInstA = null;
 
 	public ProcessFitInstA(int id, Simulation mySim, CommonAgent myAgent)
 	{
@@ -30,7 +27,7 @@ public class ProcessFitInstA extends OSPABA.Process implements IFittingsInstalle
 	public void processStart(MessageForm message)
 	{
 		TechStepMessage tsMsg = (TechStepMessage) message;
-		tsMsg.getProduct().setStepBT(this.mySim().currentTime());
+		tsMsg.getProductToProcess().setStepBT(this.mySim().currentTime());
 		tsMsg.setCode(Mc.fittingsInstallation);
 		this.hold(this.rndFitInstA.sample(), tsMsg);
 	}
@@ -42,7 +39,7 @@ public class ProcessFitInstA extends OSPABA.Process implements IFittingsInstalle
 		{
 			case Mc.fittingsInstallation -> {
 				TechStepMessage tsMsg = (TechStepMessage) message;
-				tsMsg.getProduct().setStepET(this.mySim().currentTime());
+				tsMsg.getProductToProcess().setStepET(this.mySim().currentTime());
 				this.assistantFinished(tsMsg);
 			}
 		}

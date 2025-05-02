@@ -68,10 +68,10 @@ public class DeskAllocation {
     public static void main(String[] args) {
         Order order = new Order(1, 1586522);
         DeskAllocation manager = new DeskAllocation(5);
-        manager.occupyDesk(new Furniture(order, "1-A", Furniture.Type.CHAIR));
-        Furniture o = new Furniture(order, "1-B", Furniture.Type.TABLE);
+        manager.occupyDesk(new Furniture(order, "1-A", Furniture.Type.CHAIR, true));
+        Furniture o = new Furniture(order, "1-B", Furniture.Type.TABLE, true);
         int deskID = manager.occupyDesk(o);
-        manager.occupyDesk(new Furniture(order, "1-C", Furniture.Type.WARDROBE));
+        manager.occupyDesk(new Furniture(order, "1-C", Furniture.Type.WARDROBE, true));
         System.out.println(manager);
         System.out.println("Removing "+o+" from desk["+deskID+"]");
         manager.setDeskFree(deskID, o);

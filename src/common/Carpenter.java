@@ -8,6 +8,8 @@ public class Carpenter {
         A,B,C;
     }
     public static final int IN_STORAGE = -1;
+    public static final int TRANSFER_STORAGE = -2;
+    public static final int TRANSFER_DESKS = -3;
 
     private final int carpenterId;
     private final GROUP group;
@@ -94,14 +96,15 @@ public class Carpenter {
      * @throws RuntimeException if carpenter is working right now or was not working at all
      */
     public double getLastWorkDuration() throws RuntimeException {
-        if (this.isWorking() || this.deskID == IN_STORAGE)
+        if (this.isWorking() || this.deskID < 0)
             throw new RuntimeException("Carpenter is working (hasn't returned product yet) or is located in the storage");
         return this.productProcessingET - this.productProcessingBT;
     }
 
     /**
      * Sets new position of this carpenter.
-     * @param deskID deskID of assigned product or {@code Carpenter.IN_STORAGE} constant if he is located in storage
+     * @param deskID deskID of assigned product or {@code Carpenter.IN_STORAGE} constant if he is located in storage.
+     *               If he is moving, it can be set one of these options: {@code Carpenter.TRANSFER_STORAGE}, {@code Carpenter.TRANSFER_DESKS}
      */
     public void setCurrentDeskID(int deskID) {
         this.deskID = deskID;
@@ -123,7 +126,7 @@ public class Carpenter {
 
     /**
      * @return ID of desk where carpenter is standing right now or {@code Carpenter.IN_STORAGE} value if he is in wood
-     * storage.
+     * storage. If he's currently moving, one of these options is present:{@code Carpenter.TRANSFER_STORAGE}, {@code Carpenter.TRANSFER_DESKS}
      */
     public int getCurrentDeskID() {
         return this.deskID;
@@ -192,7 +195,7 @@ public class Carpenter {
     public static void main(String[] args) {
         Carpenter carpenter = new Carpenter(GROUP.A, 1);
         Order order = new Order(1, 2500);
-        Furniture product = new Furniture(order, (order.getOrderID()+"-"+1), Furniture.Type.CHAIR);
+        Furniture product = new Furniture(order, (order.getOrderID()+"-"+1), Furniture.Type.CHAIR, true);
         product.setDeskID(1);
         carpenter.setCurrentDeskID(1);
         System.out.println(carpenter.getGroup());

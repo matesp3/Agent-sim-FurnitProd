@@ -4,6 +4,7 @@ import OSPABA.*;
 import OSPStat.Stat;
 import OSPStat.WStat;
 import common.DeskAllocation;
+import common.Furniture;
 import common.Order;
 import simulation.*;
 import utils.DoubleComp;
@@ -19,9 +20,9 @@ public class AgentFurnitProd extends OSPABA.Agent
 {
 	private final Queue<Order> qUnstarted;
 	private final Queue<Order> qStarted; // at least one furniture product is being processed
-	private final Queue<TechStepMessage> qStaining;
-	private final Queue<TechStepMessage> qAssembling;
-	private final Queue<TechStepMessage> qFittings;
+	private final Queue<Furniture> qStaining;
+	private final Queue<Furniture> qAssembling;
+	private final Queue<Furniture> qFittings;
 	private DeskAllocation deskManager;
 	// statistics: 'WT' - WaitingTime
 	private final Stat statUnsOrdersWT = new Stat();
@@ -46,14 +47,14 @@ public class AgentFurnitProd extends OSPABA.Agent
 		this.qUnstarted = new PriorityBlockingQueue<>(50, orderCmp);
 		this.qStarted = new PriorityBlockingQueue<>(50, orderCmp);
 
-		// stepMsgCmp is used for products that have some tech step already executed -> in case of orderCreation equality, prev step ET is compared
-		Comparator<TechStepMessage> stepMsgCmp = (o1, o2) -> {
-            int cmp = DoubleComp.compare(o1.getProduct().getMyOrderCreatedAt(), o2.getProduct().getMyOrderCreatedAt());
-            return cmp != 0 ? cmp : DoubleComp.compare(o1.getProduct().getStepET(), o2.getProduct().getStepET());
+		// furnitureCmp is used for products that have some tech step already executed -> in case of orderCreation equality, prev step ET is compared
+		Comparator<Furniture> furnitureCmp = (f1, f2) -> {
+            int cmp = DoubleComp.compare(f1.getMyOrderCreatedAt(), f2.getMyOrderCreatedAt());
+            return cmp != 0 ? cmp : DoubleComp.compare(f1.getStepET(), f2.getStepET());
         };
-		this.qStaining = new PriorityQueue<>(stepMsgCmp);
-		this.qAssembling = new PriorityQueue<>(stepMsgCmp);
-		this.qFittings = new PriorityQueue<>(stepMsgCmp);
+		this.qStaining = new PriorityBlockingQueue<>(50, furnitureCmp);
+		this.qAssembling = new PriorityQueue<>(50, furnitureCmp);
+		this.qFittings = new PriorityQueue<>(50, furnitureCmp);
 		this.deskManager = null;
 	}
 
@@ -109,15 +110,15 @@ public class AgentFurnitProd extends OSPABA.Agent
 		return this.qStarted;
 	}
 
-	public Queue<TechStepMessage> getQStaining() {
+	public Queue<Furniture> getQStaining() {
 		return this.qStaining;
 	}
 
-	public Queue<TechStepMessage> getQAssembling() {
+	public Queue<Furniture> getQAssembling() {
 		return this.qAssembling;
 	}
 
-	public Queue<TechStepMessage> getQFittings() {
+	public Queue<Furniture> getQFittings() {
 		return this.qFittings;
 	}
 

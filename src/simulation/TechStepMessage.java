@@ -44,7 +44,7 @@ public class TechStepMessage extends OSPABA.MessageForm {
     /**
      * @return furniture product that is assigned to the carpenter that is part of this message's instance
      */
-    public Furniture getProduct() {
+    public Furniture getProductToProcess() {
         return this.carpenter.getAssignedProduct();
     }
 }

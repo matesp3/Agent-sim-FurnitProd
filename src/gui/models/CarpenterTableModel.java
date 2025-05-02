@@ -1,5 +1,6 @@
 package gui.models;
 
+import common.Carpenter;
 import results.CarpenterModel;
 import utils.Formatter;
 
@@ -107,7 +108,12 @@ public class CarpenterTableModel extends AbstractTableModel {
         if (columnIndex == 2)
             return c.isWorking();
         if (columnIndex == 3)
-            return c.getDeskID() < 0 ? "In Storage" : c.getDeskID();
+            return switch (c.getDeskID()) {
+                case Carpenter.IN_STORAGE -> "In Storage";
+                case Carpenter.TRANSFER_STORAGE-> "Transfer-Storage";
+                case Carpenter.TRANSFER_DESKS -> "Storage-Desks";
+                default -> c.getDeskID();
+            };
         if (columnIndex == 4)
             return c.getAssignedProductID() == null ? "Not assigned" : c.getAssignedProductID();
         if (columnIndex == 5)
