@@ -3,7 +3,6 @@ package simulation;
 import OSPRNG.RNG;
 import OSPRNG.UniformContinuousRNG;
 import OSPStat.Stat;
-import OSPStat.WStat;
 import agents.agentenvironment.continualassistants.SchedulerOrderArrival;
 import agents.agenttransfer.*;
 import agents.agentmodel.*;
@@ -21,6 +20,14 @@ import utils.SeedGen;
 
 public class MySimulation extends OSPABA.Simulation
 {
+	public enum TIME_UNIT {
+		SECONDS(1), MINUTES(60), HOURS(3600), DAYS(3600*8);
+		private final double secs;
+
+		TIME_UNIT(int secs) {
+			this.secs = secs;
+		}
+	}
 	private final Stat avgTimeOrderCompletion = new Stat();
 	private final Stat avgCountOrdersCompleted = new Stat();
 
@@ -43,6 +50,8 @@ public class MySimulation extends OSPABA.Simulation
 	private final FurnitProdState simStateData = new FurnitProdState(0, 0);
 	private final FurnitProdRepStats repResults = new FurnitProdRepStats(0);
 
+	private TIME_UNIT timeUnit = TIME_UNIT.HOURS;
+
 	public MySimulation()
 	{
 		init();
@@ -51,6 +60,14 @@ public class MySimulation extends OSPABA.Simulation
 		this.agentGroupA().setFitInstGenerator(rndFitInstDur);
 		this.agentGroupC().setFitInstGenerator(rndFitInstDur);
 
+	}
+
+	public TIME_UNIT getTimeUnit() {
+		return this.timeUnit;
+	}
+
+	public void setTimeUnit(TIME_UNIT timeUnit) {
+		this.timeUnit = timeUnit;
 	}
 
 	@Override
@@ -92,17 +109,18 @@ public class MySimulation extends OSPABA.Simulation
 		this.avgUtilizationA.addSample(this.agentGroupA().getGroupUtilization());
 		this.avgUtilizationB.addSample(this.agentGroupB().getGroupUtilization());
 		this.avgUtilizationC.addSample(this.agentGroupC().getGroupUtilization());
+
 		this.avgCountUnsOrders.addSample(this.agentFurnitProd().getStatUnsOrdersQL().mean());
 		this.avgCountUnsProducts.addSample(this.agentFurnitProd().getStatUnsProductsQL().mean());
-//		 todo remaining stats updating
-//		this.avgCountStaining.addSample();
-//		this.avgCountAssembling.addSample();
-//		this.avgCountFitInstallation.addSample();
+		this.avgCountStaining.addSample(this.agentFurnitProd().getStatStainingQL().mean());
+		this.avgCountAssembling.addSample(this.agentFurnitProd().getStatAssemblingQL().mean());
+		this.avgCountFitInstallation.addSample(this.agentFurnitProd().getStatFittingsQL().mean());
+
 		this.avgTimeInUnsOrders.addSample(this.agentFurnitProd().getStatUnsOrdersWT().mean());
 		this.avgTimeInUnsProducts.addSample(this.agentFurnitProd().getStatUnsProductsWT().mean());
-//		this.avgTimeInStaining.addSample();
-//		this.avgTimeInAssembling.addSample();
-//		this.avgTimeInFitInstallation.addSample();
+		this.avgTimeInStaining.addSample(this.agentFurnitProd().getStatStainingWT().mean());
+		this.avgTimeInAssembling.addSample(this.agentFurnitProd().getStatAssemblingWT().mean());
+		this.avgTimeInFitInstallation.addSample(this.agentFurnitProd().getStatFittingsWT().mean());
 
 		SchedulerOrderArrival sch = (SchedulerOrderArrival) agentEnvironment().findAssistant(Id.schedulerOrderArrival);
 		System.out.println("created: "+sch.getCreatedOrdersCount());
@@ -287,16 +305,15 @@ public AgentGroupC agentGroupC()
 		this.repResults.setUtilizationGroupC(this.avgUtilizationC);
 		this.repResults.setUnsOrdersCount(this.avgCountUnsOrders);
 		this.repResults.setUnsProductsCount(this.avgCountUnsProducts);
-		// todo
-//		this.repResults.setStainingCount(this.avgCountStaining);
-//		this.repResults.setAssemblingCount(this.avgCountAssembling);
-//		this.repResults.setFittingsCount(this.avgCountFitInstallation);
+		this.repResults.setStainingCount(this.avgCountStaining);
+		this.repResults.setAssemblingCount(this.avgCountAssembling);
+		this.repResults.setFittingsCount(this.avgCountFitInstallation);
 
 		this.repResults.setUnsOrdersTime(this.avgTimeInUnsOrders);
 		this.repResults.setUnsProductsTime(this.avgTimeInUnsProducts);
-//		this.repResults.setStainingTime(this.avgTimeInStaining);
-//		this.repResults.setAssemblingTime(this.avgTimeInAssembling);
-//		this.repResults.setFittingsTime(this.avgTimeInFitInstallation);
+		this.repResults.setStainingTime(this.avgTimeInStaining);
+		this.repResults.setAssemblingTime(this.avgTimeInAssembling);
+		this.repResults.setFittingsTime(this.avgTimeInFitInstallation);
 	}
 
 	private void updateSimStateModel() {
@@ -328,15 +345,15 @@ public AgentGroupC agentGroupC()
 
 		this.simStateData.setUnsOrdersCount(this.agentFurnitProd().getStatUnsOrdersQL().mean());
 		this.simStateData.setUnsProductsCount(this.agentFurnitProd().getStatUnsProductsQL().mean());
-//		this.simStateData.setStainingCount(...);
-//		this.simStateData.setAssemblingCount(...);
-//		this.simStateData.setFittingsInstCount(...);
+		this.simStateData.setStainingCount(this.agentFurnitProd().getStatStainingQL().mean());
+		this.simStateData.setAssemblingCount(this.agentFurnitProd().getStatAssemblingQL().mean());
+		this.simStateData.setFittingsInstCount(this.agentFurnitProd().getStatFittingsQL().mean());
 
 		this.simStateData.setUnsOrdersTime(this.agentFurnitProd().getStatUnsOrdersWT().mean());
 		this.simStateData.setUnsProductsTime(this.agentFurnitProd().getStatUnsProductsWT().mean());
-//		this.simStateData.setStainingTime(...);
-//		this.simStateData.setAssemblingTime(...);
-//		this.simStateData.setFittingInstTime(...);
+		this.simStateData.setStainingTime(this.agentFurnitProd().getStatStainingWT().mean());
+		this.simStateData.setAssemblingTime(this.agentFurnitProd().getStatAssemblingWT().mean());
+		this.simStateData.setFittingInstTime(this.agentFurnitProd().getStatFittingsWT().mean());
 
 		this.simStateData.setUtilzA(this.agentGroupA().getGroupUtilization()*100);
 		this.simStateData.setUtilzB(this.agentGroupB().getGroupUtilization()*100);

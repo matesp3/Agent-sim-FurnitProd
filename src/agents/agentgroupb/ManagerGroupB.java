@@ -27,6 +27,8 @@ public class ManagerGroupB extends OSPABA.Manager
 	//meta! sender="AgentFurnitProd", id="79", type="Request"
 	public void processAssembling(MessageForm message)
 	{
+		message.setAddressee(this.myAgent().findAssistant(Id.processAssembling));
+		this.startContinualAssistant(message);
 	}
 
 	//meta! sender="AgentFurnitProd", id="77", type="Request"
@@ -40,6 +42,8 @@ public class ManagerGroupB extends OSPABA.Manager
 	//meta! sender="ProcessAssembling", id="83", type="Finish"
 	public void processFinish(MessageForm message)
 	{
+		message.setCode(Mc.assembling);
+		this.response(message);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"

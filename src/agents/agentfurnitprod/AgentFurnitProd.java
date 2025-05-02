@@ -53,8 +53,8 @@ public class AgentFurnitProd extends OSPABA.Agent
             return cmp != 0 ? cmp : DoubleComp.compare(f1.getStepET(), f2.getStepET());
         };
 		this.qStaining = new PriorityBlockingQueue<>(50, furnitureCmp);
-		this.qAssembling = new PriorityQueue<>(50, furnitureCmp);
-		this.qFittings = new PriorityQueue<>(50, furnitureCmp);
+		this.qAssembling = new PriorityBlockingQueue<>(50, furnitureCmp);
+		this.qFittings = new PriorityBlockingQueue<>(50, furnitureCmp);
 		this.deskManager = null;
 	}
 

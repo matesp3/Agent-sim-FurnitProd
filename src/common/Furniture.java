@@ -59,7 +59,7 @@ public class Furniture {
         return this.order.getCreatedAt();
     }
 
-    public Order getOrder() {
+    public Order getMyOrder() {
         return this.order;
     }
 
@@ -170,7 +170,8 @@ public class Furniture {
     }
 
     /**
-     * @param waitingBT time of waiting beginning for next technological step
+     * @param waitingBT time of waiting beginning for next technological step. For invalidating, it should be used
+     *                  value {@code -1} in param.
      */
     public void setWaitingBT(double waitingBT) {
         this.waitingBT = waitingBT;

@@ -110,8 +110,8 @@ public class CarpenterTableModel extends AbstractTableModel {
         if (columnIndex == 3)
             return switch (c.getDeskID()) {
                 case Carpenter.IN_STORAGE -> "In Storage";
-                case Carpenter.TRANSFER_STORAGE-> "Transfer-Storage";
-                case Carpenter.TRANSFER_DESKS -> "Storage-Desks";
+                case Carpenter.TRANSFER_STORAGE-> "Storage-Transfer";
+                case Carpenter.TRANSFER_DESKS -> "Desks-Transfer";
                 default -> c.getDeskID();
             };
         if (columnIndex == 4)
