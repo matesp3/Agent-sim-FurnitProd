@@ -9,15 +9,14 @@ public class Furniture {
         TABLE, CHAIR, WARDROBE;
     }
 
-
     public enum TechStep {
-        WOOD_PREPARATION, CARVING, STAINING, PAINTCOAT, ASSEMBLING, FIT_INSTALLATION //, DRYING - if added, need to be fit where it belongs chronologically
+        WOOD_PREPARATION, CARVING, STAINING, LACQUERING, ASSEMBLING, FIT_INSTALLATION //, DRYING - if added, need to be fit where it belongs chronologically
         ;
     }
     private final Order order;
-
     private final String productID;
     private final Type productType;
+    private final boolean lacqueringRequired;
     private int deskID;
 
     private double stepBT;
@@ -31,10 +30,11 @@ public class Furniture {
      * @param order order to which this furniture instance belongs
      * @param productID is unique identifier of furniture product within system in format {orderID}-{nr. of product in order}
      */
-    public Furniture(Order order, String productID, Type furnitureType) {
+    public Furniture(Order order, String productID, Type furnitureType, boolean lacquering) {
         this.order = order;
         this.productID = productID;
         this.productType = furnitureType;
+        this.lacqueringRequired = lacquering;
 
         this.processingBT = -1;
         this.deskID = -1;
@@ -119,6 +119,10 @@ public class Furniture {
 
     public void setStepET(double time) {
         this.stepET = time;
+    }
+
+    public boolean isLacqueringRequired() {
+        return this.lacqueringRequired;
     }
 
     /**
@@ -219,7 +223,7 @@ public class Furniture {
 
     public static void main(String[] args) throws InterruptedException {
         Order order = new Order(1, 2500);
-        Furniture product = new Furniture(order, ("" + order.getOrderID() + "-" + 1), Type.WARDROBE);
+        Furniture product = new Furniture(order, ("" + order.getOrderID() + "-" + 1), Type.WARDROBE, true);
         System.out.println(product);
         product.setProcessingBT(4.5);
         product.setStepBT(TechStep.WOOD_PREPARATION, 4.5);
@@ -231,7 +235,7 @@ public class Furniture {
         product.setStepBT(TechStep.STAINING, 27);
         product.setStepET(30);
         System.out.println(product);
-        product.setStepBT(TechStep.PAINTCOAT, 32);
+        product.setStepBT(TechStep.LACQUERING, 32);
         product.setStepET(40);
         System.out.println(product);
         product.setStepBT(TechStep.ASSEMBLING, 32);

@@ -88,6 +88,7 @@ public class ManagerGroupA extends OSPABA.Manager
 	{
 		TechStepMessage tsMsg = (TechStepMessage) message;
 		this.myAgent().getAllocator().releaseCarpenter(tsMsg.getCarpenter());
+		tsMsg.setCarpenter(null);
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"

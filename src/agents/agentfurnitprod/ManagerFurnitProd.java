@@ -112,6 +112,11 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	//meta! sender="AgentGroupC", id="88", type="Response"
 	public void processAssignCarpenterC(MessageForm message)
 	{
+		AssignMessage asgMsg = (AssignMessage) message;
+		if (asgMsg.getCarpenter() == null) {
+
+			return;
+		}
 		// todo, allocate C and check his position -> deskTransfer or staining BT
 	}
 

@@ -32,6 +32,9 @@ public class ManagerGroupB extends OSPABA.Manager
 	//meta! sender="AgentFurnitProd", id="77", type="Request"
 	public void processAssignCarpenterB(MessageForm message)
 	{
+		AssignMessage assignMsg = (AssignMessage) message;
+		assignMsg.setCarpenter(this.myAgent().getAllocator().assignCarpenter()); // always needs to be updated
+		this.response(assignMsg);
 	}
 
 	//meta! sender="ProcessAssembling", id="83", type="Finish"
@@ -50,6 +53,9 @@ public class ManagerGroupB extends OSPABA.Manager
 	//meta! sender="AgentFurnitProd", id="145", type="Notice"
 	public void processReleaseCarpenterB(MessageForm message)
 	{
+		TechStepMessage tsMsg = (TechStepMessage) message;
+		this.myAgent().getAllocator().releaseCarpenter(tsMsg.getCarpenter());
+		tsMsg.setCarpenter(null);
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"
