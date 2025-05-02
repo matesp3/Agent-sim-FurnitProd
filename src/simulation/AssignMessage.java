@@ -9,20 +9,17 @@ import common.Order;
 public class AssignMessage extends MessageForm {
 
     private Carpenter carpenter;
-    private Order order;
     private Furniture product;
 
     public AssignMessage(Simulation mySim) {
         super(mySim);
         this.carpenter = null;
-        this.order = null;
         this.product = null;
     }
 
     protected AssignMessage(AssignMessage original) {
         super(original);
         this.carpenter = original.carpenter;
-        this.order = original.order;
         this.product = original.product;
     }
 
@@ -38,7 +35,6 @@ public class AssignMessage extends MessageForm {
         AssignMessage original = (AssignMessage)message;
         // Copy attributes
         this.carpenter = original.carpenter;
-        this.order = original.order;
         this.product = original.product;
     }
 
@@ -48,14 +44,6 @@ public class AssignMessage extends MessageForm {
 
     public void setCarpenter(Carpenter carpenter) {
         this.carpenter = carpenter;
-    }
-
-    public Order getOrder() {
-        return this.order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
     }
 
     public Furniture getProduct() {

@@ -106,7 +106,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	{
 		// 2 possibilities: two types -> typecasting ; or additional attribute in one class {due to order BT | tech step)
 		AssignMessage assignMsg = (AssignMessage) message;
-		if (assignMsg.getOrder() != null) { // 1. option - product beginning
+		if (assignMsg.getProduct() == null) { // 1. option - product beginning - need to assign product to carpenter
 			this.processAssignedCarpenterForNewFurniture(assignMsg);
 		}
 		else { // 2. option - tech step processing (assignMsg.getProduct != null) must be true && step == ASSEMBLING must be true??
@@ -190,7 +190,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		this.sendAssignRequestForProduct(Mc.assignCarpenterC, Id.agentGroupC, f);
 
 		// PLAN NEXT JOB FOR CARPENTER 'A'
-		tryAssignNextWorkForCarpenterA(tsMsg);
+		this.tryAssignNextWorkForCarpenterA(tsMsg);
 	}
 
 	//meta! sender="AgentModel", id="158", type="Notice"
@@ -204,11 +204,9 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		this.updateWStatUnsProductsCount(o.getProductsCount());
 		o.setWaitingBT(this.mySim().currentTime()); /* sets waitingBT to all its products, bcs order is new. Must be set
 		 here, bcs carpenter may not be assigned to product, even if some desk is free */
+		this.addToQUnstartedOrders(o);
 		if (this.myAgent().getDeskManager().hasFreeDesk()) {
-			this.sendAssignRequestForOrder(o);
-		}
-		else { // this new order must wait as a whole, bcs there's no place where some product can be created
-			this.addToQUnstartedOrders(o);
+			this.sendAssignRequestForProduct(Mc.assignCarpenterA, Id.agentGroupA, null);
 		}
 	}
 
@@ -303,52 +301,27 @@ public class ManagerFurnitProd extends OSPABA.Manager
 
 	// comes here --v from order arrival || from this method itself
 	private void processAssignedCarpenterForNewFurniture(AssignMessage msg) {
-		Carpenter carpenter = msg.getCarpenter();
-		Order order = msg.getOrder();
-		final boolean wasOrderUnstarted = msg.getOrder().isUnstarted();
-		final boolean wasOrderEnqueued = !wasOrderUnstarted || order == this.myAgent().getQUnstarted().peek(); // was new if (wasOrderEnqueued=false)
-		if (carpenter == null) {
-		// - - - - - - CARPENTER WASN'T ASSIGNED
-			if (!wasOrderEnqueued) {
-				this.addToQUnstartedOrders(order);
-			}
-			return;
+		if (msg.getCarpenter() == null) {
+			return; // CARPENTER WASN'T ASSIGNED
 		}
 		// - - - - - - START WORKING
-		Furniture product = order.assignUnstartedProduct(); // todo mozno bude treba kontrolovat ci skutocne priradilo nejaky produkt. Ak nie, uvolnim znova carpentera
-		this.updateWStatUnsProductsCount(-1);
-		this.updateStatUnsProductsWaitTime(product, this.myAgent().getStatUnsProductsWT());
-		this.startCreatingNextFurniture(carpenter, product);
-
-		// - - - - - - QUEUE UPDATES
-		if (order.hasUnassignedProduct()) { // after assigning next one
-			if (wasOrderEnqueued) {
-				if (wasOrderUnstarted) { // moving from queue to queue
-					this.myAgent().getQStarted().add( this.pollFromQUnstartedOrders() );
-				}
-			}
-			else { // order was new, direct moving to next queue
-				this.myAgent().getQStarted().add(order);
-				this.myAgent().getStatUnsOrdersWT().addSample(this.mySim().currentTime() - order.getCreatedAt()); // 0
-			}
-		}
-		else { // nothing to assign from current order -> need to dequeue it, if it was previously enqueued
-			if (wasOrderEnqueued) {
-				if (wasOrderUnstarted) // had only 1 product and qStarted must have been empty
-					this.pollFromQUnstartedOrders(); // not adding to qStarted, bcs there's nothing to assign
-				else
-					this.myAgent().getQStarted().remove();
-			}
-			else // new order with just one product
-				this.myAgent().getStatUnsOrdersWT().addSample(this.mySim().currentTime() - order.getCreatedAt()); // 0
-		}
+		Furniture product = this.getUnstartedProduct();
+		if (product != null) {
+			this.startCreatingNextFurniture(msg.getCarpenter(), product);
 		// - - - - - - NEXT WORK PLANNING
-		if (this.myAgent().getDeskManager().hasFreeDesk()) {
-			if (!this.myAgent().getQStarted().isEmpty())
-				this.sendAssignRequestForOrder( this.myAgent().getQStarted().peek() );
-			else if (!myAgent().getQUnstarted().isEmpty())
-				this.sendAssignRequestForOrder( this.myAgent().getQUnstarted().peek() );
+			if (this.myAgent().getDeskManager().hasFreeDesk() && this.existsUnstartedProduct()) {
+				this.sendAssignRequestForProduct(Mc.assignCarpenterA, Id.agentGroupA, null);
+			}
 		}
+		else {
+			TechStepMessage tsMsg = (TechStepMessage) this.stepMsgPattern.createCopy();
+			tsMsg.setCarpenter(msg.getCarpenter());
+			this.releaseCarpenter(Mc.releaseCarpenterA, Id.agentGroupA, tsMsg);
+		}
+	}
+
+	private boolean existsUnstartedProduct() {
+		return !this.myAgent().getQStarted().isEmpty() || !myAgent().getQUnstarted().isEmpty();
 	}
 
 	/**
@@ -376,18 +349,6 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	}
 
 	/**
-	 * @param order is going to be processed by potentially assigned carpenter of group {@code Id.agentGroupA}
-	 */
-	private void sendAssignRequestForOrder(Order order) {
-		AssignMessage assignMsg = (AssignMessage) this.assignMsgPattern.createCopy();
-		assignMsg.setCode(Mc.assignCarpenterA);
-		assignMsg.setAddressee(Id.agentGroupA);
-		assignMsg.setOrder(order);
-		assignMsg.setProduct(null);
-		this.request(assignMsg);
-	}
-
-	/**
 	 *
 	 * @param code valid options: {@code Mc.assignCarpenterA}, {@code Mc.assignCarpenterB}, {@code Mc.assignCarpenterC}
 	 * @param agentGroup valid options: {@code Id.agentGroupA}, {@code Id.agentGroupB}, {@code Id.agentGroupC},
@@ -398,7 +359,6 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		AssignMessage assignMsg = (AssignMessage) this.assignMsgPattern.createCopy();
 		assignMsg.setCode(code);
 		assignMsg.setAddressee(agentGroup);
-		assignMsg.setOrder(null);
 		assignMsg.setProduct(product);
 		this.request(assignMsg);
 	}
@@ -522,20 +482,20 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		Furniture f = null;
 		if (o != null) {
 			f = o.assignUnstartedProduct();
-			this.updateWStatUnsProductsCount(-1);
-			this.updateStatUnsProductsWaitTime(f, this.myAgent().getStatUnsProductsWT());
-			if (!o.hasUnassignedProduct()) // this was last unstarted product in queue
+			if (!o.hasUnassignedProduct()) // this was the last unstarted product in its order
 				this.myAgent().getQStarted().remove(); // removes the oldest order
 		}
 		else { // nothing in qStarted, trying to get something from qUnstarted
 			o = this.pollFromQUnstartedOrders(); // always removed from qUnstarted, because it is not unstarted from now
 			if (o != null) {
 				f = o.assignUnstartedProduct();
-				this.updateWStatUnsProductsCount(-1);
-				this.updateStatUnsProductsWaitTime(f, this.myAgent().getStatUnsProductsWT());
 				if (o.hasUnassignedProduct())
-					this.myAgent().getQStarted().add(o); // something remains in order unstarted, so it is enqueued for remaining products
+					this.myAgent().getQStarted().add(o); // something remains unstarted in order, so it is enqueued for remaining products
 			}
+		}
+		if (f != null) {
+			this.updateWStatUnsProductsCount(-1);
+			this.updateStatUnsProductsWaitTime(f, this.myAgent().getStatUnsProductsWT());
 		}
 		return f;
 	}
