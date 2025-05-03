@@ -666,7 +666,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	}
 
 	private TechStepMessage getFreeTechStepMessageInstance() {
-		if (this.freeAssignMsgInstance == null)
+		if (this.freeStepMsgInstance == null)
 			return (TechStepMessage) this.stepMsgPattern.createCopy();
 		TechStepMessage m = this.freeStepMsgInstance;
 		this.freeStepMsgInstance = null;
