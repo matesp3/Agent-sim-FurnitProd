@@ -19,6 +19,11 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	private final AssignMessage assignMsgPattern;
 	private final TechStepMessage stepMsgPattern;
 	private final OrderMessage orderMsgPattern;
+
+	private AssignMessage freeAssignMsgInstance;
+	private TechStepMessage freeStepMsgInstance;
+	private OrderMessage freeOrderMsgInstance;
+
 	private int unsProductsCount;
 
 	public ManagerFurnitProd(int id, Simulation mySim, Agent myAgent)
@@ -652,4 +657,19 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		return o;
 	}
 
+	private AssignMessage getFreeAssignMessageInstance() {
+		if (this.freeAssignMsgInstance == null)
+			return (AssignMessage) this.assignMsgPattern.createCopy();
+		AssignMessage m = this.freeAssignMsgInstance;
+		this.freeAssignMsgInstance = null;
+		return m;
+	}
+
+	private TechStepMessage getFreeTechStepMessageInstance() {
+		if (this.freeAssignMsgInstance == null)
+			return (TechStepMessage) this.stepMsgPattern.createCopy();
+		TechStepMessage m = this.freeStepMsgInstance;
+		this.freeStepMsgInstance = null;
+		return m;
+	}
 }

@@ -38,8 +38,10 @@ public class FurnitProdSimController {
                 this.sim.registerDelegate(this.gui);
                 this.sim.onReplicationDidFinish(s ->
                 {
-                    if (this.sim.currentReplication() > 30)
-                        this.gui.updateAfterReplication(sim.getReplicationResults());
+                    if (this.sim.currentReplication() > 10)
+                        this.gui.updateAfterReplication(this.sim.getReplicationResults());
+                    else
+                        this.gui.updateReplicationNr(this.sim.currentReplication());
                 }
                 );
                 // - - - - -
