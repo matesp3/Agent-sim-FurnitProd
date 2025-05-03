@@ -95,10 +95,6 @@ public class SchedulerOrderArrival extends OSPABA.Scheduler
 		return (AgentEnvironment)super.myAgent();
 	}
 
-	public int getCreatedOrdersCount() {
-		return this.nextOrderID-1;
-	}
-
 	/**
 	 * @return generated new order with generated ordered furniture products
 	 * @param createdAt time of order creating

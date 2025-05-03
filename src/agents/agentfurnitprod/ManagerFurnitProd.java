@@ -199,7 +199,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		Furniture f = tsMsg.getCarpenter().returnProduct(this.mySim().currentTime());
 		this.noticeIfCompleted(f);
 
-		// PLAN NEXT JOB FOR CARPENTER 'A'
+		// PLAN NEXT JOB FOR CARPENTER 'C'
 		this.tryAssignNextWorkForCarpenterC(tsMsg);
 	}
 

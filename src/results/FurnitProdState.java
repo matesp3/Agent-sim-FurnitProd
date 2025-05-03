@@ -35,6 +35,15 @@ public class FurnitProdState extends AfterChangeResults {
     private StatResult.Simple utilzC = new StatResult.Simple("Utilization of group C:", -1, "%");
 
     private StatResult.Simple orderTimeInSystem = new StatResult.Simple("Order's time in system", -1, "[h]");
+    private StatResult.Simple usedDesksCount = new StatResult.Simple("Count of used desks", -1, "[qty]");
+
+    private int currentlyUsedDesks = 0;
+    private int currentlyCreatedOrders = 0;
+    private int currentlyCompletedOrders = 0;
+
+    private int currentlyWorkingFromA = 0;
+    private int currentlyWorkingFromB = 0;
+    private int currentlyWorkingFromC = 0;
 
     public FurnitProdState(long experimentNum, double simTime) {
         super(experimentNum, simTime);
@@ -52,6 +61,7 @@ public class FurnitProdState extends AfterChangeResults {
         this.stats.add(utilzB);
         this.stats.add(utilzC);
         this.stats.add(orderTimeInSystem);
+        this.stats.add(usedDesksCount);
     }
 
     public void carpentersAllocation(int a, int b, int c) {
@@ -64,6 +74,42 @@ public class FurnitProdState extends AfterChangeResults {
         while (c > this.carpentersC.size()) {
             this.carpentersC.add(null);
         }
+    }
+
+    public int getCurrentlyWorkingFromA() {
+        return currentlyWorkingFromA;
+    }
+
+    public int getCurrentlyWorkingFromB() {
+        return currentlyWorkingFromB;
+    }
+
+    public int getCurrentlyWorkingFromC() {
+        return currentlyWorkingFromC;
+    }
+
+    public int getCurrentlyCompletedOrders() {
+        return currentlyCompletedOrders;
+    }
+
+    public void setCurrentlyCompletedOrders(int currentlyCompletedOrders) {
+        this.currentlyCompletedOrders = currentlyCompletedOrders;
+    }
+
+    public int getCurrentlyCreatedOrders() {
+        return currentlyCreatedOrders;
+    }
+
+    public void setCurrentlyCreatedOrders(int currentlyCreatedOrders) {
+        this.currentlyCreatedOrders = currentlyCreatedOrders;
+    }
+
+    public int getCurrentlyUsedDesks() {
+        return currentlyUsedDesks;
+    }
+
+    public void setCurrentlyUsedDesks(int currentlyUsedDesks) {
+        this.currentlyUsedDesks = currentlyUsedDesks;
     }
 
     public List<StatResult.Simple> getStats() {
@@ -192,6 +238,14 @@ public class FurnitProdState extends AfterChangeResults {
         this.utilzC.setValue(utilzC);
     }
 
+    public StatResult.Simple getUsedDesksCount() {
+        return usedDesksCount;
+    }
+
+    public void setUsedDesksCount(double usedDesksCount) {
+        this.usedDesksCount.setValue(usedDesksCount);
+    }
+
     public StatResult.Simple getOrderTimeInSystem() {
         return orderTimeInSystem;
     }
@@ -273,8 +327,16 @@ public class FurnitProdState extends AfterChangeResults {
     }
 
     private void setNewCarpenters(Carpenter[] input, List<CarpenterModel> output) {
+        int workingCount = 0;
         for (int i = 0; i < input.length; i++) {
             output.set(i, this.rawToModel(input[i])); // size is the same for whole simulation
+            if (input[i].isWorking())
+                workingCount++;
+        }
+        switch (input[0].getGroup()) {
+            case A -> this.currentlyWorkingFromA = workingCount;
+            case B -> this.currentlyWorkingFromB = workingCount;
+            case C -> this.currentlyWorkingFromC = workingCount;
         }
     }
 

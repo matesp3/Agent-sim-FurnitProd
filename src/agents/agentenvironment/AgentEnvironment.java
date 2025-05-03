@@ -5,13 +5,14 @@ import OSPStat.Stat;
 import common.Order;
 import simulation.*;
 import agents.agentenvironment.continualassistants.*;
-
+import utils.Formatter;
 
 
 //meta! id="6"
 public class AgentEnvironment extends OSPABA.Agent
 {
 	private final Stat avgTimeOrderCompletion = new Stat();
+	private  int ordersCreated = 0;
 	private  int ordersCompleted = 0;
 
 	public AgentEnvironment(int id, Simulation mySim, Agent parent)
@@ -26,6 +27,7 @@ public class AgentEnvironment extends OSPABA.Agent
 	{
 		super.prepareReplication();
 		// Setup component for the next replication
+		this.ordersCreated = 0;
 		this.ordersCompleted = 0;
 		this.avgTimeOrderCompletion.clear();
 	}
@@ -43,6 +45,11 @@ public class AgentEnvironment extends OSPABA.Agent
 	public void updateStats(Order o) {
 		this.ordersCompleted++;
 		this.avgTimeOrderCompletion.addSample(o.getCompletedAt() - o.getCreatedAt());
+//		System.out.println("Duration for order's completion: "+Formatter.getStrDateTime(o.getCompletedAt() - o.getCreatedAt(), 8, 6));
+	}
+
+	public void noticeOrderCreated() {
+		this.ordersCreated++;
 	}
 
 	public int getOrdersCompleted() {
@@ -51,5 +58,9 @@ public class AgentEnvironment extends OSPABA.Agent
 
 	public Stat getAvgTimeOrderCompletion() {
 		return avgTimeOrderCompletion;
+	}
+
+	public int getOrdersCreated() {
+		return this.ordersCreated;
 	}
 }

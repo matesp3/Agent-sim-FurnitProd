@@ -50,6 +50,7 @@ public class ManagerEnvironment extends OSPABA.Manager
 		switch (message.code())
 		{
 			case Mc.orderArrival:
+				this.myAgent().noticeOrderCreated();
 				message.setAddressee(this.myAgent().parent());
 				this.notice(message); // notify boss about new order arrival
 				break;

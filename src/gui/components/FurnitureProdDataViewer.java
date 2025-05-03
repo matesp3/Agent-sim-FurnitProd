@@ -13,6 +13,9 @@ import java.util.ArrayList;
 
 public class FurnitureProdDataViewer extends JPanel {
     private ResultViewer viewSimTime;
+    private ResultViewer viewUsedDesks;
+    private ResultViewer viewOrdersCreated;
+    private ResultViewer viewOrdersCompleted;
     private CarpenterTableModel carpTabModelA;
     private CarpenterTableModel carpTabModelB;
     private CarpenterTableModel carpTabModelC;
@@ -32,14 +35,37 @@ public class FurnitureProdDataViewer extends JPanel {
     private JTable tabFittings;
     private JScrollPane mainScrollPane;
     private JPanel contentPane;
+    private JPanel headerPane;
+    private ResultViewer jlQUnst;
+    private ResultViewer jlQStart;
+    private ResultViewer jlQStain;
+    private ResultViewer jlQAssem;
+    private ResultViewer jlQFitt;
+    private ResultViewer jlCarpA;
+    private ResultViewer jlCarpB;
+    private ResultViewer jlCarpC;
 
     public FurnitureProdDataViewer() {
-        this.viewSimTime = new ResultViewer("Simulation Time");
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        this.viewSimTime = new ResultViewer("Simulation Time", Formatter.getStrDateTime(0, 8, 6));
+        this.viewUsedDesks = new ResultViewer("Used Desks", "0");
+        this.viewOrdersCreated = new ResultViewer("Orders Created", "0");
+        this.viewOrdersCompleted = new ResultViewer("Orders Completed", "0");
+        this.headerPane = this.createHeader();
         this.contentPane = this.createTables();
         this.mainScrollPane = new JScrollPane(this.contentPane);
         this.mainScrollPane.setWheelScrollingEnabled(true);
+        this.add(this.headerPane);
         this.add(this.mainScrollPane);
     }
+//    public FurnitureProdDataViewer() {
+//        this.viewSimTime = new ResultViewer("Simulation Time");
+//        this.headerPane = this.createHeader();
+//        this.contentPane = this.createTables();
+//        this.mainScrollPane = new JScrollPane(this.contentPane);
+//        this.mainScrollPane.setWheelScrollingEnabled(true);
+//        this.add(this.mainScrollPane);
+//    }
 
     public void resizeContent(int width, int height) {
         this.mainScrollPane.setPreferredSize(new Dimension(width, height));
@@ -61,22 +87,54 @@ public class FurnitureProdDataViewer extends JPanel {
                 new double[] {5,5,5,5,10,15,15,40});
     }
 
+    private JPanel createHeader() {
+        JPanel header = new JPanel();
+        header.setLayout(new BoxLayout(header, BoxLayout.X_AXIS));
+        header.setBackground(FurnitureProdForm.COL_BG_TAB);
+
+        this.viewOrdersCreated.setBorder(BorderFactory.createRaisedBevelBorder());
+        this.viewOrdersCreated.setMaximumSize(new Dimension(2000, 50));
+        this.viewOrdersCreated.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.viewOrdersCreated.setBackground(header.getBackground());
+
+        this.viewUsedDesks.setBorder(BorderFactory.createRaisedBevelBorder());
+        this.viewUsedDesks.setMaximumSize(new Dimension(2000, 50));
+        this.viewUsedDesks.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.viewUsedDesks.setBackground(header.getBackground());
+
+        this.viewSimTime.setBorder(BorderFactory.createRaisedBevelBorder());
+        this.viewSimTime.setMaximumSize(new Dimension(2000, 50));
+        this.viewSimTime.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.viewSimTime.setBackground(header.getBackground());
+
+        this.viewOrdersCompleted.setBorder(BorderFactory.createRaisedBevelBorder());
+        this.viewOrdersCompleted.setMaximumSize(new Dimension(2000, 50));
+        this.viewOrdersCompleted.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.viewOrdersCompleted.setBackground(header.getBackground());
+
+        header.add(this.viewOrdersCreated);
+        header.add(this.viewUsedDesks);
+        header.add(this.viewSimTime);
+        header.add(this.viewOrdersCompleted);
+        return header;
+    }
+
     private JPanel createTables() {
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBackground(FurnitureProdForm.COL_BG_TAB);
         JPanel p0 = new JPanel();
         p0.setLayout(new BoxLayout(p0, BoxLayout.X_AXIS));
-        p0.setBackground(FurnitureProdForm.COL_BG_TAB);
+        p0.setBackground(content.getBackground());
         JPanel p1 = new JPanel();
         p1.setLayout(new BoxLayout(p1, BoxLayout.Y_AXIS));
-        p1.setBackground(FurnitureProdForm.COL_BG_TAB);
+        p1.setBackground(content.getBackground());
         JPanel p2 = new JPanel();
         p2.setLayout(new BoxLayout(p2, BoxLayout.Y_AXIS));
-        p2.setBackground(FurnitureProdForm.COL_BG_TAB);
+        p2.setBackground(content.getBackground());
         JPanel p3 = new JPanel();
         p3.setLayout(new BoxLayout(p3, BoxLayout.Y_AXIS));
-        p3.setBackground(FurnitureProdForm.COL_BG_TAB);
+        p3.setBackground(content.getBackground());
 
         this.carpTabModelA = new CarpenterTableModel(new ArrayList<>());
         this.carpTabA = new JTable(this.carpTabModelA);
@@ -142,64 +200,76 @@ public class FurnitureProdDataViewer extends JPanel {
         orderScrollPaneFitInst.setMinimumSize(new Dimension(500, 150));
         orderScrollPaneFitInst.setMaximumSize(new Dimension(1000, 200));
 
-        JLabel jl1A = new JLabel("Queue 'Unstarted'");
-        jl1A.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
-        JLabel jl1B = new JLabel("Queue 'Started'");
-        jl1B.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
-        JLabel jl2A = new JLabel("Queue 'Staining'");
-        jl2A.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
-        JLabel jl2B = new JLabel("Queue 'Assembling'");
-        jl2B.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
-        JLabel jl2C = new JLabel("Queue 'Fittings inst.'");
-        jl2C.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
-        JLabel jl3A = new JLabel("Carpenter's group A");
-        jl3A.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
-        JLabel jl3B = new JLabel("Carpenter's group B");
-        jl3B.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
-        JLabel jl3C = new JLabel("Carpenter's group C");
-        jl3C.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
+        this.jlQUnst = new ResultViewer("Queue 'Unstarted' |  Length");
+        jlQUnst.setMaximumSize(new Dimension(200, 30));
+        jlQUnst.setBackground(content.getBackground());
+
+        this.jlQStart = new ResultViewer("Queue 'Started'  |  Length");
+        jlQStart.setMaximumSize(new Dimension(200, 30));
+        jlQStart.setBackground(content.getBackground());
+
+        this.jlQStain = new ResultViewer("Queue 'Staining'  |  Length");
+        jlQStain.setMaximumSize(new Dimension(200, 30));
+        jlQStain.setBackground(content.getBackground());
+
+        this.jlQAssem = new ResultViewer("Queue 'Assembling'  |  Length");
+        jlQAssem.setMaximumSize(new Dimension(200, 30));
+        jlQAssem.setBackground(content.getBackground());
+
+        this.jlQFitt = new ResultViewer("Queue 'Fittings inst.'  |  Length");
+        jlQFitt.setMaximumSize(new Dimension(200, 30));
+        jlQFitt.setBackground(content.getBackground());
+
+        this.jlCarpA = new ResultViewer("Carpenter's group A  |  Working");
+        jlCarpA.setMaximumSize(new Dimension(300, 20));
+        jlCarpA.setBackground(content.getBackground());
+
+        this.jlCarpB = new ResultViewer("Carpenter's group B  |  Working");
+        jlCarpB.setMaximumSize(new Dimension(300, 20));
+        jlCarpB.setBackground(content.getBackground());
+
+        this.jlCarpC = new ResultViewer("Carpenter's group C  |  Working");
+        jlCarpC.setMaximumSize(new Dimension(300, 20));
+        jlCarpC.setBackground(content.getBackground());
 
         p1.add(Box.createRigidArea(new Dimension(0, 7)));
-        p1.add(jl1A);
+        p1.add(jlQUnst);
         p1.add(Box.createRigidArea(new Dimension(0, 7)));
         p1.add(orderScrollPaneUnstarted);
         p1.add(Box.createRigidArea(new Dimension(0, 7)));
-        p1.add(jl1B);
+        p1.add(jlQStart);
         p1.add(Box.createRigidArea(new Dimension(0, 7)));
         p1.add(orderScrollPaneStarted);
         p1.add(Box.createRigidArea(new Dimension(0, 7)));
 
         p2.add(Box.createRigidArea(new Dimension(0, 7)));
-        p2.add(jl2A);
+        p2.add(jlQStain);
         p2.add(Box.createRigidArea(new Dimension(0, 7)));
         p2.add(orderScrollPaneStaining);
         p2.add(Box.createRigidArea(new Dimension(0, 7)));
-        p2.add(jl2B);
+        p2.add(jlQAssem);
         p2.add(Box.createRigidArea(new Dimension(0, 7)));
         p2.add(orderScrollPaneAssembling);
         p2.add(Box.createRigidArea(new Dimension(0, 7)));
-        p2.add(jl2C);
+        p2.add(jlQFitt);
         p2.add(Box.createRigidArea(new Dimension(0, 7)));
         p2.add(orderScrollPaneFitInst);
 
-        p3.add(jl3A);
+        p3.add(jlCarpA);
         p3.add(carpenterScrollPaneA);
         p3.add(Box.createRigidArea(new Dimension(0, 7)));
-        p3.add(jl3B);
+        p3.add(jlCarpB);
         p3.add(Box.createRigidArea(new Dimension(0, 7)));
         p3.add(carpenterScrollPaneB);
         p3.add(Box.createRigidArea(new Dimension(0, 7)));
-        p3.add(jl3C);
+        p3.add(jlCarpC);
         p3.add(Box.createRigidArea(new Dimension(0, 7)));
         p3.add(carpenterScrollPaneC);
 
         p0.add(p1);
         p0.add(Box.createRigidArea(new Dimension(25,0)));
         p0.add(p2);
-        this.viewSimTime.setBorder(BorderFactory.createRaisedBevelBorder());
-        this.viewSimTime.setMaximumSize(new Dimension(2000, 50));
-        this.viewSimTime.setAlignmentX(Component.CENTER_ALIGNMENT);
-        content.add(this.viewSimTime);
+
         content.add(p0);
         content.add(Box.createRigidArea(new Dimension(0, 10)));
         content.add(p3);
@@ -213,6 +283,17 @@ public class FurnitureProdDataViewer extends JPanel {
         this.tabModelStaining.setModels(r.getqStaining());
         this.tabModelFittings.setModels(r.getqFittings());
         this.viewSimTime.setValue(Formatter.getStrDateTime(r.getSimTime(), 8, 6));
+        this.viewUsedDesks.setValue(r.getCurrentlyUsedDesks());
+        this.viewOrdersCreated.setValue(r.getCurrentlyCreatedOrders());
+        this.viewOrdersCompleted.setValue(r.getCurrentlyCompletedOrders());
+        this.jlQUnst.setValue(r.getqUnstarted().size());
+        this.jlQStart.setValue(r.getqStarted().size());
+        this.jlQStain.setValue(r.getqStaining().size());
+        this.jlQAssem.setValue(r.getqAssembling().size());
+        this.jlQFitt.setValue(r.getqFittings().size());
+        this.jlCarpA.setValue( String.format("%d / %d",  r.getCurrentlyWorkingFromA(), r.getCarpentersA().size()) );
+        this.jlCarpB.setValue( String.format("%d / %d",  r.getCurrentlyWorkingFromB(), r.getCarpentersB().size()) );
+        this.jlCarpC.setValue( String.format("%d / %d",  r.getCurrentlyWorkingFromC(), r.getCarpentersC().size()) );
         this.carpTabModelA.setModels(r.getCarpentersA());
         this.carpTabModelB.setModels(r.getCarpentersB());
         this.carpTabModelC.setModels(r.getCarpentersC());

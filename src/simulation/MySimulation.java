@@ -29,7 +29,9 @@ public class MySimulation extends OSPABA.Simulation
 		}
 	}
 	private final Stat avgTimeOrderCompletion = new Stat();
-	private final Stat avgCountOrdersCompleted = new Stat();
+//	private final Stat avgCountOrdersCreated = new Stat();
+//	private final Stat avgCountOrdersCompleted = new Stat();
+//	private final Stat avgCountUsedDesks = new Stat();
 
 	private final Stat avgUtilizationA  = new Stat();
 	private final Stat avgUtilizationB  = new Stat();
@@ -76,7 +78,8 @@ public class MySimulation extends OSPABA.Simulation
 		super.prepareSimulation();
 		// Create global statistcis
 		this.avgTimeOrderCompletion.clear();
-		this.avgCountOrdersCompleted.clear();
+//		this.avgCountOrdersCompleted.clear();
+//		this.avgCountUsedDesks.clear();
 		this.avgUtilizationA.clear();
 		this.avgUtilizationB.clear();
 		this.avgUtilizationC.clear();
@@ -105,7 +108,10 @@ public class MySimulation extends OSPABA.Simulation
 		// Collect local statistics into global, update UI, etc...
 		super.replicationFinished();
 		this.avgTimeOrderCompletion.addSample(this.agentEnvironment().getAvgTimeOrderCompletion().mean());
-		this.avgCountOrdersCompleted.addSample(this.agentEnvironment().getOrdersCompleted());
+//		this.avgCountOrdersCreated.addSample(this.agentEnvironment().getOrdersCreated());
+//		this.avgCountOrdersCompleted.addSample(this.agentEnvironment().getOrdersCompleted());
+//		this.avgCountUsedDesks.addSample(this.agentFurnitProd().getStatUsedDesksCount().mean());
+
 		this.avgUtilizationA.addSample(this.agentGroupA().getGroupUtilization());
 		this.avgUtilizationB.addSample(this.agentGroupB().getGroupUtilization());
 		this.avgUtilizationC.addSample(this.agentGroupC().getGroupUtilization());
@@ -121,10 +127,6 @@ public class MySimulation extends OSPABA.Simulation
 		this.avgTimeInStaining.addSample(this.agentFurnitProd().getStatStainingWT().mean());
 		this.avgTimeInAssembling.addSample(this.agentFurnitProd().getStatAssemblingWT().mean());
 		this.avgTimeInFitInstallation.addSample(this.agentFurnitProd().getStatFittingsWT().mean());
-
-		SchedulerOrderArrival sch = (SchedulerOrderArrival) agentEnvironment().findAssistant(Id.schedulerOrderArrival);
-		System.out.println("created: "+sch.getCreatedOrdersCount());
-		System.out.println("completed: "+agentEnvironment().getOrdersCompleted());
 	}
 
 	@Override
@@ -208,9 +210,9 @@ public AgentGroupC agentGroupC()
 		return avgTimeOrderCompletion;
 	}
 
-	public Stat getStatCountOrdersCompleted() {
-		return avgCountOrdersCompleted;
-	}
+//	public Stat getStatCountOrdersCompleted() {
+//		return avgCountOrdersCompleted;
+//	}
 
 	public Stat getStatUtilizationA() {
 		return avgUtilizationA;
@@ -297,8 +299,10 @@ public AgentGroupC agentGroupC()
 	private void updateRepResults() {
 		this.repResults.setExperimentNum(this.currentReplication());
 
-		this.repResults.setOrderTimeInSystem(avgTimeOrderCompletion);
-//		this.repResults.set... avgCountOrdersCompleted);
+		this.repResults.setOrderTimeInSystem(this.avgTimeOrderCompletion);
+//		this.repResults.setCreatedOrdersCount(this.avgCountOrdersCreated);
+//		this.repResults.setCompletedOrdersCount(this.avgCountOrdersCompleted);
+//		this.repResults.setUsedDesksCount(this.avgCountUsedDesks);
 
 		this.repResults.setUtilizationGroupA(this.avgUtilizationA);
 		this.repResults.setUtilizationGroupB(this.avgUtilizationB);
@@ -319,6 +323,10 @@ public AgentGroupC agentGroupC()
 	private void updateSimStateModel() {
 		this.simStateData.setExperimentNum(this.currentReplication());
 		this.simStateData.setSimTime(this.currentTime());
+
+		this.simStateData.setCurrentlyCreatedOrders(this.agentEnvironment().getOrdersCreated());
+		this.simStateData.setCurrentlyCompletedOrders(this.agentEnvironment().getOrdersCompleted());
+		this.simStateData.setCurrentlyUsedDesks(this.agentFurnitProd().getUsedDesksCount());
 		// carpenters
 		this.simStateData.setModelsCarpentersA(this.agentGroupA().getAllocator().getCarpenters());
 		this.simStateData.setModelsCarpentersB(this.agentGroupB().getAllocator().getCarpenters());
@@ -341,7 +349,8 @@ public AgentGroupC agentGroupC()
 		for (Furniture f : this.agentFurnitProd().getQFittings())
 			this.simStateData.addToqFittings(f);
 		// stats
-		this.simStateData.setOrderTimeInSystem(this.getStatTimeOrderCompletion().mean());
+		this.simStateData.setOrderTimeInSystem(this.agentEnvironment().getAvgTimeOrderCompletion().mean());
+		this.simStateData.setUsedDesksCount(this.agentFurnitProd().getStatUsedDesksCount().mean());
 
 		this.simStateData.setUnsOrdersCount(this.agentFurnitProd().getStatUnsOrdersQL().mean());
 		this.simStateData.setUnsProductsCount(this.agentFurnitProd().getStatUnsProductsQL().mean());

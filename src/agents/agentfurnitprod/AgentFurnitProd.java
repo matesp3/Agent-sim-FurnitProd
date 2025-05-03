@@ -203,6 +203,17 @@ public class AgentFurnitProd extends OSPABA.Agent
 	public void setAmountOfDesks(int amount) {
 		if (amount < 1)
 			throw new IllegalArgumentException("Amount of desks must be at least 1.");
-		this.deskManager = new DeskAllocation(amount);
+		this.deskManager = new DeskAllocation(amount, new WStat(this.mySim()));
+	}
+
+	/**
+	 * @return number of how many desks is currently being used.
+	 */
+	public int getUsedDesksCount() {
+		return this.deskManager.getUsedDesksCount();
+	}
+
+	public WStat getStatUsedDesksCount() {
+		return this.deskManager.getStatUsedDesksCount();
 	}
 }

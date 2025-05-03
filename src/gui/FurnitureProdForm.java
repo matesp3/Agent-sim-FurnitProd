@@ -97,7 +97,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
             this.statsViewer.updateExperimentTime(s.currentTime());
             this.statsViewer.updateLocalStats(s.getSimStateData());
             this.simDataViewer.setEventResultsModel(s.getSimStateData());
-            this.replicationViewer.setValue(s.currentReplication() > 0 ? s.currentReplication() - 1 : 0);
+            this.replicationViewer.setValue(s.currentReplication());
         });
     }
 
@@ -105,8 +105,8 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         SwingUtilities.invokeLater(() -> {
             this.statsViewer.updateOverallStats(s);
             this.replicationViewer.setValue(s.getExperimentNum());
-            this.chartCIViewer.addValue(s.getExperimentNum(), (s.getOrderTimeInSystem().getMean() / TIME_UNIT),
-                    (s.getOrderTimeInSystem().getHalfWidth() / TIME_UNIT));
+            this.chartCIViewer.addValue(s.getExperimentNum(), (s.getOrderTimeInSystem().getMean()),
+                    (s.getOrderTimeInSystem().getHalfWidth()));
         });
     }
 
@@ -225,6 +225,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         checkLogs.setSelected(false);
         checks.add(checkLogs);
         this.furnitProdSimController.setEnabledConsoleLogs(checkLogs.isSelected());
+        this.checkLogs.setVisible(false); // temp
 
         this.checkMaxSpeed = new JCheckBox("Max-speed");
         checkMaxSpeed.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -331,12 +332,14 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         this.inputA.setEnabled(enabled);
         this.inputB.setEnabled(enabled);
         this.inputC.setEnabled(enabled);
+        this.inputDesksCount.setEnabled(enabled);
         this.inputSimDur.setEnabled(enabled);
 
         this.inputExperiments.setBackground(enabled ? COL_BG : COL_BTN_DISABLED);
         this.inputA.setBackground(enabled ? COL_BG : COL_BTN_DISABLED);
         this.inputB.setBackground(enabled ? COL_BG : COL_BTN_DISABLED);
         this.inputC.setBackground(enabled ? COL_BG : COL_BTN_DISABLED);
+        this.inputDesksCount.setBackground(enabled ? COL_BG : COL_BTN_DISABLED);
         this.inputSimDur.setBackground(enabled ? COL_BG : COL_BTN_DISABLED);
         this.inputExperiments.getParent().setBackground(enabled ? COL_BG : COL_BTN_DISABLED);
         this.inputA.getParent().setBackground(enabled ? COL_BG : COL_BTN_DISABLED);
