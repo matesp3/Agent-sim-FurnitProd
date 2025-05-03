@@ -128,12 +128,15 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		// 2. option - step == FIT_INST must be true
 		if (assignMsg.getCarpenter() == null) {
 			// now, try to assign carpenter C
-			AssignMessage newAssignMsg = (AssignMessage) assignMsg.createCopy();
-			newAssignMsg.setCode(Mc.assignCarpenterC);
-			newAssignMsg.setAddressee(Id.agentGroupC);
-			this.request(newAssignMsg);
+//			AssignMessage newAssignMsg = (AssignMessage) assignMsg.createCopy();
+//			AssignMessage newAssignMsg = assignMsg; // ok
+//			AssignMessage newAssignMsg = this.getFreeAssignMessageInstance();
+			assignMsg.setCode(Mc.assignCarpenterC);
+			assignMsg.setAddressee(Id.agentGroupC);
+			this.request(assignMsg);
 			return;
 		}
+		this.freeAssignMsgInstance = assignMsg;
 		this.myAgent().getStatFittingsWT().addSample(0);
 		this.startNextStep(assignMsg.getCarpenter(), assignMsg.getProduct(), Mc.fittingsInstallation, Id.agentGroupA);
 	}
@@ -142,6 +145,8 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	public void processAssignCarpenterB(MessageForm message)
 	{
 		AssignMessage asgMsg = (AssignMessage) message;
+		this.freeAssignMsgInstance = asgMsg;
+
 		if (asgMsg.getCarpenter() == null) { // ENQUEUE
 			this.enqueueProduct(asgMsg.getProduct(), this.myAgent().getQAssembling(), this.myAgent().getStatAssemblingQL());
 			return;
@@ -155,6 +160,8 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	public void processAssignCarpenterC(MessageForm message)
 	{
 		AssignMessage asgMsg = (AssignMessage) message;
+		this.freeAssignMsgInstance = asgMsg;
+
 		if (asgMsg.getCarpenter() == null) { // ENQUEUE
 			if (asgMsg.getProduct().getStep() == STAINING)
 				this.enqueueProduct(asgMsg.getProduct(), this.myAgent().getQStaining(), this.myAgent().getStatStainingQL());
@@ -349,6 +356,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	// comes here --v from order arrival || from this method itself
 	/** Must be ensured, that conditions for fittings installation or new furniture are met. */
 	private void processAssignedCarpenterForNewFurniture(AssignMessage msg) {
+		this.freeAssignMsgInstance = msg;
 		if (msg.getCarpenter() == null) {
 			return; // CARPENTER WASN'T ASSIGNED
 		}
@@ -378,7 +386,8 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	 * @param carpenter
 	 */
 	private void sendTechStepRequest(int code, int addressee, Carpenter carpenter) {
-		TechStepMessage stepMsg = (TechStepMessage) this.stepMsgPattern.createCopy(); // need copy, bcs more request can be created in one sim time
+//		TechStepMessage stepMsg = (TechStepMessage) this.stepMsgPattern.createCopy(); // need copy, bcs more request can be created in one sim time
+		TechStepMessage stepMsg = this.getFreeTechStepMessageInstance();
 		stepMsg.setCarpenter(carpenter);
 		this.sendTechStepRequest(code, addressee, stepMsg);
 	}
@@ -407,7 +416,8 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	 * @param product furniture that is to be processed with potentially assigned carpenter of group {@code agentGroup}
 	 */
 	private void sendAssignRequestForProduct(int code, int agentGroup, Furniture product) {
-		AssignMessage assignMsg = (AssignMessage) this.assignMsgPattern.createCopy();
+//		AssignMessage assignMsg = (AssignMessage) this.assignMsgPattern.createCopy();
+		AssignMessage assignMsg = this.getFreeAssignMessageInstance();
 		assignMsg.setCode(code);
 		assignMsg.setAddressee(agentGroup);
 		assignMsg.setProduct(product);
@@ -419,7 +429,8 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	 * @param carpenter
 	 */
 	private void sendStorageTransferRequest(Carpenter carpenter) {
-		TechStepMessage tsMsg = (TechStepMessage) this.stepMsgPattern.createCopy();
+//		TechStepMessage tsMsg = (TechStepMessage) this.stepMsgPattern.createCopy();
+		TechStepMessage tsMsg = this.getFreeTechStepMessageInstance();
 		tsMsg.setCarpenter(carpenter);
 		this.sendStorageTransferRequest(tsMsg);
 	}
@@ -439,7 +450,8 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	 * @param carpenter
 	 */
 	private void sendDeskTransferRequest(Carpenter carpenter) {
-		TechStepMessage tsMsg = (TechStepMessage) this.stepMsgPattern.createCopy();
+//		TechStepMessage tsMsg = (TechStepMessage) this.stepMsgPattern.createCopy();
+		TechStepMessage tsMsg = this.getFreeTechStepMessageInstance();
 		tsMsg.setCarpenter(carpenter);
 		this.sendDeskTransferRequest(tsMsg);
 	}
@@ -461,7 +473,8 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	}
 
 	private void startCreatingNextFurniture(Carpenter carpenter, Furniture product) {
-		TechStepMessage tsMsg = (TechStepMessage) this.stepMsgPattern.createCopy(); // need copy, bcs more request can be created in one sim time
+//		TechStepMessage tsMsg = (TechStepMessage) this.stepMsgPattern.createCopy(); // need copy, bcs more request can be created in one sim time
+		TechStepMessage tsMsg = this.getFreeTechStepMessageInstance();
 		tsMsg.setCarpenter(carpenter);
 		this.startCreatingNextFurniture(tsMsg, product);
 	}
@@ -490,7 +503,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	 * @param tsMsg msg to be reused with set carpenter
 	 */
 	private void tryAssignNextWorkForCarpenterA(TechStepMessage tsMsg) {
-		if (this.tryToStartFittingsInstallation(tsMsg.getCarpenter(), Id.agentGroupA)) {
+		if (this.tryToStartFittingsInstallation(tsMsg, Id.agentGroupA)) {
 			return;
 		}
 		else { // no fittings montage work -> try to start creating new furniture product
@@ -515,7 +528,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		if (f != null) {
 			this.myAgent().getStatAssemblingQL().addSample( this.myAgent().getQAssembling().size() );
 			this.updateStatWaitingTime(f, this.myAgent().getStatAssemblingWT());
-			this.startNextStep(tsMsg.getCarpenter(), f, Mc.assembling, Id.agentGroupB);
+			this.startNextStep(tsMsg, f, Mc.assembling, Id.agentGroupB);
 			return;
 		}
 		// carpenter B has no potential work
@@ -528,7 +541,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	 * @param tsMsg msg to be reused with set carpenter
 	 */
 	private void tryAssignNextWorkForCarpenterC(TechStepMessage tsMsg) {
-		if (this.tryToStartFittingsInstallation(tsMsg.getCarpenter(), Id.agentGroupC)) {
+		if (this.tryToStartFittingsInstallation(tsMsg, Id.agentGroupC)) {
 			return;
 		}
 		else { // no fittings montage work -> check if some furniture is waiting for staining (with optional lacquering)
@@ -536,7 +549,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 			if (f != null) {
 				this.myAgent().getStatStainingQL().addSample( this.myAgent().getQStaining().size() );
 				this.updateStatWaitingTime(f, this.myAgent().getStatStainingWT());
-				this.startNextStep(tsMsg.getCarpenter(), f, Mc.stainingAndPaintcoat, Id.agentGroupC);
+				this.startNextStep(tsMsg, f, Mc.stainingAndPaintcoat, Id.agentGroupC);
 				return;
 			}
 		}
@@ -546,20 +559,40 @@ public class ManagerFurnitProd extends OSPABA.Manager
 
 	/**
 	 * If exists some furniture waiting for fittings installation, then it starts this process with provided {@code c}.
-	 * @param c carpenter of group {@code Carpenter.GROUP.A} or {@code Carpenter.GROUP.C}
+	 * @param tsMsg tech step message with assigned carpenter of group {@code Carpenter.GROUP.A} or {@code Carpenter.GROUP.C}
 	 * @param carpenterGroupID options: {@code Id.agentGroupA}, {@code Id.agentGroupC}
 	 * @return {@code true}, if he did start fittings installation
 	 */
-	private boolean tryToStartFittingsInstallation(Carpenter c, int carpenterGroupID) {
+	private boolean tryToStartFittingsInstallation(TechStepMessage tsMsg, int carpenterGroupID) {
 		Furniture f = this.myAgent().getQFittings().poll();
 		if (f == null)
 			return false;
 		this.myAgent().getStatFittingsQL().addSample( this.myAgent().getQFittings().size() );
 		this.updateStatWaitingTime(f, this.myAgent().getStatFittingsWT());
-		this.startNextStep(c, f, Mc.fittingsInstallation, carpenterGroupID);
+		this.startNextStep(tsMsg, f, Mc.fittingsInstallation, carpenterGroupID);
 		return true;
 	}
 
+	/**
+	 * Starts specified tech step or transfer regarding carpenter's location.
+	 * @param tsMsg tech step message with assigned carpenter
+	 */
+	private void startNextStep(TechStepMessage tsMsg, Furniture f, int code, int agentGroup) {
+		tsMsg.getCarpenter().receiveProduct(f, this.mySim().currentTime());
+		if (tsMsg.getCarpenter().getCurrentDeskID() == f.getDeskID()) { // same desk
+			this.sendTechStepRequest(code, agentGroup, tsMsg);
+		}
+		else if (tsMsg.getCarpenter().getCurrentDeskID() != Carpenter.IN_STORAGE) { // other desk
+			this.sendDeskTransferRequest(tsMsg);
+		}
+		else { // he's in storage - hasn't worked yet
+			this.sendStorageTransferRequest(tsMsg);
+		}
+	}
+
+	/**
+	 * Starts specified tech step or transfer regarding carpenter's location.
+	 */
 	private void startNextStep(Carpenter c, Furniture f, int code, int agentGroup) {
 		c.receiveProduct(f, this.mySim().currentTime());
 		if (c.getCurrentDeskID() == f.getDeskID()) { // same desk
