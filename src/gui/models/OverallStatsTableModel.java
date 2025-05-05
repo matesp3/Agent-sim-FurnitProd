@@ -97,7 +97,7 @@ public class OverallStatsTableModel extends AbstractTableModel {
         if (columnIndex == 0)
             return stat.getDescription();
         else if (columnIndex == 1)
-            return Formatter.getStrCI(stat.getHalfWidth(), stat.getMean(), 5, 1.0);
+            return Formatter.getStrCI(stat.getHalfWidth(), stat.getMean(), 2, 1.0);
         else if (columnIndex == 2)
             return stat.getUnit();
         return null;

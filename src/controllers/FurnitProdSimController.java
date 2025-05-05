@@ -43,9 +43,13 @@ public class FurnitProdSimController {
                     if (this.sim.currentReplication() > 10)
                         this.gui.updateAfterReplication(this.sim.getReplicationResults());
                     else
-                        this.gui.updateReplicationNr(this.sim.currentReplication());
+                        this.gui.updateReplicationNr(this.sim.currentReplication()+1);
                 }
                 );
+                this.sim.onSimulationDidFinish(s -> {
+                    this.gui.updateReplicationNr(this.sim.currentReplication()+1);
+                    this.gui.simEnded();
+                });
                 // - - - - -
                 this.setEnabledMaxSpeed(withMaxSpeed);
                 // - - - - -

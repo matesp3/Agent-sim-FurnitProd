@@ -97,7 +97,7 @@ public class LocalStatsTableModel extends AbstractTableModel {
         if (columnIndex == 0)
             return stat.getDescription();
         else if (columnIndex == 1)
-            return String.format("%.5f", stat.getValue());
+            return String.format("%.2f", stat.getValue());
         else if (columnIndex == 2)
             return stat.getUnit();
         return null;

@@ -120,6 +120,13 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         });
     }
 
+    /**
+     * Notification is sent from some controller. Sends message about simulation end event.
+     */
+    public void simEnded() {
+        this.onSimEnded();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
@@ -140,7 +147,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         }
         else if (cmd.equals("Cancel")) {
             this.furnitProdSimController.terminateSimulation();
-            this.onSimEnd();
+            this.onSimEnded();
         }
         else if (cmd.equals("Pause")) {
             if (this.simPaused) {
@@ -191,7 +198,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
     @Override
     public void componentHidden(ComponentEvent e) {}
 
-    private void onSimEnd() {
+    private void onSimEnded() {
         this.setBtnEnabled(this.btnStart, true);
         this.setBtnEnabled(this.btnPause, false);
         this.setBtnEnabled(this.btnCancel, false);
