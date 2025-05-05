@@ -18,8 +18,7 @@ public class ExperimentsRunner {
     public static final String DELIM = ";";
     private static final String RESULTS_HEADER = "[0]ConfigNr;[1]Ts;[2]ExecutedReps;[3]CountA;[4]CountB;[5]CountC;[6]DesksCount;[7]SimDays;[8]CI-Order'sTimeInSystem;" +
             "[9]CI-UtilizationA;[10]CI-UtilizationB;[11]CI-UtilizationC;[12]AVG-CreatedOrders;[13]AVG-CompletedOrders";
-//    private static final int MAX_REPS = 1_000;
-    private static final int MAX_REPS = 10;
+    private static final int MAX_REPS = 1_000;
     private static final int IDX_COUNT_A = 0;
     private static final int IDX_COUNT_B = 1;
     private static final int IDX_COUNT_C = 2;
@@ -300,7 +299,7 @@ public class ExperimentsRunner {
         printMessage("Sorting results ascending by Order's Time In System...");
         this.sortResults();
         try (FileWriter filWr = new FileWriter(SORTED_RESULTS_PATH)) {
-            filWr.write("    * * * * * S O R T E D   R E S U L T S * * * * *   (ascending by Order's Time In System)  ");
+            filWr.write("    * * * * * S O R T E D   R E S U L T S * * * * *   (ascending by [8]Order's Time In System)  ");
             filWr.write('\n'+RESULTS_HEADER);
             for (int i = 0; i < this.results.length; i++) {
                 filWr.write('\n' + this.results[i].toString() );

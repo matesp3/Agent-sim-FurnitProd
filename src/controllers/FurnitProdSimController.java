@@ -1,9 +1,11 @@
 package controllers;
 
+import OSPAnimator.Animator;
 import gui.FurnitureProdForm;
-import results.FurnitProdRepStats;
 import simulation.MySimulation;
 import utils.DoubleComp;
+
+import javax.swing.*;
 
 /**
  * Controller is used for communication with business logic (some type of Simulation).
@@ -159,5 +161,16 @@ public class FurnitProdSimController {
 //        Thread t = new Thread(r, "Thread-config shiftTime");
 //        t.setDaemon(true); // if GUI ends, simulation also
 //        t.start();
+    }
+
+    public Animator createAnimator() {
+        // ok.. napojene na gui
+        System.out.println("!!!Create Animator' NOT IMPLEMENTED YET!!!");
+        return null;
+    }
+
+    public void removeAnimator() {
+        // ok.. napojene na gui
+        System.out.println("!!!Remove Animator' NOT IMPLEMENTED YET!!!");
     }
 }

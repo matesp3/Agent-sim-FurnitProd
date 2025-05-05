@@ -3,6 +3,7 @@ package gui;
 import OSPABA.ISimDelegate;
 import OSPABA.SimState;
 import OSPABA.Simulation;
+import OSPAnimator.Animator;
 import controllers.FurnitProdSimController;
 import gui.components.*;
 import results.FurnitProdRepStats;
@@ -38,6 +39,8 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
     private StatsViewer statsViewer;
     private FurnitureProdDataViewer simDataViewer;
     private CIChartViewer chartCIViewer;
+    private JPanel animatorViewer;
+    private Animator animator = null;
     // custom components
     private InputWithLabel inputA;
     private InputWithLabel inputB;
@@ -55,6 +58,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
     private JButton btnShiftConfig;
     private JCheckBox checkLogs;
     private JCheckBox checkMaxSpeed;
+    private JCheckBox checkAnimator;
 
     private final FurnitProdSimController furnitProdSimController;
     private boolean simPaused;
@@ -156,8 +160,19 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
                 checkLogs.setSelected(false);
                 furnitProdSimController.setEnabledConsoleLogs(false);
             }
-        }
-        else if (cmd.equals("Console-logs")) {
+        } else if (cmd.equals("Animator")) {
+            if (this.checkAnimator.isSelected()) {
+                this.animator = this.furnitProdSimController.createAnimator();  // adding animator to simulation
+                this.animatorViewer.add(this.animator);                         // adding animator to view
+                this.tabbedContentPane.addTab("Animator", this.animatorViewer); // adding tab
+            }
+            else {
+                this.tabbedContentPane.remove(this.animatorViewer); // removing tab
+                this.animatorViewer.remove(this.animator);          // removing animator from viewer
+                this.furnitProdSimController.removeAnimator();      // removing animator from simulation
+                this.animator = null;
+            }
+        } else if (cmd.equals("Console-logs")) {
             this.furnitProdSimController.setEnabledConsoleLogs(checkLogs.isSelected());
         }
     }
@@ -203,6 +218,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         this.statsViewer = new StatsViewer();
         this.simDataViewer = new FurnitureProdDataViewer();
         this.chartCIViewer = new CIChartViewer();
+        this.animatorViewer = new JPanel();
 
         this.tabbedContentPane.addTab("Statistics", this.statsViewer);
         this.tabbedContentPane.addTab("Sim. state view", this.simDataViewer);
@@ -226,7 +242,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
 
         this.checkLogs = new JCheckBox("Console-logs");
         checkLogs.setAlignmentX(Component.CENTER_ALIGNMENT);
-        checkLogs.setBackground(COL_BG);
+        checkLogs.setBackground(checks.getBackground());
         checkLogs.addActionListener(this);
         checkLogs.setSelected(false);
         checks.add(checkLogs);
@@ -235,7 +251,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
 
         this.checkMaxSpeed = new JCheckBox("Max-speed");
         checkMaxSpeed.setAlignmentX(Component.CENTER_ALIGNMENT);
-        checkMaxSpeed.setBackground(COL_BG);
+        checkMaxSpeed.setBackground(checks.getBackground());
         checkMaxSpeed.addActionListener(this);
         // ----
         checkMaxSpeed.setSelected(false);
@@ -243,7 +259,18 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         // ----
         checks.add(Box.createRigidArea(new Dimension(0, 5)));
         checks.add(checkMaxSpeed);
+
+        this.checkAnimator = new JCheckBox("Animator");
+        this.checkAnimator.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.checkAnimator.setBackground(checks.getBackground());
+        this.checkAnimator.addActionListener(this);
+        // ----
+        this.checkAnimator.setSelected(false);
+        // ----
+        checks.add(Box.createRigidArea(new Dimension(0, 5)));
+        checks.add(this.checkAnimator);
         checks.setAlignmentY(Component.BOTTOM_ALIGNMENT);
+
         this.eastPane.add(checks);
 
         this.btnStart = this.createBtn("Run");
