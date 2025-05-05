@@ -26,7 +26,9 @@ public class FurnitProdRepStats extends SimResults {
     private StatResult.ConfInterval utilizationGroupC = new StatResult.ConfInterval("Utilization of group C:", -1, -1, "%");
 
     private StatResult.ConfInterval orderTimeInSystem = new StatResult.ConfInterval("Order's time in system", -1, -1, "[h]");
-//    private StatResult.ConfInterval completedOrdersCount = new StatResult.ConfInterval("Count of completed orders", -1, -1, "[qty]");
+    private StatResult.Simple avgCompletedOrdersCount = new StatResult.Simple("AVG Count of completed orders", -1,  "[qty]");
+    private StatResult.Simple avgCreatedOrdersCount = new StatResult.Simple("AVG Count of created orders", -1, "[qty]");;
+    private StatResult.Simple avgUsedDesksCount = new StatResult.Simple("AVG Count of u orders", -1, "[qty]");;
 
     public FurnitProdRepStats(long experimentNum) {
         super(experimentNum);
@@ -165,27 +167,27 @@ public class FurnitProdRepStats extends SimResults {
         this.orderTimeInSystem.setCI(s.mean()/TIME_UNIT, (s.confidenceInterval_95()[1] - s.mean())/TIME_UNIT);
     }
 
-//    public StatResult.ConfInterval getCompletedOrdersCount() {
-//        return completedOrdersCount;
-//    }
-//
-//    public void setCompletedOrdersCount(Stat s) {
-//        this.completedOrdersCount.setCI(s.mean(), s.confidenceInterval_95()[1]-s.mean());
-//    }
-//
-//    public StatResult.ConfInterval getCreatedOrdersCount() {
-//        return createdOrdersCount;
-//    }
-//
-//    public void setCreatedOrdersCount(Stat s) {
-//        this.createdOrdersCount.setCI(s.mean(), s.confidenceInterval_95()[1]-s.mean());
-//    }
-//
-//    public StatResult.ConfInterval getUsedDesksCount() {
-//        return usedDesksCount;
-//    }
-//
-//    public void setUsedDesksCount(Stat s) {
-//        this.usedDesksCount.setCI(s.mean(), s.confidenceInterval_95()[1]-s.mean());
-//    }
+    public StatResult.Simple getAvgCompletedOrdersCount() {
+        return avgCompletedOrdersCount;
+    }
+
+    public void setAvgCompletedOrdersCount(Stat s) {
+        this.avgCompletedOrdersCount.setValue(s.mean());
+    }
+
+    public StatResult.Simple getAvgCreatedOrdersCount() {
+        return avgCreatedOrdersCount;
+    }
+
+    public void setAvgCreatedOrdersCount(Stat s) {
+        this.avgCreatedOrdersCount.setValue(s.mean());
+    }
+
+    public StatResult.Simple getAvgUsedDesksCount() {
+        return avgUsedDesksCount;
+    }
+
+    public void setAvgUsedDesksCount(Stat s) {
+        this.avgUsedDesksCount.setValue(s.mean());
+    }
 }

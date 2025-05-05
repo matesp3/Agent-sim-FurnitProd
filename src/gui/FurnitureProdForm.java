@@ -104,8 +104,8 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
     public void updateAfterReplication(FurnitProdRepStats s) {
         SwingUtilities.invokeLater(() -> {
             this.statsViewer.updateOverallStats(s);
-            this.replicationViewer.setValue(s.getExperimentNum());
-            this.chartCIViewer.addValue(s.getExperimentNum(), (s.getOrderTimeInSystem().getMean()),
+            this.replicationViewer.setValue(s.getReplicationNum());
+            this.chartCIViewer.addValue(s.getReplicationNum(), (s.getOrderTimeInSystem().getMean()),
                     (s.getOrderTimeInSystem().getHalfWidth()));
         });
     }

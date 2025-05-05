@@ -3,7 +3,6 @@ package simulation;
 import OSPRNG.RNG;
 import OSPRNG.UniformContinuousRNG;
 import OSPStat.Stat;
-import agents.agentenvironment.continualassistants.SchedulerOrderArrival;
 import agents.agenttransfer.*;
 import agents.agentmodel.*;
 import agents.agentenvironment.*;
@@ -29,9 +28,9 @@ public class MySimulation extends OSPABA.Simulation
 		}
 	}
 	private final Stat avgTimeOrderCompletion = new Stat();
-//	private final Stat avgCountOrdersCreated = new Stat();
-//	private final Stat avgCountOrdersCompleted = new Stat();
-//	private final Stat avgCountUsedDesks = new Stat();
+	private final Stat avgCountOrdersCreated = new Stat();
+	private final Stat avgCountOrdersCompleted = new Stat();
+	private final Stat avgCountUsedDesks = new Stat();
 
 	private final Stat avgUtilizationA  = new Stat();
 	private final Stat avgUtilizationB  = new Stat();
@@ -78,8 +77,9 @@ public class MySimulation extends OSPABA.Simulation
 		super.prepareSimulation();
 		// Create global statistcis
 		this.avgTimeOrderCompletion.clear();
-//		this.avgCountOrdersCompleted.clear();
-//		this.avgCountUsedDesks.clear();
+		this.avgCountOrdersCreated.clear();
+		this.avgCountOrdersCompleted.clear();
+		this.avgCountUsedDesks.clear();
 		this.avgUtilizationA.clear();
 		this.avgUtilizationB.clear();
 		this.avgUtilizationC.clear();
@@ -108,9 +108,9 @@ public class MySimulation extends OSPABA.Simulation
 		// Collect local statistics into global, update UI, etc...
 		super.replicationFinished();
 		this.avgTimeOrderCompletion.addSample(this.agentEnvironment().getAvgTimeOrderCompletion().mean());
-//		this.avgCountOrdersCreated.addSample(this.agentEnvironment().getOrdersCreated());
-//		this.avgCountOrdersCompleted.addSample(this.agentEnvironment().getOrdersCompleted());
-//		this.avgCountUsedDesks.addSample(this.agentFurnitProd().getStatUsedDesksCount().mean());
+		this.avgCountOrdersCreated.addSample(this.agentEnvironment().getOrdersCreated());
+		this.avgCountOrdersCompleted.addSample(this.agentEnvironment().getOrdersCompleted());
+		this.avgCountUsedDesks.addSample(this.agentFurnitProd().getStatUsedDesksCount().mean());
 
 		this.avgUtilizationA.addSample(this.agentGroupA().getGroupUtilization());
 		this.avgUtilizationB.addSample(this.agentGroupB().getGroupUtilization());
@@ -300,9 +300,9 @@ public AgentGroupC agentGroupC()
 		this.repResults.setExperimentNum(this.currentReplication());
 
 		this.repResults.setOrderTimeInSystem(this.avgTimeOrderCompletion);
-//		this.repResults.setCreatedOrdersCount(this.avgCountOrdersCreated);
-//		this.repResults.setCompletedOrdersCount(this.avgCountOrdersCompleted);
-//		this.repResults.setUsedDesksCount(this.avgCountUsedDesks);
+		this.repResults.setAvgCreatedOrdersCount(this.avgCountOrdersCreated);
+		this.repResults.setAvgCompletedOrdersCount(this.avgCountOrdersCompleted);
+		this.repResults.setAvgUsedDesksCount(this.avgCountUsedDesks);
 
 		this.repResults.setUtilizationGroupA(this.avgUtilizationA);
 		this.repResults.setUtilizationGroupB(this.avgUtilizationB);
