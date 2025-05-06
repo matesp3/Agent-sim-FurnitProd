@@ -21,14 +21,13 @@ public class FurnitProdSimController {
     public FurnitProdSimController(FurnitureProdForm gui) {
         this.gui = gui;
         this.sim = null;
-        this.maxSpeedOn = true;
+        this.maxSpeedOn = false;
         this.consoleLogsOn = false;
         this.shiftTime = 1;      // sim-seconds
         this.sleepTime = 1;  // real-seconds
     }
 
     public boolean isSimRunning() {
-//        return this.simRunning;
         return this.sim != null && sim.isRunning();
     }
 
@@ -129,7 +128,7 @@ public class FurnitProdSimController {
     public void setEnabledMaxSpeed(boolean enabled) {
         this.maxSpeedOn = enabled;
 //        if (!this.simExists())
-        if (!this.isSimRunning())
+        if (this.sim == null)
             return;
         Runnable r = () -> {
             if (enabled)
@@ -171,29 +170,6 @@ public class FurnitProdSimController {
         }
         this.sim.removeAnimator();
         this.animator = null;
-    }
-
-    public void setShiftTime(double time) {
-        throw new UnsupportedOperationException("Not supported yet.");
-//        this.shiftTime = time;
-//        this.shiftTime = DoubleComp.compare(time, 0) == -1 ? 0 : time;
-//        if (this.sim == null)
-//            return;
-//        Runnable r = () -> sim.setShiftTime(time);
-//        Thread t = new Thread(r, "Thread-config shiftTime");
-//        t.setDaemon(true); // if GUI ends, simulation also
-//        t.start();
-    }
-
-    public void setSleepTime(long millis) {
-        throw new UnsupportedOperationException("Not supported yet.");
-//        this.sleepTime = millis < 0 ? 0 : millis;
-//        if (this.sim == null)
-//            return;
-//        Runnable r = () -> sim.setSleepTime(millis);
-//        Thread t = new Thread(r, "Thread-config sleepTime");
-//        t.setDaemon(true); // if GUI ends, simulation also
-//        t.start();
     }
 
     public void setEnabledConsoleLogs(boolean enabled) {
