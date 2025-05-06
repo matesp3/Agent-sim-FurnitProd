@@ -3,18 +3,23 @@ package gui;
 import OSPABA.ISimDelegate;
 import OSPABA.SimState;
 import OSPABA.Simulation;
-import OSPAnimator.Animator;
+import OSPAnimator.AnimImageItem;
+import OSPAnimator.IAnimator;
 import controllers.FurnitProdSimController;
 import gui.components.*;
 import results.FurnitProdRepStats;
 import simulation.MySimulation;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionListener, ComponentListener {
     public static final double TIME_UNIT = 3600.0;
@@ -40,7 +45,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
     private FurnitureProdDataViewer simDataViewer;
     private CIChartViewer chartCIViewer;
     private JPanel animatorViewer;
-    private Animator animator = null;
+    private IAnimator animator = null;
     // custom components
     private InputWithLabel inputA;
     private InputWithLabel inputB;
@@ -120,6 +125,41 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         });
     }
 
+    public void registerAnimator(IAnimator animator){
+        this.animator = animator;
+        if (animator == null)
+            return;
+        this.animatorViewer.setBackground(COL_TEXT_FONT_2);
+        this.animatorViewer.setLayout(null);
+        this.tabbedContentPane.addTab("Animator", this.animatorViewer); // adding tab
+        this.animator.canvas().setBounds(0, 0, 500, 500);
+        this.animator.canvas().setBackground(Color.GREEN);
+//            this.animator.setBackgroundImage(ImageIO.read(new File(ConfigData.IMG_PATH_DESK)));
+        AnimImageItem img1 = null;
+        try {
+            img1 = new AnimImageItem(ImageIO.read(new File(ConfigData.IMG_PATH_DESK)));
+            img1.setImageSize(200, 150);
+            img1.setPosition(0,0);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        this.animator.register(img1);
+//        this.animator.canvas().setVisible(true);
+        this.animatorViewer.add(this.animator.canvas());                    // adding animator to view
+//        this.animator.canvas().set;
+    }
+
+    public void unregisterAnimator() {
+        if (this.animator == null)
+            return;
+        this.tabbedContentPane.remove(this.animatorViewer); // removing tab
+        this.animatorViewer.remove(this.animator.canvas()); // removing animator from viewer
+        this.animator = null;
+        Thread t = new Thread(this.furnitProdSimController::removeAnimator, "Thread-AnimRemoving");
+        t.setDaemon(true);
+        t.start();
+    }
+
     /**
      * Notification is sent from some controller. Sends message about simulation end event.
      */
@@ -142,7 +182,9 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
                 this.replicationViewer.setValue(0);
                 this.furnitProdSimController.launchSimulation(this.inputA.getIntValue(), this.inputB.getIntValue(),
                         this.inputC.getIntValue(), this.inputDesksCount.getIntValue(),
-                        this.inputExperiments.getIntValue(), this.inputSimDur.getDoubleValue(), this.checkMaxSpeed.isSelected());
+                        this.inputExperiments.getIntValue(), this.inputSimDur.getDoubleValue(),
+                        this.checkMaxSpeed.isSelected(), this.checkAnimator.isSelected());
+//                        this.checkMaxSpeed.isSelected(), true);
             }
         }
         else if (cmd.equals("Cancel")) {
@@ -161,23 +203,25 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         }
         else if (cmd.equals("Max-speed")) {
             this.furnitProdSimController.setEnabledMaxSpeed(checkMaxSpeed.isSelected());
-            checkLogs.setEnabled(!checkMaxSpeed.isSelected());
+            this.checkLogs.setEnabled(!checkMaxSpeed.isSelected());
             this.timeSlider.setVisible(!checkMaxSpeed.isSelected());
+            this.checkAnimator.setVisible(!checkMaxSpeed.isSelected());
             if (checkMaxSpeed.isSelected()) {
                 checkLogs.setSelected(false);
-                furnitProdSimController.setEnabledConsoleLogs(false);
+                this.unregisterAnimator();
+                this.checkAnimator.setSelected(false);
+                this.furnitProdSimController.setEnabledConsoleLogs(false);
             }
         } else if (cmd.equals("Animator")) {
             if (this.checkAnimator.isSelected()) {
-                this.animator = this.furnitProdSimController.createAnimator();  // adding animator to simulation
-                this.animatorViewer.add(this.animator);                         // adding animator to view
-                this.tabbedContentPane.addTab("Animator", this.animatorViewer); // adding tab
+                Thread t = new Thread(()->
+                this.registerAnimator(this.furnitProdSimController.createAnimator()),
+                        "Thread-animCreating"); // adding animator to simulation
+                t.setDaemon(true);
+                t.start();
             }
             else {
-                this.tabbedContentPane.remove(this.animatorViewer); // removing tab
-                this.animatorViewer.remove(this.animator);          // removing animator from viewer
-                this.furnitProdSimController.removeAnimator();      // removing animator from simulation
-                this.animator = null;
+                this.unregisterAnimator();
             }
         } else if (cmd.equals("Console-logs")) {
             this.furnitProdSimController.setEnabledConsoleLogs(checkLogs.isSelected());
@@ -226,6 +270,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         this.simDataViewer = new FurnitureProdDataViewer();
         this.chartCIViewer = new CIChartViewer();
         this.animatorViewer = new JPanel();
+//        this.animatorViewer.setLayout(null);
 
         this.tabbedContentPane.addTab("Statistics", this.statsViewer);
         this.tabbedContentPane.addTab("Sim. state view", this.simDataViewer);
@@ -397,7 +442,4 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         txtField.setColumns( (int)((5.0/7.0)*expectedLettersCount)+1 );
         return txtField;
     }
-
-
-
 }
