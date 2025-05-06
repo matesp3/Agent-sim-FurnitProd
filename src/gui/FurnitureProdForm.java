@@ -129,10 +129,11 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         this.animator = animator;
         if (animator == null)
             return;
+        this.tabbedContentPane.addTab("Animator", this.animatorViewer); // adding tab
         this.animatorViewer.setBackground(COL_TEXT_FONT_2);
         this.animatorViewer.setLayout(null);
-        this.tabbedContentPane.addTab("Animator", this.animatorViewer); // adding tab
-        this.animator.canvas().setBounds(0, 0, 500, 500);
+        this.animatorViewer.add(this.animator.canvas());                    // adding animator to view
+        this.animator.canvas().setBounds(0, 0, animatorViewer.getWidth(), animatorViewer.getWidth());
         this.animator.canvas().setBackground(Color.GREEN);
 //            this.animator.setBackgroundImage(ImageIO.read(new File(ConfigData.IMG_PATH_DESK)));
         AnimImageItem img1 = null;
@@ -145,13 +146,14 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         }
         this.animator.register(img1);
 //        this.animator.canvas().setVisible(true);
-        this.animatorViewer.add(this.animator.canvas());                    // adding animator to view
+
 //        this.animator.canvas().set;
     }
 
     public void unregisterAnimator() {
         if (this.animator == null)
             return;
+        this.checkAnimator.setSelected(false);
         this.tabbedContentPane.remove(this.animatorViewer); // removing tab
         this.animatorViewer.remove(this.animator.canvas()); // removing animator from viewer
         this.animator = null;
@@ -170,23 +172,25 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
     @Override
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
-        if (cmd.equals("Run")) {
-            if (! this.furnitProdSimController.isSimRunning()) {
-                this.statsViewer.clearStatsList();
-                this.chartCIViewer.setMaxReplicationNr(this.inputExperiments.getIntValue());
-                this.chartCIViewer.clearChart();
-                this.setBtnEnabled(this.btnStart, false);
-                this.setBtnEnabled(this.btnPause, true);
-                this.setBtnEnabled(this.btnCancel, true);
-                this.setEnabledInputs(false);
-                this.replicationViewer.setValue(0);
-                this.furnitProdSimController.launchSimulation(this.inputA.getIntValue(), this.inputB.getIntValue(),
-                        this.inputC.getIntValue(), this.inputDesksCount.getIntValue(),
-                        this.inputExperiments.getIntValue(), this.inputSimDur.getDoubleValue(),
-                        this.checkMaxSpeed.isSelected(), this.checkAnimator.isSelected());
-//                        this.checkMaxSpeed.isSelected(), true);
+        if (cmd.equals("Run")) { // could be clicked only when button is enabled
+            boolean animatorWasSelected = this.checkAnimator.isSelected();
+            if (this.animator != null) {
+                this.unregisterAnimator();
             }
-        }
+            this.checkAnimator.setSelected(animatorWasSelected);
+            this.statsViewer.clearStatsList();
+            this.chartCIViewer.setMaxReplicationNr(this.inputExperiments.getIntValue());
+            this.chartCIViewer.clearChart();
+            this.setBtnEnabled(this.btnStart, false);
+            this.setBtnEnabled(this.btnPause, true);
+            this.setBtnEnabled(this.btnCancel, true);
+            this.setEnabledInputs(false);
+            this.replicationViewer.setValue(0);
+            this.furnitProdSimController.launchSimulation(this.inputA.getIntValue(), this.inputB.getIntValue(),
+                    this.inputC.getIntValue(), this.inputDesksCount.getIntValue(),
+                    this.inputExperiments.getIntValue(), this.inputSimDur.getDoubleValue(),
+                    this.checkMaxSpeed.isSelected(), animatorWasSelected);
+    }
         else if (cmd.equals("Cancel")) {
             this.furnitProdSimController.terminateSimulation();
             this.onSimEnded();
@@ -209,7 +213,6 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
             if (checkMaxSpeed.isSelected()) {
                 checkLogs.setSelected(false);
                 this.unregisterAnimator();
-                this.checkAnimator.setSelected(false);
                 this.furnitProdSimController.setEnabledConsoleLogs(false);
             }
         } else if (cmd.equals("Animator")) {
@@ -234,6 +237,9 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         this.simDataViewer.resizeContent(this.getWidth() - 200, this.getHeight() - 150);
         this.statsViewer.resizeContent(this.getWidth() - 200, this.getHeight() - 150);
         this.chartCIViewer.resizeContent(this.getWidth() - 200, this.getHeight() - 125);
+        if (this.animator != null) {
+            this.animator.canvas().setBounds(0, 0, animatorViewer.getWidth(), animatorViewer.getWidth());
+        }
     }
     @Override
     public void componentMoved(ComponentEvent e) {}

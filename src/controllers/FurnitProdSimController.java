@@ -1,13 +1,9 @@
 package controllers;
 
-import OSPAnimator.Animator;
 import OSPAnimator.IAnimator;
-import gui.ConfigData;
 import gui.FurnitureProdForm;
 import simulation.MySimulation;
 import utils.DoubleComp;
-
-import javax.swing.*;
 
 /**
  * Controller is used for communication with business logic (some type of Simulation).
@@ -25,7 +21,6 @@ public class FurnitProdSimController {
     public FurnitProdSimController(FurnitureProdForm gui) {
         this.gui = gui;
         this.sim = null;
-        this.simRunning = false;
         this.maxSpeedOn = true;
         this.consoleLogsOn = false;
         this.shiftTime = 1;      // sim-seconds
@@ -33,7 +28,12 @@ public class FurnitProdSimController {
     }
 
     public boolean isSimRunning() {
-        return this.simRunning;
+//        return this.simRunning;
+        return this.sim != null && sim.isRunning();
+    }
+
+    public boolean simExists() {
+        return this.sim != null;
     }
 
     public void launchSimulation(int groupA, int groupB, int groupC, int desksCount, int experiments, double simulatedDays, boolean withMaxSpeed, boolean withAnimator) {
@@ -52,9 +52,9 @@ public class FurnitProdSimController {
                 this.sim.onSimulationDidFinish(s -> {
                     this.gui.updateReplicationNr(this.sim.currentReplication()+1);
                     this.gui.simEnded();
+                    this.sim = null;
                 });
                 this.sim.onAnimatorWasCreated((oldAnim, newAnim) -> {
-                    System.out.println(ConfigData.IMG_PATH_DESK);
                     System.out.println("new animator exists? "+(this.sim.animatorExists()&&newAnim !=null));
                 });
                 this.sim.onAnimatorWasRemoved((oldAnim)-> {
@@ -80,17 +80,18 @@ public class FurnitProdSimController {
         Thread t = new Thread(r, "Thread-Main");
         t.setDaemon(true); // if GUI ends, simulation also
         t.start();
-        this.simRunning = true;
     }
 
     public void terminateSimulation() {
-        if (this.sim == null || !this.simRunning)
+//        if (!this.simExists())
+        if (!this.isSimRunning())
             return;
-        Runnable r = () -> sim.stopSimulation();
+        Runnable r = () -> {
+            this.sim.stopSimulation();
+        };
         Thread t = new Thread(r, "Thread-Cancel");
         t.setDaemon(true); // if GUI ends, simulation also
         t.start();
-        this.simRunning = false;
     }
 
     public void pauseSimulation() {
@@ -102,7 +103,8 @@ public class FurnitProdSimController {
     }
 
     private void setSimPaused(boolean paused) {
-        if (this.sim == null || !this.simRunning)
+//        if (!this.simExists())
+        if (!this.isSimRunning())
             return;
         Runnable r = () -> {
             if (paused)
@@ -118,14 +120,16 @@ public class FurnitProdSimController {
     public void setShiftAndSleepTime(double shiftTime, double sleepTime) {
         this.shiftTime = DoubleComp.compare(shiftTime, 0) == -1 ? 0 : shiftTime;
         this.sleepTime = DoubleComp.compare(sleepTime, 0) == -1 ? 0 : sleepTime;
-        if (this.sim == null)
+//        if (!this.simExists())
+        if (!this.isSimRunning())
             return;
         this.changeSimSpeed();
     }
 
     public void setEnabledMaxSpeed(boolean enabled) {
         this.maxSpeedOn = enabled;
-        if (this.sim == null)
+//        if (!this.simExists())
+        if (!this.isSimRunning())
             return;
         Runnable r = () -> {
             if (enabled)
@@ -149,13 +153,34 @@ public class FurnitProdSimController {
         t.start();
     }
 
-    public void setEnabledConsoleLogs(boolean enabled) {
-//        throw new UnsupportedOperationException("Not supported yet.");
-        this.consoleLogsOn = enabled;
+    public IAnimator createAnimator() {
+//        if (!this.simExists()) {
+        if (!this.isSimRunning()) { // before simulation start
+            return null;
+        }
+        this.sim.createAnimator();
+        this.animator = this.sim.animator();
+        this.animator.setSynchronizedTime(false);
+        return this.animator;
+    }
+
+    public void removeAnimator() {
+//        if (!this.simExists()) {
+        if (!this.isSimRunning()) { // before simulation start
+            return;
+        }
+        this.sim.removeAnimator();
+        this.animator = null;
+    }
+
+    public void setShiftTime(double time) {
+        throw new UnsupportedOperationException("Not supported yet.");
+//        this.shiftTime = time;
+//        this.shiftTime = DoubleComp.compare(time, 0) == -1 ? 0 : time;
 //        if (this.sim == null)
 //            return;
-//        Runnable r = () -> sim.setDebugMode(enabled);
-//        Thread t = new Thread(r, "Thread-config consoleLogs");
+//        Runnable r = () -> sim.setShiftTime(time);
+//        Thread t = new Thread(r, "Thread-config shiftTime");
 //        t.setDaemon(true); // if GUI ends, simulation also
 //        t.start();
     }
@@ -171,42 +196,14 @@ public class FurnitProdSimController {
 //        t.start();
     }
 
-    public void setShiftTime(double time) {
-        throw new UnsupportedOperationException("Not supported yet.");
-//        this.shiftTime = time;
-//        this.shiftTime = DoubleComp.compare(time, 0) == -1 ? 0 : time;
+    public void setEnabledConsoleLogs(boolean enabled) {
+//        throw new UnsupportedOperationException("Not supported yet.");
+        this.consoleLogsOn = enabled;
 //        if (this.sim == null)
 //            return;
-//        Runnable r = () -> sim.setShiftTime(time);
-//        Thread t = new Thread(r, "Thread-config shiftTime");
+//        Runnable r = () -> sim.setDebugMode(enabled);
+//        Thread t = new Thread(r, "Thread-config consoleLogs");
 //        t.setDaemon(true); // if GUI ends, simulation also
 //        t.start();
-    }
-
-    public IAnimator createAnimator() {
-        if (this.sim == null) { // before simulation start
-            return null;
-        }
-//        Thread t = new Thread(() ->
-//        {
-//            this.sim.createAnimator();
-//            this.animator = this.sim.animator();
-//        }, "Thread-AnimatorCreation");
-//        t.setDaemon(true);
-//        t.start();
-        this.sim.createAnimator();
-        this.animator = this.sim.animator();
-        return this.animator;
-    }
-
-    public void removeAnimator() {
-        if (this.sim == null) { // before simulation start
-            return;
-        }
-//        Thread t = new Thread(() -> { this.sim.removeAnimator();}, "Thread-AnimatorRemoval");
-//        t.setDaemon(true);
-//        t.start();
-        this.sim.removeAnimator();
-        this.animator = null;
     }
 }
