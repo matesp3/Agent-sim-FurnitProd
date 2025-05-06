@@ -128,7 +128,7 @@ public class FurnitProdSimController {
     public void setEnabledMaxSpeed(boolean enabled) {
         this.maxSpeedOn = enabled;
 //        if (!this.simExists())
-        if (this.sim == null)
+        if (this.sim == null) // if used isSimRunning(), it won't affect simulation, bcs instance exists, but it does not run
             return;
         Runnable r = () -> {
             if (enabled)

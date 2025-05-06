@@ -1,0 +1,129 @@
+package gui;
+
+import OSPAnimator.AnimImageItem;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+
+public class ImgResources {
+    public static final String DIR_IMAGES = System.getProperty("user.dir") + "\\images\\";
+    /** original: 450x750 px */
+    public static final String IMG_PATH_CARPENTER_A = DIR_IMAGES + "stolar-A.png";
+    public static final int WIDTH_CARPENTER = 95;
+    public static final int HEIGHT_CARPENTER = 160;
+    /** original: 450x750 px */
+    public static final String IMG_PATH_CARPENTER_B = DIR_IMAGES + "stolar-B.png";
+    /** original: 450x750 px */
+    public static final String IMG_PATH_CARPENTER_C = DIR_IMAGES + "stolar-C.png";
+    /** original:  700x500 px */
+    public static final String IMG_PATH_DESK = DIR_IMAGES + "pracovisko.png";
+    public static final int WIDTH_DESK = 150;
+    public static final int HEIGHT_DESK = 105;
+    /** original: 600x400 px */
+    public static final String IMG_PATH_TABLE = DIR_IMAGES + "order-stol.png";
+    public static final int WIDTH_TABLE = 130;
+    public static final int HEIGHT_TABLE = 85;
+    /** original: 300x500 px */
+    public static final String IMG_PATH_CHAIR = DIR_IMAGES + "order-stolicka.png";
+    public static final int WIDTH_CHAIR = 65;
+    public static final int HEIGHT_CHAIR = 105;
+    /** original: 400x700 px */
+    public static final String IMG_PATH_WARDROBE = DIR_IMAGES + "order-skrina.png";
+    public static final int WIDTH_WARDROBE = 85;
+    public static final int HEIGHT_WARDROBE = 150;
+
+    public static AnimImageItem createCarpenterA(int posX, int posY) {
+        AnimImageItem ai = createCarpenterA();
+        ai.setPosition(posX, posY);
+        return ai;
+    }
+
+    public static AnimImageItem createCarpenterB(int posX, int posY) {
+        AnimImageItem ai = createCarpenterB();
+        ai.setPosition(posX, posY);
+        return ai;
+    }
+
+    public static AnimImageItem createCarpenterC(int posX, int posY) {
+        AnimImageItem ai = createCarpenterC();
+        ai.setPosition(posX, posY);
+        return ai;
+    }
+
+    public static AnimImageItem createDesk(int posX, int posY) {
+        AnimImageItem ai = createDesk();
+        ai.setPosition(posX, posY);
+        return ai;
+    }
+
+    public static AnimImageItem createTable(int posX, int posY) {
+        AnimImageItem ai = createTable();
+        ai.setPosition(posX, posY);
+        return ai;
+    }
+
+    public static AnimImageItem createChair(int posX, int posY) {
+        AnimImageItem ai = createChair();
+        ai.setPosition(posX, posY);
+        return ai;
+    }
+
+    public static AnimImageItem createWardrobe(int posX, int posY) {
+        AnimImageItem ai = createWardrobe();
+        ai.setPosition(posX, posY);
+        return ai;
+    }
+
+    public static AnimImageItem createCarpenterA() {
+        return createCarpenter(IMG_PATH_CARPENTER_A);
+    }
+
+    public static AnimImageItem createCarpenterB() {
+        return createCarpenter(IMG_PATH_CARPENTER_B);
+    }
+
+    public static AnimImageItem createCarpenterC() {
+        return createCarpenter(IMG_PATH_CARPENTER_C);
+    }
+
+    public static AnimImageItem createDesk() {
+        try {
+            return new AnimImageItem(ImageIO.read(new File(IMG_PATH_DESK)), 150, 105);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static AnimImageItem createTable() {
+        try {
+            return new AnimImageItem(ImageIO.read(new File(IMG_PATH_TABLE)), 130, 85);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static AnimImageItem createChair() {
+        try {
+            return new AnimImageItem(ImageIO.read(new File(IMG_PATH_CHAIR)), 65, 105);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static AnimImageItem createWardrobe() {
+        try {
+            return new AnimImageItem(ImageIO.read(new File(IMG_PATH_WARDROBE)), 85, 150);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static AnimImageItem createCarpenter(String imageWithCarpType) {
+        try {
+            return new AnimImageItem(ImageIO.read(new File(imageWithCarpType)), 95, 160);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

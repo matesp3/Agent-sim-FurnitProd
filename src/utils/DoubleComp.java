@@ -1,9 +1,8 @@
 package utils;
 
-import gui.ConfigData;
+import gui.ImgResources;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -49,7 +48,7 @@ public class DoubleComp {
     public static void main(String[] args) {
 //        showExamplesOfComparing();
         try {
-            System.out.println(ImageIO.read(new File(ConfigData.IMG_PATH_DESK)).getWidth());
+            System.out.println(ImageIO.read(new File(ImgResources.IMG_PATH_DESK)).getWidth());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
