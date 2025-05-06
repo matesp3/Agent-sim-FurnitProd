@@ -1,5 +1,6 @@
 package common;
 
+import OSPAnimator.Anim;
 import OSPAnimator.AnimImageItem;
 import animation.AnimatedEntity;
 import animation.ImgResources;
@@ -229,13 +230,13 @@ public class Carpenter implements IAnimatedEntity {
         }
 
         @Override
-        public void moveTo(double startTime, double duration, int x, int y) {
-            super.moveTo(startTime, duration, x, y);
+        public Anim moveTo(double startTime, double duration, double x, double y) {
+            return super.moveTo(startTime, duration, x, y);
         }
 
         @Override
-        public void setPosition(double x, double y) {
-            super.setPosition(x, y);
+        public Anim setPosition(double x, double y) {
+            return super.setPosition(x, y);
         }
 
         @Override

@@ -159,7 +159,7 @@ public class FurnitProdSimController {
         }
         this.sim.createAnimator();
         this.animator = this.sim.animator();
-        this.animator.setSynchronizedTime(false);
+        this.animator.setSynchronizedTime(true);
         return this.animator;
     }
 
