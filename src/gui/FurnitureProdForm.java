@@ -5,20 +5,18 @@ import OSPABA.SimState;
 import OSPABA.Simulation;
 import OSPAnimator.AnimImageItem;
 import OSPAnimator.IAnimator;
+import animation.ImgResources;
 import controllers.FurnitProdSimController;
 import gui.components.*;
 import results.FurnitProdRepStats;
 import simulation.MySimulation;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.io.File;
-import java.io.IOException;
 
 public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionListener, ComponentListener {
     public static final double TIME_UNIT = 3600.0;
@@ -135,19 +133,19 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         this.animator.canvas().setBounds(0, 0, animatorViewer.getWidth(), animatorViewer.getWidth());
         this.animator.canvas().setBackground( new Color(180, 160, 160));
 //            this.animator.setBackgroundImage(ImageIO.read(new File(ConfigData.IMG_PATH_DESK)));
-        int w = ImgResources.WIDTH_DESK; // max height
-        int h = ImgResources.HEIGHT_WARDROBE; // max height
-        AnimImageItem imgDesk = ImgResources.createDesk(w*0, h-ImgResources.HEIGHT_DESK);
-        AnimImageItem imgCarpenterA = ImgResources.createCarpenterA(w*1, h-ImgResources.HEIGHT_CARPENTER);
-        AnimImageItem imgTable = ImgResources.createTable(w*2, h-ImgResources.HEIGHT_TABLE);
-        AnimImageItem imgChair = ImgResources.createChair(w*3, h-ImgResources.HEIGHT_CHAIR);
-        AnimImageItem imgWardrobe = ImgResources.createWardrobe(w*4, h-ImgResources.HEIGHT_WARDROBE);
-
-        this.animator.register(imgDesk);
-        this.animator.register(imgCarpenterA);
-        this.animator.register(imgTable);
-        this.animator.register(imgChair);
-        this.animator.register(imgWardrobe);
+//        int w = ImgResources.WIDTH_DESK; // max height
+//        int h = ImgResources.HEIGHT_WARDROBE; // max height
+//        AnimImageItem imgDesk = ImgResources.createDesk(w*0, h-ImgResources.HEIGHT_DESK);
+//        AnimImageItem imgCarpenterA = ImgResources.createCarpenterA(w*1, h-ImgResources.HEIGHT_CARPENTER);
+//        AnimImageItem imgTable = ImgResources.createTable(w*2, h-ImgResources.HEIGHT_TABLE);
+//        AnimImageItem imgChair = ImgResources.createChair(w*3, h-ImgResources.HEIGHT_CHAIR);
+//        AnimImageItem imgWardrobe = ImgResources.createWardrobe(w*4, h-ImgResources.HEIGHT_WARDROBE);
+//
+//        this.animator.register(imgDesk);
+//        this.animator.register(imgCarpenterA);
+//        this.animator.register(imgTable);
+//        this.animator.register(imgChair);
+//        this.animator.register(imgWardrobe);
     }
 
     public void unregisterAnimator() {

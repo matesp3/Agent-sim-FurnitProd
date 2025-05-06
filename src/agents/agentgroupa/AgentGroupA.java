@@ -4,6 +4,7 @@ import OSPABA.*;
 import OSPRNG.RNG;
 import common.Carpenter;
 import common.CarpenterGroup;
+import contracts.IAgentWithEntity;
 import contracts.ICarpenterGroup;
 import contracts.IFittingsInstaller;
 import simulation.*;
@@ -12,7 +13,7 @@ import agents.agentgroupa.continualassistants.*;
 
 
 //meta! id="39"
-public class AgentGroupA extends OSPABA.Agent implements IFittingsInstaller, ICarpenterGroup
+public class AgentGroupA extends OSPABA.Agent implements IFittingsInstaller, ICarpenterGroup, IAgentWithEntity
 {
 	private final CarpenterGroup allocator;
 
@@ -61,10 +62,14 @@ public class AgentGroupA extends OSPABA.Agent implements IFittingsInstaller, ICa
 		this.allocator.initCarpenters(amount);
 	}
 
-	/**
-	 * @return number from interval <0,1>
-	 */
 	public double getGroupUtilization() {
 		return this.allocator.getGroupUtilization(this.mySim().currentTime());
+	}
+
+	@Override
+	public void registerEntities() {
+		for (Carpenter c : this.allocator.getCarpenters()) {
+			this.mySim().animator().register(c.getAnimatedEntity());
+		}
 	}
 }

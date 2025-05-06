@@ -1,8 +1,12 @@
 package common;
 
+import OSPAnimator.AnimImageItem;
+import animation.AnimatedEntity;
+import animation.ImgResources;
+import contracts.IAnimatedEntity;
 import utils.DoubleComp;
 
-public class Carpenter {
+public class Carpenter implements IAnimatedEntity {
 
     public enum GROUP {
         A,B,C;
@@ -18,6 +22,8 @@ public class Carpenter {
     private double productProcessingBT;
     private double productProcessingET;
     private double sumOfWorkingTime;
+    // anim
+    private AnimatedCarpenter animCarpenter;
 
     public Carpenter(GROUP group, int carpenterID) {
         this.group = group;
@@ -27,6 +33,7 @@ public class Carpenter {
         this.productProcessingET = -1;
         this.assignedProduct = null;
         this.sumOfWorkingTime = 0;
+        this.animCarpenter = new AnimatedCarpenter(this);
     }
 
     public void reset() {
@@ -191,6 +198,65 @@ public class Carpenter {
         return String.format("Carp{%s;carpID=%d;desk=%d;productID=%s}", this.group, this.carpenterId, this.deskID,
                 this.isWorking() ? this.assignedProduct.getProductID() : null);
     }
+
+    @Override
+    public AnimatedEntity getAnimatedEntity() {
+        return null;
+    }
+
+    public static class AnimatedCarpenter extends AnimatedEntity {
+        private final AnimImageItem imgCarpenter;
+        private final Carpenter c;
+
+        public AnimatedCarpenter(Carpenter carpenter) {
+            this.c = carpenter;
+            this.imgCarpenter = switch (carpenter.group) {
+                case A -> ImgResources.createCarpenterA();
+                case B -> ImgResources.createCarpenterB();
+                case C -> ImgResources.createCarpenterC();
+            };
+        }
+
+        @Override
+        public void renderEntity() {
+            // tato metoda sa bude volat z logiky a zoberie si hodnoty atributov - zabezpeci sa aktualizacia textu
+            // o PRESUN entit sa budu starat MANAZERI. Atributy budu aktualizovat metody zdedene z AnimatedEntity
+        }
+
+        @Override
+        public void removeEntity() {
+
+        }
+
+        @Override
+        public void moveTo(double startTime, double duration, int x, int y) {
+            super.moveTo(startTime, duration, x, y);
+        }
+
+        @Override
+        public void setPosition(double x, double y) {
+            super.setPosition(x, y);
+        }
+
+        @Override
+        public double getWidth() {
+            return super.getWidth();
+        }
+
+        @Override
+        public double getHeight() {
+            return super.getHeight();
+        }
+    }
+
+
+
+
+
+
+
+
+
 
     public static void main(String[] args) {
         Carpenter carpenter = new Carpenter(GROUP.A, 1);

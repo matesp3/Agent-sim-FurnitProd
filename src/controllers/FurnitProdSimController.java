@@ -59,6 +59,9 @@ public class FurnitProdSimController {
                 this.sim.onAnimatorWasRemoved((oldAnim)-> {
                     System.out.println("old animator exists? "+(this.sim.animatorExists()));
                 });
+                this.setEnabledMaxSpeed(withMaxSpeed);
+                this.sim.setAmountOfDesks(desksCount);
+                this.sim.setAmountOfCarpenters(groupA, groupB, groupC);
                 // - - - animator
                 if (withAnimator) {
                     this.sim.createAnimator();
@@ -67,9 +70,6 @@ public class FurnitProdSimController {
                     this.gui.registerAnimator(this.animator);
                 }
                 // - - -
-                this.setEnabledMaxSpeed(withMaxSpeed);
-                this.sim.setAmountOfDesks(desksCount);
-                this.sim.setAmountOfCarpenters(groupA, groupB, groupC);
                 this.sim.simulate(experiments, simulatedDays*8*3600);
                 this.simRunning = false;
             } catch (Exception e) {

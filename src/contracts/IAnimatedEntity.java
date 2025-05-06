@@ -1,7 +1,7 @@
 package contracts;
 
+import animation.AnimatedEntity;
+
 public interface IAnimatedEntity {
-    void initialize();
-    void render();
-    void remove();
+    AnimatedEntity getAnimatedEntity();
 }

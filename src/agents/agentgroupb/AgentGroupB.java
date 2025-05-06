@@ -3,6 +3,7 @@ package agents.agentgroupb;
 import OSPABA.*;
 import common.Carpenter;
 import common.CarpenterGroup;
+import contracts.IAgentWithEntity;
 import contracts.ICarpenterGroup;
 import simulation.*;
 import agents.agentgroupb.continualassistants.*;
@@ -10,7 +11,7 @@ import agents.agentgroupb.continualassistants.*;
 
 
 //meta! id="73"
-public class AgentGroupB extends OSPABA.Agent implements ICarpenterGroup
+public class AgentGroupB extends OSPABA.Agent implements ICarpenterGroup, IAgentWithEntity
 {
 	private final CarpenterGroup allocator;
 
@@ -50,10 +51,15 @@ public class AgentGroupB extends OSPABA.Agent implements ICarpenterGroup
 		this.allocator.initCarpenters(amount);
 	}
 
-	/**
-	 * @return number from interval <0,1>
-	 */
+	@Override
 	public double getGroupUtilization() {
 		return this.allocator.getGroupUtilization(this.mySim().currentTime());
+	}
+
+	@Override
+	public void registerEntities() {
+		for (Carpenter c : this.allocator.getCarpenters()) {
+			this.mySim().animator().register(c.getAnimatedEntity());
+		}
 	}
 }

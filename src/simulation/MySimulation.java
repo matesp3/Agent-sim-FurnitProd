@@ -10,6 +10,7 @@ import agents.agentgroupa.*;
 import agents.agentgroupb.*;
 import agents.agentgroupc.*;
 import agents.agentfurnitprod.*;
+import animation.FurnitureFactoryAnimation;
 import common.Furniture;
 import common.Order;
 import results.FurnitProdRepStats;
@@ -51,6 +52,8 @@ public class MySimulation extends OSPABA.Simulation
 	private final FurnitProdState simStateData = new FurnitProdState(0, 0);
 	private final FurnitProdRepStats repResults = new FurnitProdRepStats(0);
 
+	private FurnitureFactoryAnimation animationHandler = null;
+
 	private TIME_UNIT timeUnit = TIME_UNIT.HOURS;
 
 	public MySimulation()
@@ -69,6 +72,19 @@ public class MySimulation extends OSPABA.Simulation
 
 	public void setTimeUnit(TIME_UNIT timeUnit) {
 		this.timeUnit = timeUnit;
+	}
+
+	@Override
+	public void createAnimator() {
+		super.createAnimator();
+		if (!this.animatorExists())
+			throw new RuntimeException("Animator should be already created, but isn't");
+		// register all entities to animator here in one place
+		this.animationHandler = new FurnitureFactoryAnimation(this.animator(), this.agentFurnitProd().getDeskManager().getAllDesksCount()); // desks are internally registered
+		System.out.println("ok..done");
+//		this.agentGroupA().registerEntities();
+//		this.agentGroupB().registerEntities();
+//		this.agentGroupC().registerEntities();
 	}
 
 	@Override
@@ -294,6 +310,10 @@ public AgentGroupC agentGroupC()
 	public FurnitProdState getSimStateData() {
 		this.updateSimStateModel();
 		return this.simStateData;
+	}
+
+	public FurnitureFactoryAnimation getAnimationHandler() {
+		return this.animationHandler;
 	}
 
 	private void updateRepResults() {

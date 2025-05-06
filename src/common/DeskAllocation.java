@@ -1,14 +1,20 @@
 package common;
 
+import OSPAnimator.AnimImageItem;
 import OSPStat.WStat;
+import animation.ImgResources;
+import contracts.IAnimatedEntity;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 public class DeskAllocation {
+    // - - - - logic attributes
     private final Furniture[] desks;
     private int firstFree;
+    // - - - - simulation attributes
     private int usedDesks;
     private WStat statCount;
 
@@ -76,6 +82,14 @@ public class DeskAllocation {
      */
     public int getUsedDesksCount() {
         return this.usedDesks;
+    }
+
+    /**
+     * @return is equal to maximum number of furniture products, that can be processed at the same time (one furniture
+     * is processed on the same desk from the beginning to the end of its creating process)
+     */
+    public int getAllDesksCount() {
+        return this.desks.length;
     }
 
     public WStat getStatUsedDesksCount() {

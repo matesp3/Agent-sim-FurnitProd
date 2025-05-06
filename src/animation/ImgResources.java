@@ -1,4 +1,4 @@
-package gui;
+package animation;
 
 import OSPAnimator.AnimImageItem;
 
@@ -33,43 +33,43 @@ public class ImgResources {
     public static final int WIDTH_WARDROBE = 85;
     public static final int HEIGHT_WARDROBE = 150;
 
-    public static AnimImageItem createCarpenterA(int posX, int posY) {
+    public static AnimImageItem createCarpenterA(double posX, double posY) {
         AnimImageItem ai = createCarpenterA();
         ai.setPosition(posX, posY);
         return ai;
     }
 
-    public static AnimImageItem createCarpenterB(int posX, int posY) {
+    public static AnimImageItem createCarpenterB(double posX, double posY) {
         AnimImageItem ai = createCarpenterB();
         ai.setPosition(posX, posY);
         return ai;
     }
 
-    public static AnimImageItem createCarpenterC(int posX, int posY) {
+    public static AnimImageItem createCarpenterC(double posX, double posY) {
         AnimImageItem ai = createCarpenterC();
         ai.setPosition(posX, posY);
         return ai;
     }
 
-    public static AnimImageItem createDesk(int posX, int posY) {
+    public static AnimImageItem createDesk(double posX, double posY) {
         AnimImageItem ai = createDesk();
         ai.setPosition(posX, posY);
         return ai;
     }
 
-    public static AnimImageItem createTable(int posX, int posY) {
+    public static AnimImageItem createTable(double posX, double posY) {
         AnimImageItem ai = createTable();
         ai.setPosition(posX, posY);
         return ai;
     }
 
-    public static AnimImageItem createChair(int posX, int posY) {
+    public static AnimImageItem createChair(double posX, double posY) {
         AnimImageItem ai = createChair();
         ai.setPosition(posX, posY);
         return ai;
     }
 
-    public static AnimImageItem createWardrobe(int posX, int posY) {
+    public static AnimImageItem createWardrobe(double posX, double posY) {
         AnimImageItem ai = createWardrobe();
         ai.setPosition(posX, posY);
         return ai;

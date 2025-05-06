@@ -1,6 +1,6 @@
 package utils;
 
-import gui.ImgResources;
+import animation.ImgResources;
 
 import javax.imageio.ImageIO;
 import java.io.File;
