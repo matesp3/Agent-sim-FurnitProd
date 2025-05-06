@@ -136,7 +136,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
 //        int w = ImgResources.WIDTH_DESK; // max height
 //        int h = ImgResources.HEIGHT_WARDROBE; // max height
 //        AnimImageItem imgDesk = ImgResources.createDesk(w*0, h-ImgResources.HEIGHT_DESK);
-//        AnimImageItem imgCarpenterA = ImgResources.createCarpenterA(w*1, h-ImgResources.HEIGHT_CARPENTER);
+//        AnimImageItem imgCarpenterA = ImgResources.createCarpenterA(ImgResources.WIDTH_CARPENTER, ImgResources.HEIGHT_CARPENTER);
 //        AnimImageItem imgTable = ImgResources.createTable(w*2, h-ImgResources.HEIGHT_TABLE);
 //        AnimImageItem imgChair = ImgResources.createChair(w*3, h-ImgResources.HEIGHT_CHAIR);
 //        AnimImageItem imgWardrobe = ImgResources.createWardrobe(w*4, h-ImgResources.HEIGHT_WARDROBE);

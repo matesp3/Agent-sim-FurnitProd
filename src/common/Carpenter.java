@@ -2,6 +2,8 @@ package common;
 
 import OSPAnimator.Anim;
 import OSPAnimator.AnimImageItem;
+import OSPAnimator.AnimTextItem;
+import OSPAnimator.IAnimator;
 import animation.AnimatedEntity;
 import animation.ImgResources;
 import contracts.IAnimatedEntity;
@@ -34,6 +36,7 @@ public class Carpenter implements IAnimatedEntity {
         this.productProcessingET = -1;
         this.assignedProduct = null;
         this.sumOfWorkingTime = 0;
+
         this.animCarpenter = new AnimatedCarpenter(this);
     }
 
@@ -202,11 +205,12 @@ public class Carpenter implements IAnimatedEntity {
 
     @Override
     public AnimatedEntity getAnimatedEntity() {
-        return null;
+        return this.animCarpenter;
     }
 
     public static class AnimatedCarpenter extends AnimatedEntity {
         private final AnimImageItem imgCarpenter;
+        private final AnimTextItem txtWorkStatus;
         private final Carpenter c;
 
         public AnimatedCarpenter(Carpenter carpenter) {
@@ -216,48 +220,52 @@ public class Carpenter implements IAnimatedEntity {
                 case B -> ImgResources.createCarpenterB();
                 case C -> ImgResources.createCarpenterC();
             };
+            this.txtWorkStatus = new AnimTextItem( c.isWorking() ? "Working" : "Idle" );
+        }
+
+        @Override
+        public void registerEntity(IAnimator animator) {
+            animator.register(this.imgCarpenter);
+            animator.register(this.txtWorkStatus);
         }
 
         @Override
         public void renderEntity() {
             // tato metoda sa bude volat z logiky a zoberie si hodnoty atributov - zabezpeci sa aktualizacia textu
             // o PRESUN entit sa budu starat MANAZERI. Atributy budu aktualizovat metody zdedene z AnimatedEntity
+            this.txtWorkStatus.setText( c.isWorking() ? "Working" : "Idle" );
         }
 
         @Override
         public void removeEntity() {
-
+            this.imgCarpenter.remove();
+            this.txtWorkStatus.remove();
         }
 
         @Override
         public Anim moveTo(double startTime, double duration, double x, double y) {
-            return super.moveTo(startTime, duration, x, y);
+            this.txtWorkStatus.moveTo(startTime, duration, x, y);
+            return this.imgCarpenter.moveTo(startTime, duration, x, y);
         }
 
         @Override
         public Anim setPosition(double x, double y) {
-            return super.setPosition(x, y);
+            this.txtWorkStatus.setPosition(x, y);
+            return this.imgCarpenter.setPosition(x, y);
         }
 
         @Override
         public double getWidth() {
-            return super.getWidth();
+            return Math.max(this.imgCarpenter.getWidth(), this.txtWorkStatus.getWidth());
         }
 
         @Override
         public double getHeight() {
-            return super.getHeight();
+            return this.imgCarpenter.getHeight() + this.txtWorkStatus.getHeight();
         }
     }
 
-
-
-
-
-
-
-
-
+    //  -   -   -   -   -   -   M A I N -   -   -   -   -   -   -
 
     public static void main(String[] args) {
         Carpenter carpenter = new Carpenter(GROUP.A, 1);

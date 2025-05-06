@@ -10,8 +10,8 @@ public class ImgResources {
     public static final String DIR_IMAGES = System.getProperty("user.dir") + "\\images\\";
     /** original: 450x750 px */
     public static final String IMG_PATH_CARPENTER_A = DIR_IMAGES + "stolar-A.png";
-    public static final int WIDTH_CARPENTER = 95;
-    public static final int HEIGHT_CARPENTER = 160;
+    public static final int WIDTH_CARPENTER = 65;
+    public static final int HEIGHT_CARPENTER = 145;
     /** original: 450x750 px */
     public static final String IMG_PATH_CARPENTER_B = DIR_IMAGES + "stolar-B.png";
     /** original: 450x750 px */
@@ -89,7 +89,7 @@ public class ImgResources {
 
     public static AnimImageItem createDesk() {
         try {
-            return new AnimImageItem(ImageIO.read(new File(IMG_PATH_DESK)), 150, 105);
+            return new AnimImageItem(ImageIO.read(new File(IMG_PATH_DESK)), WIDTH_DESK, HEIGHT_DESK);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -97,7 +97,7 @@ public class ImgResources {
 
     public static AnimImageItem createTable() {
         try {
-            return new AnimImageItem(ImageIO.read(new File(IMG_PATH_TABLE)), 130, 85);
+            return new AnimImageItem(ImageIO.read(new File(IMG_PATH_TABLE)), WIDTH_TABLE, HEIGHT_TABLE);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -105,7 +105,7 @@ public class ImgResources {
 
     public static AnimImageItem createChair() {
         try {
-            return new AnimImageItem(ImageIO.read(new File(IMG_PATH_CHAIR)), 65, 105);
+            return new AnimImageItem(ImageIO.read(new File(IMG_PATH_CHAIR)), WIDTH_CHAIR, HEIGHT_CHAIR);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -113,7 +113,7 @@ public class ImgResources {
 
     public static AnimImageItem createWardrobe() {
         try {
-            return new AnimImageItem(ImageIO.read(new File(IMG_PATH_WARDROBE)), 85, 150);
+            return new AnimImageItem(ImageIO.read(new File(IMG_PATH_WARDROBE)), WIDTH_WARDROBE, HEIGHT_WARDROBE);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -121,7 +121,7 @@ public class ImgResources {
 
     private static AnimImageItem createCarpenter(String imageWithCarpType) {
         try {
-            return new AnimImageItem(ImageIO.read(new File(imageWithCarpType)), 95, 160);
+            return new AnimImageItem(ImageIO.read(new File(imageWithCarpType)), WIDTH_CARPENTER, HEIGHT_CARPENTER);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

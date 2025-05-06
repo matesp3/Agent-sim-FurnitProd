@@ -1,30 +1,41 @@
 package common;
 
+import OSPAnimator.Anim;
+import OSPAnimator.AnimImageItem;
+import OSPAnimator.AnimTextItem;
+import OSPAnimator.IAnimator;
+import animation.AnimatedEntity;
+import animation.ImgResources;
+import contracts.IAnimatedEntity;
 import utils.DoubleComp;
 import utils.Formatter;
 
-public class Furniture {
+public class Furniture implements IAnimatedEntity {
 
     public enum Type {
         TABLE, CHAIR, WARDROBE;
-    }
 
+    }
     public enum TechStep {
         WOOD_PREPARATION, CARVING, STAINING, LACQUERING, ASSEMBLING, FIT_INSTALLATION //, DRYING - if added, need to be fit where it belongs chronologically
         ;
+
     }
     private final Order order;
     private final String productID;
     private final Type productType;
     private final boolean lacqueringRequired;
     private int deskID;
-
     private double stepBT;
+
     private double stepET;
     private double processingBT;
     private double waitingBT;
     private double timeCompleted;
     private TechStep step;
+    // anim
+    private AnimatedFurniture animFurniture;
+
     /**
      * Technological step is automatically {@code null}.
      * @param order order to which this furniture instance belongs
@@ -43,8 +54,9 @@ public class Furniture {
         this.waitingBT = -1;
         this.timeCompleted = -1;
         this.step = null;
-    }
 
+        this.animFurniture = new AnimatedFurniture(this);
+    }
     /**
      * @return unique identifier of order
      */
@@ -221,6 +233,68 @@ public class Furniture {
         if (newStep.ordinal() <= this.step.ordinal()) // causality check
             throw new IllegalArgumentException("Steps causality of product violated [currentStep="+this.step +";newStep="+newStep+"]");
     }
+
+    @Override
+    public AnimatedEntity getAnimatedEntity() {
+        return this.animFurniture;
+    }
+
+    public static class AnimatedFurniture extends AnimatedEntity {
+        private AnimImageItem imgFurniture;
+        private AnimTextItem txtTechStep;
+        private Furniture f;
+
+        public AnimatedFurniture(Furniture f) {
+            this.f = f;
+            this.imgFurniture = switch (f.getProductType()) {
+                case TABLE -> ImgResources.createTable();
+                case CHAIR -> ImgResources.createChair();
+                case WARDROBE -> ImgResources.createWardrobe();
+            };
+            this.txtTechStep = new AnimTextItem("Waiting");
+        }
+
+        @Override
+        public void registerEntity(IAnimator animator) {
+            animator.register(this.imgFurniture);
+            animator.register(this.txtTechStep);
+        }
+
+        @Override
+        public void renderEntity() {
+            this.txtTechStep.setText( f.step != null ? f.step.toString() : "Waiting" );
+        }
+
+        @Override
+        public void removeEntity() {
+            this.imgFurniture.remove();
+            this.txtTechStep.remove();
+        }
+
+        @Override
+        public Anim moveTo(double startTime, double duration, double x, double y) {
+            this.txtTechStep.moveTo(startTime, duration, x, y);
+            return this.imgFurniture.moveTo(startTime, duration, x, y);
+        }
+
+        @Override
+        public Anim setPosition(double x, double y) {
+            this.txtTechStep.setPosition(x, y);
+            return this.imgFurniture.setPosition(x, y);
+        }
+
+        @Override
+        public double getWidth() {
+            return Math.max(this.imgFurniture.getWidth(), this.txtTechStep.getWidth());
+        }
+
+        @Override
+        public double getHeight() {
+            return this.imgFurniture.getHeight()+this.txtTechStep.getHeight();
+        }
+    }
+
+    //  -   -   -   -   -   -   M A I N -   -   -   -   -   -   -
 
     public static void main(String[] args) throws InterruptedException {
         Order order = new Order(1, 2500);

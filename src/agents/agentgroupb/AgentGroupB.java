@@ -1,6 +1,7 @@
 package agents.agentgroupb;
 
 import OSPABA.*;
+import OSPAnimator.IAnimator;
 import common.Carpenter;
 import common.CarpenterGroup;
 import contracts.IAgentWithEntity;
@@ -58,8 +59,9 @@ public class AgentGroupB extends OSPABA.Agent implements ICarpenterGroup, IAgent
 
 	@Override
 	public void registerEntities() {
+		IAnimator animator = this.mySim().animator();
 		for (Carpenter c : this.allocator.getCarpenters()) {
-			this.mySim().animator().register(c.getAnimatedEntity());
+			c.getAnimatedEntity().registerEntity(animator);
 		}
 	}
 }

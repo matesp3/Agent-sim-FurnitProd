@@ -1,6 +1,7 @@
 package agents.agentgroupc;
 
 import OSPABA.*;
+import OSPAnimator.IAnimator;
 import OSPRNG.RNG;
 import common.Carpenter;
 import common.CarpenterGroup;
@@ -68,8 +69,9 @@ public class AgentGroupC extends OSPABA.Agent implements IFittingsInstaller, ICa
 
 	@Override
 	public void registerEntities() {
+		IAnimator animator = this.mySim().animator();
 		for (Carpenter c : this.allocator.getCarpenters()) {
-			this.mySim().animator().register(c.getAnimatedEntity());
+			c.getAnimatedEntity().registerEntity(animator);
 		}
 	}
 }
