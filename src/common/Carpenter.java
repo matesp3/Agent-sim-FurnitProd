@@ -8,6 +8,7 @@ import animation.AnimatedEntity;
 import animation.ImgResources;
 import contracts.IAnimatedEntity;
 import utils.DoubleComp;
+import utils.Formatter;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -308,10 +309,16 @@ public class Carpenter implements IAnimatedEntity {
         }
 
         private String getStatus(){
-            return String.format("Info:\n * Status: %s\n * process = %s\n * furniture = %s",
+            return String.format("Carpenter [%s]:\n * Group: %s\n * deskID: %s\n * Status: %s\n * furnitureID = %s\n * work: %s\n * work-start: %s\n * work-end: %s",
+                    c.carpenterId,
+                    c.group.toString(),
+                    c.deskID != IN_STORAGE ? c.deskID : "In storage",
                     c.isWorking() ? "Working" : "Idle",
+                    c.assignedProduct != null ? c.assignedProduct.getProductID() : "-",
                     c.assignedProduct != null ? c.assignedProduct.getStep() : "-",
-                    c.assignedProduct != null ? c.assignedProduct.getProductID() : "-");
+                    Formatter.getStrDateTime(c.productProcessingBT, 8, 6),
+                    Formatter.getStrDateTime(c.productProcessingET, 8, 6)
+            );
         }
     }
 

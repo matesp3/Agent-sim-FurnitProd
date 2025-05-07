@@ -58,18 +58,6 @@ public class FurnitureProdDataViewer extends JPanel {
         this.add(this.headerPane);
         this.add(this.mainScrollPane);
     }
-//    public FurnitureProdDataViewer() {
-//        this.viewSimTime = new ResultViewer("Simulation Time");
-//        this.headerPane = this.createHeader();
-//        this.contentPane = this.createTables();
-//        this.mainScrollPane = new JScrollPane(this.contentPane);
-//        this.mainScrollPane.setWheelScrollingEnabled(true);
-//        this.add(this.mainScrollPane);
-//    }
-
-    public JPanel getHeader() {
-        return this.headerPane;
-    }
 
     public void resizeContent(int width, int height) {
         this.mainScrollPane.setPreferredSize(new Dimension(width, height));

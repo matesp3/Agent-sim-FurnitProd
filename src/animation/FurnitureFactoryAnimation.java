@@ -16,7 +16,7 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
     private static final int H = getMax(new int[]{ImgResources.HEIGHT_CARPENTER, ImgResources.HEIGHT_CHAIR, ImgResources.HEIGHT_TABLE, ImgResources.HEIGHT_WARDROBE, ImgResources.HEIGHT_TABLE});
     private static final int DESKS_PER_ROW = 6;
     private static final int DESKS_DIST_X = ImgResources.WIDTH_DESK + + ImgResources.WIDTH_CARPENTER + 25;
-    private static final int DESKS_DIST_Y = ImgResources.HEIGHT_DESK + 25;
+    private static final int DESKS_DIST_Y = ImgResources.HEIGHT_DESK + 35;
     private static final int DESK_HOVER_OFFSET_Y = 45; // from top of desk image
     private static final Point2D BASE_POS = new Point2D.Double(300,200);
 

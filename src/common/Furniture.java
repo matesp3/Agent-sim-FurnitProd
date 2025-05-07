@@ -361,7 +361,7 @@ public class Furniture implements IAnimatedEntity {
         }
 
         private String getFurnitureInfo() {
-            return String.format("Furniture [%-7s]:\n * created=%s\n * orderID=%d\n * desk=%d\n * step=%s\n * type%-8s\n * waitingBT=%s\n * stepBT=%s\n * setET=%s\n * started=%s\n * completed=%s",
+            return String.format("Furniture [%-7s]:\n * created: %s\n * orderID: %d\n * deskID: %d\n * step: %s\n * product: %-8s\n * waitingBT: %s\n * step-start: %s\n * step-end: %s\n * started: %s\n * completed: %s",
                     f.productID, Formatter.getStrDateTime(f.getMyOrderCreatedAt(), 8, 6),
                     f.order.getOrderID(), f.deskID, f.step, f.productType.toString(),
                     Formatter.getStrDateTime(f.waitingBT, 8, 6),

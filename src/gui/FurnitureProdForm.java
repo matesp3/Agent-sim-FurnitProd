@@ -3,9 +3,7 @@ package gui;
 import OSPABA.ISimDelegate;
 import OSPABA.SimState;
 import OSPABA.Simulation;
-import OSPAnimator.AnimImageItem;
 import OSPAnimator.IAnimator;
-import animation.ImgResources;
 import controllers.FurnitProdSimController;
 import gui.components.*;
 import results.FurnitProdRepStats;
@@ -41,7 +39,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
     private StatsViewer statsViewer;
     private FurnitureProdDataViewer simDataViewer;
     private CIChartViewer chartCIViewer;
-    private JPanel animatorViewer;
+    private FurnitureProdAnimViewer animationViewer;
     private IAnimator animator = null;
     // custom components
     private InputWithLabel inputA;
@@ -103,6 +101,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
             this.statsViewer.updateExperimentTime(s.currentTime());
             this.statsViewer.updateLocalStats(s.getSimStateData());
             this.simDataViewer.setEventResultsModel(s.getSimStateData());
+            this.animationViewer.setEventResultsModel(s.getSimStateData());
             this.replicationViewer.setValue(s.currentReplication());
         });
     }
@@ -126,34 +125,14 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         this.animator = animator;
         if (animator == null)
             return;
-        this.tabbedContentPane.addTab("Animator", this.animatorViewer); // adding tab
-//        this.animatorViewer.setBackground(COL_TEXT_FONT_2);
-        this.animatorViewer.setLayout(null);
-        this.animatorViewer.add(this.animator.canvas());                    // adding animator to view
-        this.animator.canvas().setBounds(0, 0, animatorViewer.getWidth(), animatorViewer.getWidth());
-        this.animator.canvas().setBackground( new Color(180, 160, 160));
-//            this.animator.setBackgroundImage(ImageIO.read(new File(ConfigData.IMG_PATH_DESK)));
-//        int w = ImgResources.WIDTH_DESK; // max height
-//        int h = ImgResources.HEIGHT_WARDROBE; // max height
-//        AnimImageItem imgDesk = ImgResources.createDesk(w*0, h-ImgResources.HEIGHT_DESK);
-//        AnimImageItem imgCarpenterA = ImgResources.createCarpenterA(ImgResources.WIDTH_CARPENTER, ImgResources.HEIGHT_CARPENTER);
-//        AnimImageItem imgTable = ImgResources.createTable(w*2, h-ImgResources.HEIGHT_TABLE);
-//        AnimImageItem imgChair = ImgResources.createChair(w*3, h-ImgResources.HEIGHT_CHAIR);
-//        AnimImageItem imgWardrobe = ImgResources.createWardrobe(w*4, h-ImgResources.HEIGHT_WARDROBE);
-//
-//        this.animator.register(imgDesk);
-//        this.animator.register(imgCarpenterA);
-//        this.animator.register(imgTable);
-//        this.animator.register(imgChair);
-//        this.animator.register(imgWardrobe);
+        this.animationViewer.addAnimPane(this.animator.canvas()); // adding animator to view
     }
 
     public void unregisterAnimator() {
         if (this.animator == null)
             return;
         this.checkAnimator.setSelected(false);
-        this.tabbedContentPane.remove(this.animatorViewer); // removing tab
-        this.animatorViewer.remove(this.animator.canvas()); // removing animator from viewer
+        this.animationViewer.removeAnimPane(); // removing animator from viewer
         this.animator = null;
         Thread t = new Thread(this.furnitProdSimController::removeAnimator, "Thread-AnimRemoving");
         t.setDaemon(true);
@@ -236,7 +215,7 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         this.statsViewer.resizeContent(this.getWidth() - 200, this.getHeight() - 150);
         this.chartCIViewer.resizeContent(this.getWidth() - 200, this.getHeight() - 125);
         if (this.animator != null) {
-            this.animator.canvas().setBounds(0, 0, animatorViewer.getWidth(), animatorViewer.getWidth());
+            this.animator.canvas().setBounds(0, 0, animationViewer.getWidth(), animationViewer.getWidth());
         }
     }
     @Override
@@ -270,15 +249,15 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
     }
 
     private void createTabs() {
+        this.chartCIViewer = new CIChartViewer();
         this.statsViewer = new StatsViewer();
         this.simDataViewer = new FurnitureProdDataViewer();
-        this.chartCIViewer = new CIChartViewer();
-        this.animatorViewer = new JPanel();
-//        this.animatorViewer.setLayout(null);
+        this.animationViewer = new FurnitureProdAnimViewer();
 
-        this.tabbedContentPane.addTab("Statistics", this.statsViewer);
-        this.tabbedContentPane.addTab("Sim. state view", this.simDataViewer);
         this.tabbedContentPane.addTab("Value Stabilization", this.chartCIViewer);
+        this.tabbedContentPane.addTab("Statistics", this.statsViewer);
+        this.tabbedContentPane.addTab("Simulation state", this.simDataViewer);
+        this.tabbedContentPane.addTab("Animation", this.animationViewer);
     }
 
     private void createNorthPart() {

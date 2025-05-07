@@ -89,7 +89,7 @@ public class MySimulation extends OSPABA.Simulation
 		c3.getAnimatedEntity().registerEntity(this.animator());
 		this.animationHandler.moveCarpenterToDesk(0, 0, c1.getAnimatedEntity());
 		this.animationHandler.moveCarpenterToDesk(6, 0, c2.getAnimatedEntity());
-		this.animationHandler.moveCarpenterToDesk(2, 0, c3.getAnimatedEntity());
+		this.animationHandler.moveCarpenterToDesk(12, 0, c3.getAnimatedEntity());
 //		this.animationHandler.placeCarpenterToStorage(c1.getAnimatedEntity());
 //		this.animationHandler.placeCarpenterToStorage(c2.getAnimatedEntity());
 //		this.animationHandler.placeCarpenterToStorage(c3.getAnimatedEntity());
@@ -104,7 +104,7 @@ public class MySimulation extends OSPABA.Simulation
 		f3.getAnimatedEntity().registerEntity(this.animator());
 		this.animationHandler.moveFurnitureOnDesk(0, 0, f1.getAnimatedEntity());
 		this.animationHandler.moveFurnitureOnDesk(6, 0, f2.getAnimatedEntity());
-		this.animationHandler.moveFurnitureOnDesk(2, 0, f3.getAnimatedEntity());
+		this.animationHandler.moveFurnitureOnDesk(12, 0, f3.getAnimatedEntity());
 //		this.agentGroupA().registerEntities();
 //		this.agentGroupB().registerEntities();
 //		this.agentGroupC().registerEntities();
