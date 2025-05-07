@@ -3,6 +3,7 @@ package agents.agentgroupa;
 import OSPABA.*;
 import OSPAnimator.IAnimator;
 import OSPRNG.RNG;
+import animation.FurnitureFactoryAnimation;
 import common.Carpenter;
 import common.CarpenterGroup;
 import contracts.IAgentWithEntity;
@@ -70,8 +71,10 @@ public class AgentGroupA extends OSPABA.Agent implements IFittingsInstaller, ICa
 	@Override
 	public void registerEntities() {
 		IAnimator animator = this.mySim().animator();
+		FurnitureFactoryAnimation animHandler = ((MySimulation)this.mySim()).getAnimationHandler();
 		for (Carpenter c : this.allocator.getCarpenters()) {
 			c.initAnimatedEntity().registerEntity(animator);
+			animHandler.placeCarpenterAToStorage(c.getAnimatedEntity());
 		}
 	}
 }

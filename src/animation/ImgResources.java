@@ -32,6 +32,10 @@ public class ImgResources {
     public static final String IMG_PATH_WARDROBE = DIR_IMAGES + "order-skrina.png";
     public static final int WIDTH_WARDROBE = 75;
     public static final int HEIGHT_WARDROBE = 140;
+    /** original: 2000x1200 px */
+    public static final String IMG_PATH_STORAGE = DIR_IMAGES + "sklad.png";
+    public static final int WIDTH_STORAGE = 2220;
+    public static final int HEIGHT_STORAGE = 1335;
 
     public static AnimImageItem createCarpenterA(double posX, double posY) {
         AnimImageItem ai = createCarpenterA();

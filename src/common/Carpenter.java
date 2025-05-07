@@ -253,8 +253,8 @@ public class Carpenter implements IAnimatedEntity {
                 throw new RuntimeException(e);
             }
             super.setToolTip(this.getStatus());
-            this.txtWorkStatus = new AnimTextItem(String.format("[ID=%d]", c.carpenterId));
-            this.txtWorkStatus.setColor(new Color(168, 229, 255));
+            this.txtWorkStatus = new AnimTextItem(this.getHeaderStatus());
+            this.txtWorkStatus.setColor(new Color(9, 91, 173));
         }
 
         @Override
@@ -268,6 +268,7 @@ public class Carpenter implements IAnimatedEntity {
             // tato metoda sa bude volat z logiky a zoberie si hodnoty atributov - zabezpeci sa aktualizacia textu
             // o PRESUN entit sa budu starat MANAZERI. Atributy budu aktualizovat metody zdedene z AnimatedEntity
             super.setToolTip(this.getStatus());
+            this.txtWorkStatus.setText(this.getHeaderStatus());
         }
 
         @Override
@@ -288,13 +289,13 @@ public class Carpenter implements IAnimatedEntity {
 
         @Override
         public Anim moveTo(double startTime, double duration, double x, double y) {
-            this.txtWorkStatus.moveTo(startTime, duration, x+20, y-18.5);
+            this.txtWorkStatus.moveTo(startTime, duration, x, y-18.5);
             return super.moveTo(startTime, duration, x, y); // img
         }
 
         @Override
         public Anim setPosition(double x, double y) {
-            this.txtWorkStatus.setPosition(x+20, y-18.5);
+            this.txtWorkStatus.setPosition(x, y-18.5);
             return super.setPosition(x, y); // img
         }
 
@@ -306,6 +307,10 @@ public class Carpenter implements IAnimatedEntity {
         @Override
         public double getHeight() {
             return super.getHeight() + this.txtWorkStatus.getHeight();
+        }
+
+        private String getHeaderStatus() {
+            return String.format("%3d - %-7s", c.carpenterId, c.isWorking() ? "Working" : "Idle");
         }
 
         private String getStatus(){

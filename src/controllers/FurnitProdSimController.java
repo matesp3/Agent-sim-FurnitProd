@@ -40,13 +40,25 @@ public class FurnitProdSimController {
             try {
                 this.sim = new MySimulation();
                 this.sim.registerDelegate(this.gui);
+                this.sim.onReplicationWillStart(s ->
+                {
+                    if (this.sim.animatorExists()) {
+                        this.gui.unregisterAnimator();
+                        this.sim.removeAnimator();
+                        // --
+                        this.sim.createAnimator();
+                        this.animator = this.sim.animator();
+                        this.animator.setSynchronizedTime(false);
+                        this.gui.registerAnimator(this.animator);
+                    }
+                });
                 this.sim.onReplicationDidFinish(s ->
-                        {
-                            if (this.sim.currentReplication() > 10)
-                                this.gui.updateAfterReplication(this.sim.getReplicationResults());
-                            else
-                                this.gui.updateReplicationNr(this.sim.currentReplication()+1);
-                        }
+                {
+                    if (this.sim.currentReplication() > 10)
+                        this.gui.updateAfterReplication(this.sim.getReplicationResults());
+                    else
+                        this.gui.updateReplicationNr(this.sim.currentReplication()+1);
+                }
                 );
                 this.sim.onSimulationDidFinish(s -> {
                     this.gui.updateReplicationNr(this.sim.currentReplication()+1);
