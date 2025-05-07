@@ -21,7 +21,7 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
     private static final Point2D BASE_POS = new Point2D.Double(300,200);
 
     private static final Point2D STORAGE_Q_CARPS_A_START = new Point2D.Double(0,0);
-    private static final Point2D STORAGE_Q_CARPS_A_END = new Point2D.Double(200, ImgResources.HEIGHT_CARPENTER);
+    private static final Point2D STORAGE_Q_CARPS_A_END = new Point2D.Double(100, 100);
 
     private static final Point2D STORAGE_Q_CARPS_B_START = new Point2D.Double(0,ImgResources.HEIGHT_CARPENTER);
     private static final Point2D STORAGE_Q_CARPS_B_END = new Point2D.Double(200, ImgResources.HEIGHT_CARPENTER*2);
@@ -65,7 +65,8 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
 
     }
 
-    public void placeCarpenterToStorage(AnimImageItem animatedCarpenter) {
+    public void placeCarpenterToStorage(AnimatedEntity animatedCarpenter) {
+        animatedCarpenter.setLabelsVisible(false);
         this.qCarpsInStorageA.insert(animatedCarpenter);
     }
 

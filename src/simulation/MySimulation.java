@@ -81,22 +81,22 @@ public class MySimulation extends OSPABA.Simulation
 			throw new RuntimeException("Animator should be already created, but isn't");
 		// register all entities to animator here in one place
 		this.animationHandler = new FurnitureFactoryAnimation(this.animator(), this.agentFurnitProd().getDeskManager().getAllDesksCount()); // desks are internally registered
-		Carpenter c1 = new Carpenter(Carpenter.GROUP.A, 1);
-		Carpenter c2 = new Carpenter(Carpenter.GROUP.B, 1);
-		Carpenter c3 = new Carpenter(Carpenter.GROUP.C, 1);
+		Carpenter c1 = new Carpenter(Carpenter.GROUP.A, 1, true);
+		Carpenter c2 = new Carpenter(Carpenter.GROUP.B, 1, true);
+		Carpenter c3 = new Carpenter(Carpenter.GROUP.C, 1, true);
 		c1.getAnimatedEntity().registerEntity(this.animator());
 		c2.getAnimatedEntity().registerEntity(this.animator());
 		c3.getAnimatedEntity().registerEntity(this.animator());
 		this.animationHandler.moveCarpenterToDesk(0, 0, c1.getAnimatedEntity());
 		this.animationHandler.moveCarpenterToDesk(1, 0, c2.getAnimatedEntity());
 		this.animationHandler.moveCarpenterToDesk(2, 0, c3.getAnimatedEntity());
-		this.animationHandler.placeCarpenterToStorage(c1.getAnimatedEntity().getProxyImage());
-		this.animationHandler.placeCarpenterToStorage(c2.getAnimatedEntity().getProxyImage());
-		this.animationHandler.placeCarpenterToStorage(c3.getAnimatedEntity().getProxyImage());
+		this.animationHandler.placeCarpenterToStorage(c1.getAnimatedEntity());
+		this.animationHandler.placeCarpenterToStorage(c2.getAnimatedEntity());
+		this.animationHandler.placeCarpenterToStorage(c3.getAnimatedEntity());
 
-		Furniture f1 = new Furniture(null, "1-A", Furniture.Type.WARDROBE, false);
-		Furniture f2 = new Furniture(null, "1-B", Furniture.Type.CHAIR, false);
-		Furniture f3 = new Furniture(null, "1-C", Furniture.Type.TABLE, false);
+		Furniture f1 = new Furniture(null, "1-A", Furniture.Type.WARDROBE, false, true);
+		Furniture f2 = new Furniture(null, "1-B", Furniture.Type.CHAIR, false, true);
+		Furniture f3 = new Furniture(null, "1-C", Furniture.Type.TABLE, false, true);
 		f1.getAnimatedEntity().registerEntity(this.animator());
 		f2.getAnimatedEntity().registerEntity(this.animator());
 		f3.getAnimatedEntity().registerEntity(this.animator());

@@ -10,6 +10,11 @@ import contracts.IAnimatedEntity;
 import utils.DoubleComp;
 import utils.Formatter;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
 public class Furniture implements IAnimatedEntity {
 
     public enum Type {
@@ -40,8 +45,10 @@ public class Furniture implements IAnimatedEntity {
      * Technological step is automatically {@code null}.
      * @param order order to which this furniture instance belongs
      * @param productID is unique identifier of furniture product within system in format {orderID}-{nr. of product in order}
+     * @param createAnimatedEntity set {@code false}, if animation doesn't exist. Creating animated entity is heavy
+     *                      operation.
      */
-    public Furniture(Order order, String productID, Type furnitureType, boolean lacquering) {
+    public Furniture(Order order, String productID, Type furnitureType, boolean lacquering, boolean createAnimatedEntity) {
         this.order = order;
         this.productID = productID;
         this.productType = furnitureType;
@@ -55,7 +62,8 @@ public class Furniture implements IAnimatedEntity {
         this.timeCompleted = -1;
         this.step = null;
 
-        this.animFurniture = new AnimatedFurniture(this);
+        if (createAnimatedEntity) // very time-consuming in fast mode
+            this.animFurniture = new AnimatedFurniture(this);
     }
     /**
      * @return unique identifier of order
@@ -235,29 +243,50 @@ public class Furniture implements IAnimatedEntity {
     }
 
     @Override
+    public AnimatedEntity initAnimatedEntity() {
+        if (this.animFurniture == null)
+            this.animFurniture = new AnimatedFurniture(this);
+        return this.animFurniture;
+    }
+
+    @Override
     public AnimatedEntity getAnimatedEntity() {
         return this.animFurniture;
     }
 
     public static class AnimatedFurniture extends AnimatedEntity {
-        private AnimImageItem imgFurniture;
         private AnimTextItem txtTechStep;
         private Furniture f;
 
         public AnimatedFurniture(Furniture f) {
             this.f = f;
-            this.imgFurniture = switch (f.getProductType()) {
-                case TABLE -> ImgResources.createTable();
-                case CHAIR -> ImgResources.createChair();
-                case WARDROBE -> ImgResources.createWardrobe();
-            };
+            try {
+                BufferedImage imgFurniture;
+                switch (f.getProductType()) {
+                    case TABLE -> {
+                        imgFurniture = ImageIO.read(new File(ImgResources.IMG_PATH_TABLE));
+                        super.setImage(imgFurniture, ImgResources.WIDTH_TABLE, ImgResources.HEIGHT_TABLE);
+                    }
+                    case CHAIR -> {
+                        imgFurniture = ImageIO.read(new File(ImgResources.IMG_PATH_CHAIR));
+                        super.setImage(imgFurniture, ImgResources.WIDTH_CHAIR, ImgResources.HEIGHT_CHAIR);
+                    }
+                    case WARDROBE -> {
+                        imgFurniture = ImageIO.read(new File(ImgResources.IMG_PATH_WARDROBE));
+                        super.setImage(imgFurniture, ImgResources.WIDTH_WARDROBE, ImgResources.HEIGHT_WARDROBE);
+                    }
+                }
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             this.txtTechStep = new AnimTextItem(this.getStatus());
         }
 
         @Override
         public void registerEntity(IAnimator animator) {
-            animator.register(this.imgFurniture);
             animator.register(this.txtTechStep);
+            animator.register(this); // img
         }
 
         @Override
@@ -266,36 +295,41 @@ public class Furniture implements IAnimatedEntity {
         }
 
         @Override
-        public void removeEntity() {
-            this.imgFurniture.remove();
+        public void unregisterEntity() {
             this.txtTechStep.remove();
+            super.remove(); // img
         }
 
         @Override
-        public AnimImageItem getProxyImage() {
-            return this.imgFurniture;
+        public void setLabelsVisible(double inTime, boolean visible) {
+            this.txtTechStep.setVisible(inTime, visible);
+        }
+
+        @Override
+        public void setLabelsVisible(boolean visible) {
+            this.txtTechStep.setVisible(visible);
         }
 
         @Override
         public Anim moveTo(double startTime, double duration, double x, double y) {
             this.txtTechStep.moveTo(startTime, duration, x, y);
-            return this.imgFurniture.moveTo(startTime, duration, x, y);
+            return super.moveTo(startTime, duration, x, y); // img
         }
 
         @Override
         public Anim setPosition(double x, double y) {
             this.txtTechStep.setPosition(x, y);
-            return this.imgFurniture.setPosition(x, y);
+            return super.setPosition(x, y); // img
         }
 
         @Override
         public double getWidth() {
-            return Math.max(this.imgFurniture.getWidth(), this.txtTechStep.getWidth());
+            return Math.max(super.getWidth(), this.txtTechStep.getWidth());
         }
 
         @Override
         public double getHeight() {
-            return this.imgFurniture.getHeight()+this.txtTechStep.getHeight();
+            return super.getHeight()+this.txtTechStep.getHeight();
         }
 
         private String getStatus() {
@@ -307,7 +341,7 @@ public class Furniture implements IAnimatedEntity {
 
     public static void main(String[] args) throws InterruptedException {
         Order order = new Order(1, 2500);
-        Furniture product = new Furniture(order, ("" + order.getOrderID() + "-" + 1), Type.WARDROBE, true);
+        Furniture product = new Furniture(order, ("" + order.getOrderID() + "-" + 1), Type.WARDROBE, true, false);
         System.out.println(product);
         product.setProcessingBT(4.5);
         product.setStepBT(TechStep.WOOD_PREPARATION, 4.5);

@@ -134,11 +134,11 @@ public class Order {
         Order order = new Order(248, 2500710);
         Furniture[] products = new Furniture[]
                 {
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 1), Furniture.Type.WARDROBE, false),
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 2), Furniture.Type.CHAIR, false),
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 3), Furniture.Type.CHAIR, false),
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 4), Furniture.Type.WARDROBE, false),
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 5), Furniture.Type.TABLE, false)
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 1), Furniture.Type.WARDROBE, false, false),
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 2), Furniture.Type.CHAIR, false, false),
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 3), Furniture.Type.CHAIR, false, false),
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 4), Furniture.Type.WARDROBE, false, false),
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 5), Furniture.Type.TABLE, false, false)
                 };
         order.setProducts(products);
         System.out.println(order);

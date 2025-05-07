@@ -49,7 +49,7 @@ public class AgentGroupB extends OSPABA.Agent implements ICarpenterGroup, IAgent
 
 	@Override
 	public void setAmountOfCarpenters(int amount) {
-		this.allocator.initCarpenters(amount);
+		this.allocator.initCarpenters(amount, this.mySim().animatorExists());
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class AgentGroupB extends OSPABA.Agent implements ICarpenterGroup, IAgent
 	public void registerEntities() {
 		IAnimator animator = this.mySim().animator();
 		for (Carpenter c : this.allocator.getCarpenters()) {
-			c.getAnimatedEntity().registerEntity(animator);
+			c.initAnimatedEntity().registerEntity(animator);
 		}
 	}
 }

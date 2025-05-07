@@ -9,6 +9,11 @@ import animation.ImgResources;
 import contracts.IAnimatedEntity;
 import utils.DoubleComp;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
 public class Carpenter implements IAnimatedEntity {
 
     public enum GROUP {
@@ -28,7 +33,13 @@ public class Carpenter implements IAnimatedEntity {
     // anim
     private AnimatedCarpenter animCarpenter;
 
-    public Carpenter(GROUP group, int carpenterID) {
+    /**
+     * @param group
+     * @param carpenterID
+     * @param createAnimatedEntity set {@code false}, if animation doesn't exist. Creating animated entity is heavy
+     *                             operation.
+     */
+    public Carpenter(GROUP group, int carpenterID, boolean createAnimatedEntity) {
         this.group = group;
         this.carpenterId = carpenterID;
         this.deskID = IN_STORAGE;
@@ -37,7 +48,8 @@ public class Carpenter implements IAnimatedEntity {
         this.assignedProduct = null;
         this.sumOfWorkingTime = 0;
 
-        this.animCarpenter = new AnimatedCarpenter(this);
+        if (createAnimatedEntity) // very time-consuming in fast mode
+            this.animCarpenter = new AnimatedCarpenter(this);
     }
 
     public void reset() {
@@ -204,29 +216,41 @@ public class Carpenter implements IAnimatedEntity {
     }
 
     @Override
+    public AnimatedEntity initAnimatedEntity() {
+        if (this.animCarpenter == null)
+            this.animCarpenter = new AnimatedCarpenter(this);
+        return this.animCarpenter;
+    }
+
+    @Override
     public AnimatedEntity getAnimatedEntity() {
         return this.animCarpenter;
     }
 
     public static class AnimatedCarpenter extends AnimatedEntity {
-        private final AnimImageItem imgCarpenter;
         private final AnimTextItem txtWorkStatus;
         private final Carpenter c;
 
         public AnimatedCarpenter(Carpenter carpenter) {
             this.c = carpenter;
-            this.imgCarpenter = switch (carpenter.group) {
-                case A -> ImgResources.createCarpenterA();
-                case B -> ImgResources.createCarpenterB();
-                case C -> ImgResources.createCarpenterC();
-            };
+            try {
+                BufferedImage imgCarpenter = switch (carpenter.group) {
+                    case A -> ImageIO.read(new File(ImgResources.IMG_PATH_CARPENTER_A));
+                    case B -> ImageIO.read(new File(ImgResources.IMG_PATH_CARPENTER_B));
+                    case C -> ImageIO.read(new File(ImgResources.IMG_PATH_CARPENTER_C));
+                };
+                super.setImage(imgCarpenter, ImgResources.WIDTH_CARPENTER, ImgResources.HEIGHT_CARPENTER);
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             this.txtWorkStatus = new AnimTextItem(this.getStatus());
         }
 
         @Override
         public void registerEntity(IAnimator animator) {
-            animator.register(this.imgCarpenter);
             animator.register(this.txtWorkStatus);
+            animator.register(this); // img
         }
 
         @Override
@@ -237,36 +261,41 @@ public class Carpenter implements IAnimatedEntity {
         }
 
         @Override
-        public void removeEntity() {
-            this.imgCarpenter.remove();
+        public void unregisterEntity() {
             this.txtWorkStatus.remove();
+            super.remove(); // img
         }
 
         @Override
-        public AnimImageItem getProxyImage() {
-            return this.imgCarpenter;
+        public void setLabelsVisible(double inTime, boolean visible) {
+            this.txtWorkStatus.setVisible(inTime, visible);
+        }
+
+        @Override
+        public void setLabelsVisible(boolean visible) {
+            this.txtWorkStatus.setVisible(visible);
         }
 
         @Override
         public Anim moveTo(double startTime, double duration, double x, double y) {
             this.txtWorkStatus.moveTo(startTime, duration, x, y);
-            return this.imgCarpenter.moveTo(startTime, duration, x, y);
+            return super.moveTo(startTime, duration, x, y); // img
         }
 
         @Override
         public Anim setPosition(double x, double y) {
             this.txtWorkStatus.setPosition(x, y);
-            return this.imgCarpenter.setPosition(x, y);
+            return super.setPosition(x, y); // img
         }
 
         @Override
         public double getWidth() {
-            return Math.max(this.imgCarpenter.getWidth(), this.txtWorkStatus.getWidth());
+            return Math.max(super.getWidth(), this.txtWorkStatus.getWidth());
         }
 
         @Override
         public double getHeight() {
-            return this.imgCarpenter.getHeight() + this.txtWorkStatus.getHeight();
+            return super.getHeight() + this.txtWorkStatus.getHeight();
         }
 
         private String getStatus(){
@@ -277,9 +306,9 @@ public class Carpenter implements IAnimatedEntity {
     //  -   -   -   -   -   -   M A I N -   -   -   -   -   -   -
 
     public static void main(String[] args) {
-        Carpenter carpenter = new Carpenter(GROUP.A, 1);
+        Carpenter carpenter = new Carpenter(GROUP.A, 1, false);
         Order order = new Order(1, 2500);
-        Furniture product = new Furniture(order, (order.getOrderID()+"-"+1), Furniture.Type.CHAIR, true);
+        Furniture product = new Furniture(order, (order.getOrderID()+"-"+1), Furniture.Type.CHAIR, true, false);
         product.setDeskID(1);
         carpenter.setCurrentDeskID(1);
         System.out.println(carpenter.getGroup());

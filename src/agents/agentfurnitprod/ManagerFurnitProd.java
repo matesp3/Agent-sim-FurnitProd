@@ -345,6 +345,10 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	private void noticeIfCompleted(Furniture f) {
 		f.setTimeCompleted(this.mySim().currentTime());
 		this.myAgent().getDeskManager().setDeskFree(f.getDeskID(), f); // release desk
+
+		if (f.getAnimatedEntity() != null)
+			f.getAnimatedEntity().unregisterEntity();
+
 		if (f.getMyOrder().isCompleted()) { // if all furniture products of this order are completed
 			f.getMyOrder().setCompletedAt(this.mySim().currentTime());
 			OrderMessage newOrderMsg = (OrderMessage) this.orderMsgPattern.createCopy();

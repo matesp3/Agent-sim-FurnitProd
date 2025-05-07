@@ -105,7 +105,8 @@ public class SchedulerOrderArrival extends OSPABA.Scheduler
 		for (int i = 0; i < orderedProducts.length; i++) {
 			orderedProducts[i] = new Furniture(order,
 					String.format("%d-%c", order.getOrderID(), (char)(65+i)), this.nextProductType(),
-					DoubleComp.compare( this.rndLacquering.sample(), THRESHOLD_LACQUERING ) == -1
+					DoubleComp.compare( this.rndLacquering.sample(), THRESHOLD_LACQUERING ) == -1,
+					this.mySim().animatorExists()
 			);
 		}
 		order.setProducts(orderedProducts);

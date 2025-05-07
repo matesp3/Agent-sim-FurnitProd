@@ -13,10 +13,10 @@ public class CarpenterGroup {
         this.firstFree = Integer.MAX_VALUE;
     }
 
-    public void initCarpenters(int amount) {
+    public void initCarpenters(int amount, boolean createAnimatedEntities) {
         this.carpenters = new Carpenter[amount];
         for (int i = 0; i < amount; i++) {
-            this.carpenters[i] = new Carpenter(this.groupID, nextID++);
+            this.carpenters[i] = new Carpenter(this.groupID, nextID++, createAnimatedEntities);
         }
         this.firstFree = 0;
     }
@@ -118,7 +118,7 @@ public class CarpenterGroup {
 
     public static void main(String[] args) {
         CarpenterGroup allocator = new CarpenterGroup(Carpenter.GROUP.A);
-        allocator.initCarpenters(3);
+        allocator.initCarpenters(3, false);
         System.out.println("State:  "+allocator);
         Carpenter c1 = allocator.assignCarpenter();
         System.out.println(" > assigned: "+c1);
