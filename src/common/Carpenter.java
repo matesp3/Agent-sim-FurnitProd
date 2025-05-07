@@ -10,6 +10,7 @@ import contracts.IAnimatedEntity;
 import utils.DoubleComp;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -75,6 +76,8 @@ public class Carpenter implements IAnimatedEntity {
         this.productProcessingBT = timeOfStart;
         this.assignedProduct = product;
 //        product.setStepBT(timeOfStart);
+        if (this.animCarpenter != null)
+            this.animCarpenter.renderEntity();
     }
 
     /**
@@ -91,6 +94,8 @@ public class Carpenter implements IAnimatedEntity {
         this.sumOfWorkingTime += (this.productProcessingET - this.productProcessingBT);
         Furniture productToReturn = this.assignedProduct;
         this.assignedProduct = null;
+        if (this.animCarpenter != null)
+            this.animCarpenter.renderEntity();
         return productToReturn;
     }
 
@@ -131,6 +136,8 @@ public class Carpenter implements IAnimatedEntity {
      */
     public void setCurrentDeskID(int deskID) {
         this.deskID = deskID;
+//        if (this.animCarpenter != null)
+//            this.animCarpenter.renderEntity();
     }
 
     /**
@@ -245,6 +252,7 @@ public class Carpenter implements IAnimatedEntity {
                 throw new RuntimeException(e);
             }
             this.txtWorkStatus = new AnimTextItem(this.getStatus());
+            this.txtWorkStatus.setColor(new Color(218, 239, 246));
         }
 
         @Override
@@ -278,13 +286,13 @@ public class Carpenter implements IAnimatedEntity {
 
         @Override
         public Anim moveTo(double startTime, double duration, double x, double y) {
-            this.txtWorkStatus.moveTo(startTime, duration, x, y);
+            this.txtWorkStatus.moveTo(startTime, duration, x, y-18.5);
             return super.moveTo(startTime, duration, x, y); // img
         }
 
         @Override
         public Anim setPosition(double x, double y) {
-            this.txtWorkStatus.setPosition(x, y);
+            this.txtWorkStatus.setPosition(x, y-18.5);
             return super.setPosition(x, y); // img
         }
 
@@ -299,7 +307,7 @@ public class Carpenter implements IAnimatedEntity {
         }
 
         private String getStatus(){
-            return String.format("id=%s [%s]", this.c.carpenterId, c.isWorking() ? "Working" : "Idle");
+            return String.format("ID=%s [%s]", this.c.carpenterId, c.isWorking() ? "Working" : "Idle");
         }
     }
 

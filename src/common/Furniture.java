@@ -11,6 +11,7 @@ import utils.DoubleComp;
 import utils.Formatter;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -281,6 +282,7 @@ public class Furniture implements IAnimatedEntity {
                 throw new RuntimeException(e);
             }
             this.txtTechStep = new AnimTextItem(this.getStatus());
+            this.txtTechStep.setColor(new Color(255, 231, 46));
         }
 
         @Override
@@ -312,13 +314,13 @@ public class Furniture implements IAnimatedEntity {
 
         @Override
         public Anim moveTo(double startTime, double duration, double x, double y) {
-            this.txtTechStep.moveTo(startTime, duration, x, y);
+            this.txtTechStep.moveTo(startTime, duration, x - 1.5, y - 17);
             return super.moveTo(startTime, duration, x, y); // img
         }
 
         @Override
         public Anim setPosition(double x, double y) {
-            this.txtTechStep.setPosition(x, y);
+            this.txtTechStep.setPosition(x - 1.5, y - 20);
             return super.setPosition(x, y); // img
         }
 
@@ -333,7 +335,7 @@ public class Furniture implements IAnimatedEntity {
         }
 
         private String getStatus() {
-            return String.format("id=%s [%s]", f.getProductID(), (f.step != null ? f.step.toString() : "Waiting"));
+            return String.format("ID=%s [%s]", f.getProductID(), (f.step != null ? f.step.toString() : "Waiting"));
         }
     }
 
