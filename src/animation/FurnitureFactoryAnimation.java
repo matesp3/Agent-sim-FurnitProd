@@ -1,6 +1,7 @@
 package animation;
 
 import OSPAnimator.AnimImageItem;
+import OSPAnimator.AnimQueue;
 import OSPAnimator.IAnimator;
 import contracts.IAnimatorHandler;
 
@@ -16,11 +17,23 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
     private static final int DESKS_PER_ROW = 6;
     private static final int DESKS_DIST_X = ImgResources.WIDTH_DESK + + ImgResources.WIDTH_CARPENTER + 25;
     private static final int DESKS_DIST_Y = ImgResources.HEIGHT_DESK + 15;
-    private static final int DESK_HOVER_OFFSET_Y = 35; // from top of desk image
-    private static final Point2D BASE_POS = new Point2D.Double(200,50);
+    private static final int DESK_HOVER_OFFSET_Y = 45; // from top of desk image
+    private static final Point2D BASE_POS = new Point2D.Double(300,200);
+
+    private static final Point2D STORAGE_Q_CARPS_A_START = new Point2D.Double(0,0);
+    private static final Point2D STORAGE_Q_CARPS_A_END = new Point2D.Double(200, ImgResources.HEIGHT_CARPENTER);
+
+    private static final Point2D STORAGE_Q_CARPS_B_START = new Point2D.Double(0,ImgResources.HEIGHT_CARPENTER);
+    private static final Point2D STORAGE_Q_CARPS_B_END = new Point2D.Double(200, ImgResources.HEIGHT_CARPENTER*2);
+
+    private static final Point2D STORAGE_Q_CARPS_C_START = new Point2D.Double(0,ImgResources.HEIGHT_CARPENTER*2);
+    private static final Point2D STORAGE_Q_CARPS_C_END = new Point2D.Double(200, ImgResources.HEIGHT_CARPENTER*3);
 
     private IAnimator animator;
 
+    private AnimQueue qCarpsInStorageA;
+//    private AnimQueue qCarpsInStorageB;
+//    private AnimQueue qCarpsInStorageC;
     private AnimImageItem[] animDesks = null;
     private int desksCount;
 
@@ -31,6 +44,8 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
     public FurnitureFactoryAnimation(IAnimator animator, int desksCount) {
         this.animator = animator;
         this.desksCount = desksCount;
+        this.qCarpsInStorageA = new AnimQueue(animator, STORAGE_Q_CARPS_A_START, STORAGE_Q_CARPS_A_END, 100);
+        this.qCarpsInStorageA.setVisible(true); // visibility of queue stats
         this.initDesks();
     }
 
@@ -51,7 +66,7 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
     }
 
     public void placeCarpenterToStorage(AnimImageItem animatedCarpenter) {
-
+        this.qCarpsInStorageA.insert(animatedCarpenter);
     }
 
     public IAnimator getAnimator() {

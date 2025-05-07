@@ -251,7 +251,7 @@ public class Furniture implements IAnimatedEntity {
                 case CHAIR -> ImgResources.createChair();
                 case WARDROBE -> ImgResources.createWardrobe();
             };
-            this.txtTechStep = new AnimTextItem("Waiting");
+            this.txtTechStep = new AnimTextItem(this.getStatus());
         }
 
         @Override
@@ -262,13 +262,18 @@ public class Furniture implements IAnimatedEntity {
 
         @Override
         public void renderEntity() {
-            this.txtTechStep.setText( f.step != null ? f.step.toString() : "Waiting" );
+            this.txtTechStep.setText(this.getStatus());
         }
 
         @Override
         public void removeEntity() {
             this.imgFurniture.remove();
             this.txtTechStep.remove();
+        }
+
+        @Override
+        public AnimImageItem getProxyImage() {
+            return this.imgFurniture;
         }
 
         @Override
@@ -291,6 +296,10 @@ public class Furniture implements IAnimatedEntity {
         @Override
         public double getHeight() {
             return this.imgFurniture.getHeight()+this.txtTechStep.getHeight();
+        }
+
+        private String getStatus() {
+            return String.format("id=%s [%s]", f.getProductID(), (f.step != null ? f.step.toString() : "Waiting"));
         }
     }
 

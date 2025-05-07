@@ -220,7 +220,7 @@ public class Carpenter implements IAnimatedEntity {
                 case B -> ImgResources.createCarpenterB();
                 case C -> ImgResources.createCarpenterC();
             };
-            this.txtWorkStatus = new AnimTextItem( c.isWorking() ? "Working" : "Idle" );
+            this.txtWorkStatus = new AnimTextItem(this.getStatus());
         }
 
         @Override
@@ -233,13 +233,18 @@ public class Carpenter implements IAnimatedEntity {
         public void renderEntity() {
             // tato metoda sa bude volat z logiky a zoberie si hodnoty atributov - zabezpeci sa aktualizacia textu
             // o PRESUN entit sa budu starat MANAZERI. Atributy budu aktualizovat metody zdedene z AnimatedEntity
-            this.txtWorkStatus.setText( c.isWorking() ? "Working" : "Idle" );
+            this.txtWorkStatus.setText(this.getStatus());
         }
 
         @Override
         public void removeEntity() {
             this.imgCarpenter.remove();
             this.txtWorkStatus.remove();
+        }
+
+        @Override
+        public AnimImageItem getProxyImage() {
+            return this.imgCarpenter;
         }
 
         @Override
@@ -262,6 +267,10 @@ public class Carpenter implements IAnimatedEntity {
         @Override
         public double getHeight() {
             return this.imgCarpenter.getHeight() + this.txtWorkStatus.getHeight();
+        }
+
+        private String getStatus(){
+            return String.format("id=%s [%s]", this.c.carpenterId, c.isWorking() ? "Working" : "Idle");
         }
     }
 

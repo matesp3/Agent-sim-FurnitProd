@@ -20,18 +20,18 @@ public class ImgResources {
     public static final String IMG_PATH_DESK = DIR_IMAGES + "pracovisko.png";
     public static final int WIDTH_DESK = 150;
     public static final int HEIGHT_DESK = 105;
-    /** original: 600x400 px */
+    /** original: 532x356 px */
     public static final String IMG_PATH_TABLE = DIR_IMAGES + "order-stol.png";
-    public static final int WIDTH_TABLE = 130;
-    public static final int HEIGHT_TABLE = 85;
-    /** original: 300x500 px */
+    public static final int WIDTH_TABLE = 115;
+    public static final int HEIGHT_TABLE = 75;
+    /** original: 250x452 px */
     public static final String IMG_PATH_CHAIR = DIR_IMAGES + "order-stolicka.png";
-    public static final int WIDTH_CHAIR = 65;
-    public static final int HEIGHT_CHAIR = 105;
-    /** original: 400x700 px */
+    public static final int WIDTH_CHAIR = 55;
+    public static final int HEIGHT_CHAIR = 95;
+    /** original: 350x662 px */
     public static final String IMG_PATH_WARDROBE = DIR_IMAGES + "order-skrina.png";
-    public static final int WIDTH_WARDROBE = 85;
-    public static final int HEIGHT_WARDROBE = 150;
+    public static final int WIDTH_WARDROBE = 75;
+    public static final int HEIGHT_WARDROBE = 140;
 
     public static AnimImageItem createCarpenterA(double posX, double posY) {
         AnimImageItem ai = createCarpenterA();

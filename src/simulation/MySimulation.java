@@ -90,6 +90,9 @@ public class MySimulation extends OSPABA.Simulation
 		this.animationHandler.moveCarpenterToDesk(0, 0, c1.getAnimatedEntity());
 		this.animationHandler.moveCarpenterToDesk(1, 0, c2.getAnimatedEntity());
 		this.animationHandler.moveCarpenterToDesk(2, 0, c3.getAnimatedEntity());
+		this.animationHandler.placeCarpenterToStorage(c1.getAnimatedEntity().getProxyImage());
+		this.animationHandler.placeCarpenterToStorage(c2.getAnimatedEntity().getProxyImage());
+		this.animationHandler.placeCarpenterToStorage(c3.getAnimatedEntity().getProxyImage());
 
 		Furniture f1 = new Furniture(null, "1-A", Furniture.Type.WARDROBE, false);
 		Furniture f2 = new Furniture(null, "1-B", Furniture.Type.CHAIR, false);
