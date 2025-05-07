@@ -251,8 +251,9 @@ public class Carpenter implements IAnimatedEntity {
             catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            this.txtWorkStatus = new AnimTextItem(this.getStatus());
-            this.txtWorkStatus.setColor(new Color(218, 239, 246));
+            super.setToolTip(this.getStatus());
+            this.txtWorkStatus = new AnimTextItem(String.format("[ID=%d]", c.carpenterId));
+            this.txtWorkStatus.setColor(new Color(168, 229, 255));
         }
 
         @Override
@@ -265,7 +266,7 @@ public class Carpenter implements IAnimatedEntity {
         public void renderEntity() {
             // tato metoda sa bude volat z logiky a zoberie si hodnoty atributov - zabezpeci sa aktualizacia textu
             // o PRESUN entit sa budu starat MANAZERI. Atributy budu aktualizovat metody zdedene z AnimatedEntity
-            this.txtWorkStatus.setText(this.getStatus());
+            super.setToolTip(this.getStatus());
         }
 
         @Override
@@ -286,13 +287,13 @@ public class Carpenter implements IAnimatedEntity {
 
         @Override
         public Anim moveTo(double startTime, double duration, double x, double y) {
-            this.txtWorkStatus.moveTo(startTime, duration, x, y-18.5);
+            this.txtWorkStatus.moveTo(startTime, duration, x+20, y-18.5);
             return super.moveTo(startTime, duration, x, y); // img
         }
 
         @Override
         public Anim setPosition(double x, double y) {
-            this.txtWorkStatus.setPosition(x, y-18.5);
+            this.txtWorkStatus.setPosition(x+20, y-18.5);
             return super.setPosition(x, y); // img
         }
 
@@ -307,7 +308,10 @@ public class Carpenter implements IAnimatedEntity {
         }
 
         private String getStatus(){
-            return String.format("ID=%s [%s]", this.c.carpenterId, c.isWorking() ? "Working" : "Idle");
+            return String.format("Info:\n * Status: %s\n * process = %s\n * furniture = %s",
+                    c.isWorking() ? "Working" : "Idle",
+                    c.assignedProduct != null ? c.assignedProduct.getStep() : "-",
+                    c.assignedProduct != null ? c.assignedProduct.getProductID() : "-");
         }
     }
 

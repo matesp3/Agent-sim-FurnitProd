@@ -88,21 +88,22 @@ public class MySimulation extends OSPABA.Simulation
 		c2.getAnimatedEntity().registerEntity(this.animator());
 		c3.getAnimatedEntity().registerEntity(this.animator());
 		this.animationHandler.moveCarpenterToDesk(0, 0, c1.getAnimatedEntity());
-		this.animationHandler.moveCarpenterToDesk(1, 0, c2.getAnimatedEntity());
+		this.animationHandler.moveCarpenterToDesk(6, 0, c2.getAnimatedEntity());
 		this.animationHandler.moveCarpenterToDesk(2, 0, c3.getAnimatedEntity());
 //		this.animationHandler.placeCarpenterToStorage(c1.getAnimatedEntity());
 //		this.animationHandler.placeCarpenterToStorage(c2.getAnimatedEntity());
 //		this.animationHandler.placeCarpenterToStorage(c3.getAnimatedEntity());
-
-		Furniture f1 = new Furniture(null, "1-A", Furniture.Type.WARDROBE, false, true);
+		Order o = new Order(24, 15475);
+		Furniture f1 = new Furniture(o, "1-A", Furniture.Type.WARDROBE, false, true);
+		f1.setStep(Furniture.TechStep.WOOD_PREPARATION);
 		c1.receiveProduct(f1, 50);
-		Furniture f2 = new Furniture(null, "1-B", Furniture.Type.CHAIR, false, true);
-		Furniture f3 = new Furniture(null, "1-C", Furniture.Type.TABLE, false, true);
+		Furniture f2 = new Furniture(o, "1-B", Furniture.Type.WARDROBE, false, true);
+		Furniture f3 = new Furniture(o, "1-C", Furniture.Type.TABLE, false, true);
 		f1.getAnimatedEntity().registerEntity(this.animator());
 		f2.getAnimatedEntity().registerEntity(this.animator());
 		f3.getAnimatedEntity().registerEntity(this.animator());
 		this.animationHandler.moveFurnitureOnDesk(0, 0, f1.getAnimatedEntity());
-		this.animationHandler.moveFurnitureOnDesk(1, 0, f2.getAnimatedEntity());
+		this.animationHandler.moveFurnitureOnDesk(6, 0, f2.getAnimatedEntity());
 		this.animationHandler.moveFurnitureOnDesk(2, 0, f3.getAnimatedEntity());
 //		this.agentGroupA().registerEntities();
 //		this.agentGroupB().registerEntities();

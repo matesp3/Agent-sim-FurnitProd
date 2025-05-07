@@ -10,23 +10,23 @@ public class ImgResources {
     public static final String DIR_IMAGES = System.getProperty("user.dir") + "\\images\\";
     /** original: 251x643 px */
     public static final String IMG_PATH_CARPENTER_A = DIR_IMAGES + "stolar-A.png";
-    public static final int WIDTH_CARPENTER = 55;
-    public static final int HEIGHT_CARPENTER = 135;
+    public static final int WIDTH_CARPENTER = 80;
+    public static final int HEIGHT_CARPENTER = 180;  // ratio 3.5
     /** original: 450x750 px */
     public static final String IMG_PATH_CARPENTER_B = DIR_IMAGES + "stolar-B.png";
     /** original: 450x750 px */
     public static final String IMG_PATH_CARPENTER_C = DIR_IMAGES + "stolar-C.png";
     /** original:  700x500 px */
     public static final String IMG_PATH_DESK = DIR_IMAGES + "pracovisko.png";
-    public static final int WIDTH_DESK = 150;
-    public static final int HEIGHT_DESK = 105;
+    public static final int WIDTH_DESK = 200; // ratio 3.5
+    public static final int HEIGHT_DESK = 145; // ratio 3.5
     /** original: 532x356 px */
     public static final String IMG_PATH_TABLE = DIR_IMAGES + "order-stol.png";
     public static final int WIDTH_TABLE = 115;
     public static final int HEIGHT_TABLE = 75;
     /** original: 250x452 px */
     public static final String IMG_PATH_CHAIR = DIR_IMAGES + "order-stolicka.png";
-    public static final int WIDTH_CHAIR = 45;
+    public static final int WIDTH_CHAIR = 30;
     public static final int HEIGHT_CHAIR = 95;
     /** original: 350x662 px */
     public static final String IMG_PATH_WARDROBE = DIR_IMAGES + "order-skrina.png";

@@ -67,6 +67,10 @@ public class FurnitureProdDataViewer extends JPanel {
 //        this.add(this.mainScrollPane);
 //    }
 
+    public JPanel getHeader() {
+        return this.headerPane;
+    }
+
     public void resizeContent(int width, int height) {
         this.mainScrollPane.setPreferredSize(new Dimension(width, height));
         SwingTableColumnResizer.setJTableColsWidth(this.tabUnstarted, (width-25)/2,

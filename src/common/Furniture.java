@@ -23,9 +23,27 @@ public class Furniture implements IAnimatedEntity {
 
     }
     public enum TechStep {
-        WOOD_PREPARATION, CARVING, STAINING, LACQUERING, ASSEMBLING, FIT_INSTALLATION //, DRYING - if added, need to be fit where it belongs chronologically
-        ;
+        WOOD_PREPARATION("Wood Prep."), CARVING("Carving"),
+        STAINING("Staining"), LACQUERING("Lacquering"),
+        ASSEMBLING("Assembling"), FIT_INSTALLATION("Fit. Inst.");
+        private final String description;
+        TechStep(String d) {
+            this.description = d;
+        }
 
+        @Override
+        public String toString() {
+            return this.description;
+        }
+    }
+
+    public enum TIME_UNIT {
+        SECONDS(1), MINUTES(60), HOURS(3600), DAYS(3600*8);
+        private final double secs;
+
+        TIME_UNIT(int secs) {
+            this.secs = secs;
+        }
     }
     private final Order order;
     private final String productID;
@@ -125,6 +143,8 @@ public class Furniture implements IAnimatedEntity {
     public void setStep(TechStep techStep) {
         this.stepCheck(techStep);
         this.step = techStep;
+        if (this.animFurniture != null)
+            this.animFurniture.renderEntity();
     }
 
     public void setStepBT(double time) {
@@ -282,7 +302,8 @@ public class Furniture implements IAnimatedEntity {
                 throw new RuntimeException(e);
             }
             this.txtTechStep = new AnimTextItem(this.getStatus());
-            this.txtTechStep.setColor(new Color(255, 231, 46));
+            super.setToolTip(this.getFurnitureInfo());
+            this.txtTechStep.setColor(new Color(255, 242, 137));
         }
 
         @Override
@@ -294,6 +315,7 @@ public class Furniture implements IAnimatedEntity {
         @Override
         public void renderEntity() {
             this.txtTechStep.setText(this.getStatus());
+            super.setToolTip(this.getFurnitureInfo());
         }
 
         @Override
@@ -314,13 +336,13 @@ public class Furniture implements IAnimatedEntity {
 
         @Override
         public Anim moveTo(double startTime, double duration, double x, double y) {
-            this.txtTechStep.moveTo(startTime, duration, x - 1.5, y - 17);
+            this.txtTechStep.moveTo(startTime, duration, x - 1.5, y - 14);
             return super.moveTo(startTime, duration, x, y); // img
         }
 
         @Override
         public Anim setPosition(double x, double y) {
-            this.txtTechStep.setPosition(x - 1.5, y - 20);
+            this.txtTechStep.setPosition(x - 1.5, y - 14);
             return super.setPosition(x, y); // img
         }
 
@@ -335,7 +357,19 @@ public class Furniture implements IAnimatedEntity {
         }
 
         private String getStatus() {
-            return String.format("ID=%s [%s]", f.getProductID(), (f.step != null ? f.step.toString() : "Waiting"));
+            return String.format("[ID=%s] %10s", f.getProductID(), (f.step != null ? f.step.toString() : "Waiting"));
+        }
+
+        private String getFurnitureInfo() {
+            return String.format("Furniture [%-7s]:\n * created=%s\n * orderID=%d\n * desk=%d\n * step=%s\n * type%-8s\n * waitingBT=%s\n * stepBT=%s\n * setET=%s\n * started=%s\n * completed=%s",
+                    f.productID, Formatter.getStrDateTime(f.getMyOrderCreatedAt(), 8, 6),
+                    f.order.getOrderID(), f.deskID, f.step, f.productType.toString(),
+                    Formatter.getStrDateTime(f.waitingBT, 8, 6),
+                    Formatter.getStrDateTime(f.stepBT, 8, 6),
+                    Formatter.getStrDateTime(f.stepET, 8, 6),
+                    Formatter.getStrDateTime(f.processingBT, 8, 6),
+                    Formatter.getStrDateTime(f.timeCompleted, 8, 6)
+            );
         }
     }
 
