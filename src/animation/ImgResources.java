@@ -8,10 +8,10 @@ import java.io.IOException;
 
 public class ImgResources {
     public static final String DIR_IMAGES = System.getProperty("user.dir") + "\\images\\";
-    /** original: 450x750 px */
+    /** original: 251x643 px */
     public static final String IMG_PATH_CARPENTER_A = DIR_IMAGES + "stolar-A.png";
-    public static final int WIDTH_CARPENTER = 65;
-    public static final int HEIGHT_CARPENTER = 145;
+    public static final int WIDTH_CARPENTER = 55;
+    public static final int HEIGHT_CARPENTER = 135;
     /** original: 450x750 px */
     public static final String IMG_PATH_CARPENTER_B = DIR_IMAGES + "stolar-B.png";
     /** original: 450x750 px */
