@@ -5,7 +5,6 @@ import OSPRNG.RNG;
 import contracts.IFittingsInstaller;
 import simulation.*;
 import agents.agentgroupa.*;
-import OSPABA.Process;
 
 //meta! id="70"
 public class ProcessFitInstA extends OSPABA.Process implements IFittingsInstaller
@@ -27,6 +26,10 @@ public class ProcessFitInstA extends OSPABA.Process implements IFittingsInstalle
 	//meta! sender="AgentGroupA", id="71", type="Start"
 	public void processStart(MessageForm message)
 	{
+		TechStepMessage tsMsg = (TechStepMessage) message;
+		tsMsg.getProductToProcess().setStepBT(this.mySim().currentTime());
+		tsMsg.setCode(Mc.fittingsInstallation);
+		this.hold(this.rndFitInstA.sample(), tsMsg);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"
@@ -34,6 +37,11 @@ public class ProcessFitInstA extends OSPABA.Process implements IFittingsInstalle
 	{
 		switch (message.code())
 		{
+			case Mc.fittingsInstallation -> {
+				TechStepMessage tsMsg = (TechStepMessage) message;
+				tsMsg.getProductToProcess().setStepET(this.mySim().currentTime());
+				this.assistantFinished(tsMsg);
+			}
 		}
 	}
 

@@ -1,9 +1,9 @@
 package results;
 
-public class AfterEventResults extends SimResults {
+public class AfterChangeResults extends SimResults {
     private double simTime;
 
-    public AfterEventResults(long experimentNum, double simTime) {
+    public AfterChangeResults(long experimentNum, double simTime) {
         super(experimentNum);
         this.simTime = simTime;
     }

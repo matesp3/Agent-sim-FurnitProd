@@ -28,6 +28,10 @@ public abstract class StatResult {
         public double getValue() {
             return this.value;
         }
+
+        public void setValue(double value) {
+            this.value = value;
+        }
     }
 
     public static class ConfInterval extends StatResult {
@@ -46,6 +50,11 @@ public abstract class StatResult {
 
         public double getHalfWidth() {
             return this.halfWidth;
+        }
+
+        public void setCI(double mean, double halfWidth) {
+            this.mean = mean;
+            this.halfWidth = halfWidth;
         }
     }
 }

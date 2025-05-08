@@ -5,6 +5,7 @@ import OSPRNG.ExponentialRNG;
 import OSPRNG.RNG;
 import OSPRNG.UniformContinuousRNG;
 import OSPRNG.UniformDiscreteRNG;
+import animation.FurnitureFactoryAnimation;
 import common.Furniture;
 import common.Order;
 import simulation.*;
@@ -18,9 +19,11 @@ public class SchedulerOrderArrival extends OSPABA.Scheduler
 {
 	private static final double THRESHOLD_TABLE = 50;
 	private static final double THRESHOLD_CHAIR = THRESHOLD_TABLE+15;
+	private static final double THRESHOLD_LACQUERING = 15;
 
 	private final RNG<Double> rndGapDuration;
 	private final RNG<Double> rndOrderType;
+	private final RNG<Double> rndLacquering;
 	private final RNG<Integer> rndOrderedProductsCount;
 	private int nextOrderID;
 
@@ -30,6 +33,7 @@ public class SchedulerOrderArrival extends OSPABA.Scheduler
 		// 2 arrivals per 1 hour, 1 arrival each 1800[s]
 		this.rndGapDuration = new ExponentialRNG(3600.0 / 2, SeedGen.getSeedRNG());
 		this.rndOrderType = new UniformContinuousRNG(0.0, 100.0, SeedGen.getSeedRNG()); // generates percentages of probability of order's type
+		this.rndLacquering = new UniformContinuousRNG(0.0, 100.0, SeedGen.getSeedRNG());
 		this.rndOrderedProductsCount = new UniformDiscreteRNG(1, 5, SeedGen.getSeedRNG());
 		this.nextOrderID = 1;
 	}
@@ -92,10 +96,6 @@ public class SchedulerOrderArrival extends OSPABA.Scheduler
 		return (AgentEnvironment)super.myAgent();
 	}
 
-	public int getCreatedOrdersCount() {
-		return this.nextOrderID-1;
-	}
-
 	/**
 	 * @return generated new order with generated ordered furniture products
 	 * @param createdAt time of order creating
@@ -105,10 +105,20 @@ public class SchedulerOrderArrival extends OSPABA.Scheduler
 		Furniture[] orderedProducts = new Furniture[this.rndOrderedProductsCount.sample()];
 		for (int i = 0; i < orderedProducts.length; i++) {
 			orderedProducts[i] = new Furniture(order,
-					String.format("%d-%c", order.getOrderID(), (char)(65+i)), this.nextProductType()
+					String.format("%d-%c", order.getOrderID(), (char)(65+i)), this.nextProductType(),
+					DoubleComp.compare( this.rndLacquering.sample(), THRESHOLD_LACQUERING ) == -1
 			);
 		}
 		order.setProducts(orderedProducts);
+		// --- ANIMATION
+		if (this.mySim().animatorExists()) {
+			FurnitureFactoryAnimation animHandler = ((MySimulation) this.mySim()).getAnimationHandler();
+			for (int i = 0; i < orderedProducts.length; i++) {
+				orderedProducts[i].initAnimatedEntity().registerEntity(this.mySim().animator());
+				animHandler.enqueueFurnitureInStorage(orderedProducts[i].getAnimatedEntity(), false);
+			}
+		}
+		// ---
 		return order;
 	}
 

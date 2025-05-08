@@ -24,21 +24,12 @@ public class ManagerModel extends OSPABA.Manager
 		}
 	}
 
-	//meta! sender="AgentFurnitProd", id="28", type="Response"
-	public void processOrderProcessing(MessageForm message)
-	{
-		// handling response --v
-		message.setCode(Mc.orderCompleted);
-		message.setAddressee(Id.agentEnvironment);
-		this.notice(message);
-	}
-
 	//meta! sender="AgentEnvironment", id="15", type="Notice"
 	public void processOrderArrival(MessageForm message)
 	{
-		message.setCode(Mc.orderProcessing);
+		message.setCode(Mc.orderProcessingStart);
 		message.setAddressee(Id.agentFurnitProd);
-		this.request(message);
+		this.notice(message);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"
@@ -53,6 +44,14 @@ public class ManagerModel extends OSPABA.Manager
 		}
 	}
 
+	//meta! sender="AgentFurnitProd", id="159", type="Notice"
+	public void processOrderProcessingEnd(MessageForm message)
+	{
+		message.setCode(Mc.orderCompleted);
+		message.setAddressee(Id.agentEnvironment);
+		this.notice(message);
+	}
+
 	//meta! userInfo="Generated code: do not modify", tag="begin"
 	public void init()
 	{
@@ -63,12 +62,12 @@ public class ManagerModel extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.orderArrival:
-			processOrderArrival(message);
+		case Mc.orderProcessingEnd:
+			processOrderProcessingEnd(message);
 		break;
 
-		case Mc.orderProcessing:
-			processOrderProcessing(message);
+		case Mc.orderArrival:
+			processOrderArrival(message);
 		break;
 
 		default:

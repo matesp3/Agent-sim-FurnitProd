@@ -3,9 +3,8 @@ package gui.components;
 import gui.FurnitureProdForm;
 import gui.models.LocalStatsTableModel;
 import gui.models.OverallStatsTableModel;
-import gui.models.StatsModel;
-import results.FurnitProdEventResults;
-import results.FurnitProdExpStats;
+import results.FurnitProdState;
+import results.FurnitProdRepStats;
 import utils.Formatter;
 import utils.SwingTableColumnResizer;
 
@@ -96,20 +95,12 @@ public class StatsViewer extends JPanel {
         this.expTimeViewer.setValue(Formatter.getStrDateTime(time, 8, 6));
     }
 
-    public void addStatResult(StatsModel statResult) {
-        this.overallStatsTableModel.add(statResult);
-    }
-
-    public void updateOverallStats(FurnitProdExpStats results) {
+    public void updateOverallStats(FurnitProdRepStats results) {
         this.overallStatsTableModel.updateTable(results);
     }
 
-    public void updateLocalStats(FurnitProdEventResults results) {
+    public void updateLocalStats(FurnitProdState results) {
         this.localStatsTableModel.updateTable(results);
-    }
-
-    public void updateStatAtRow(int rowIdx, StatsModel statResult) {
-        this.overallStatsTableModel.setModel(rowIdx, statResult);
     }
 
     public void clearStatsList() {

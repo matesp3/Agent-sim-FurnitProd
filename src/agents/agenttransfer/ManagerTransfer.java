@@ -27,21 +27,29 @@ public class ManagerTransfer extends OSPABA.Manager
 	//meta! sender="AgentFurnitProd", id="35", type="Request"
 	public void processDeskTransfer(MessageForm message)
 	{
+		message.setAddressee(myAgent().findAssistant(Id.processDeskTransfer));
+		this.startContinualAssistant(message);
 	}
 
 	//meta! sender="AgentFurnitProd", id="33", type="Request"
 	public void processStorageTransfer(MessageForm message)
 	{
+		message.setAddressee(myAgent().findAssistant(Id.processStorageTransfer));
+		this.startContinualAssistant(message);
 	}
 
 	//meta! sender="ProcessStorageTransfer", id="48", type="Finish"
 	public void processFinishProcessStorageTransfer(MessageForm message)
 	{
+		message.setCode(Mc.storageTransfer);
+		this.response(message);
 	}
 
 	//meta! sender="ProcessDeskTransfer", id="46", type="Finish"
 	public void processFinishProcessDeskTransfer(MessageForm message)
 	{
+		message.setCode(Mc.deskTransfer);
+		this.response(message);
 	}
 
 	//meta! userInfo="Process messages defined in code", id="0"
@@ -62,25 +70,25 @@ public class ManagerTransfer extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.deskTransfer:
-			processDeskTransfer(message);
+		case Mc.storageTransfer:
+			processStorageTransfer(message);
 		break;
 
 		case Mc.finish:
 			switch (message.sender().id())
 			{
-			case Id.processStorageTransfer:
-				processFinishProcessStorageTransfer(message);
-			break;
-
 			case Id.processDeskTransfer:
 				processFinishProcessDeskTransfer(message);
+			break;
+
+			case Id.processStorageTransfer:
+				processFinishProcessStorageTransfer(message);
 			break;
 			}
 		break;
 
-		case Mc.storageTransfer:
-			processStorageTransfer(message);
+		case Mc.deskTransfer:
+			processDeskTransfer(message);
 		break;
 
 		default:

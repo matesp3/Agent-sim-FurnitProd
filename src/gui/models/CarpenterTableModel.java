@@ -1,6 +1,7 @@
 package gui.models;
 
-import results.CarpenterResults;
+import common.Carpenter;
+import results.CarpenterModel;
 import utils.Formatter;
 
 import javax.swing.table.AbstractTableModel;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CarpenterTableModel extends AbstractTableModel {
-    private final List<CarpenterResults> lResults;
+    private final List<CarpenterModel> lResults;
     private final String[] aColNames = new String[] {
             "ID",
             "Group",
@@ -30,31 +31,31 @@ public class CarpenterTableModel extends AbstractTableModel {
             String.class
     };
 
-    public CarpenterTableModel(List<CarpenterResults> lResults) {
+    public CarpenterTableModel(List<CarpenterModel> lResults) {
         this.lResults = lResults;
     }
 
-    public void add(CarpenterResults model) {
+    public void add(CarpenterModel model) {
         this.lResults.add(model);
         this.fireTableDataChanged();
     }
 
-    public void setModels(List<CarpenterResults> lModels) {
+    public void setModels(List<CarpenterModel> lModels) {
         this.clear();
         if (lModels != null)
             lResults.addAll(lModels);
         this.fireTableDataChanged();
     }
 
-    public CarpenterResults getModel(int index) {
+    public CarpenterModel getModel(int index) {
         return this.lResults.get(index);
     }
 
-    public ArrayList<CarpenterResults> getModels() {
+    public ArrayList<CarpenterModel> getModels() {
         return new ArrayList<>(this.lResults);
     }
 
-    public void setModel(int index, CarpenterResults model) {
+    public void setModel(int index, CarpenterModel model) {
         if (model == null || index < 0 || index > this.lResults.size())
             return;
         this.lResults.set(index, model);
@@ -99,7 +100,7 @@ public class CarpenterTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        CarpenterResults c = this.lResults.get(rowIndex);
+        CarpenterModel c = this.lResults.get(rowIndex);
         if (columnIndex == 0)
             return c.getCarpenterID();
         if (columnIndex == 1)
@@ -107,7 +108,12 @@ public class CarpenterTableModel extends AbstractTableModel {
         if (columnIndex == 2)
             return c.isWorking();
         if (columnIndex == 3)
-            return c.getDeskID() < 0 ? "In Storage" : c.getDeskID();
+            return switch (c.getDeskID()) {
+                case Carpenter.IN_STORAGE -> "In Storage";
+                case Carpenter.TRANSFER_STORAGE-> "Storage-Transfer";
+                case Carpenter.TRANSFER_DESKS -> "Desks-Transfer";
+                default -> c.getDeskID();
+            };
         if (columnIndex == 4)
             return c.getAssignedProductID() == null ? "Not assigned" : c.getAssignedProductID();
         if (columnIndex == 5)

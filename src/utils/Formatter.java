@@ -29,7 +29,7 @@ public class Formatter {
     public static String getStrCI(double h, double mean, int p, double divisor) {
         h /= divisor;
         mean /= divisor;
-        return p < 0 ? String.format(("95%% < %f | %f | %f >"), mean-h, mean, mean+h)
-                     : String.format(("95%% < %."+p+"f | %."+p+"f | %."+p+"f >"), mean-h, mean, mean+h);
+        return p < 0 ? String.format(("< %f | %f >"), mean-h, mean, mean+h)
+                     : String.format(("< %."+p+"f | %."+p+"f >"), mean-h, mean+h);
     }
 }

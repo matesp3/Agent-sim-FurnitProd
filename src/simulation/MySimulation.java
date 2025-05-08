@@ -1,10 +1,8 @@
 package simulation;
 
-import OSPABA.*;
 import OSPRNG.RNG;
 import OSPRNG.UniformContinuousRNG;
 import OSPStat.Stat;
-import agents.agentenvironment.continualassistants.SchedulerOrderArrival;
 import agents.agenttransfer.*;
 import agents.agentmodel.*;
 import agents.agentenvironment.*;
@@ -12,29 +10,51 @@ import agents.agentgroupa.*;
 import agents.agentgroupb.*;
 import agents.agentgroupc.*;
 import agents.agentfurnitprod.*;
+import animation.FurnitureFactoryAnimation;
+import common.Carpenter;
+import common.Furniture;
+import common.Order;
+import results.FurnitProdRepStats;
+import results.FurnitProdState;
 import utils.SeedGen;
-
 
 public class MySimulation extends OSPABA.Simulation
 {
+	public enum TIME_UNIT {
+		SECONDS(1), MINUTES(60), HOURS(3600), DAYS(3600*8);
+		private final double secs;
+
+		TIME_UNIT(int secs) {
+			this.secs = secs;
+		}
+	}
 	private final Stat avgTimeOrderCompletion = new Stat();
+	private final Stat avgCountOrdersCreated = new Stat();
 	private final Stat avgCountOrdersCompleted = new Stat();
+	private final Stat avgCountUsedDesks = new Stat();
 
 	private final Stat avgUtilizationA  = new Stat();
 	private final Stat avgUtilizationB  = new Stat();
 	private final Stat avgUtilizationC  = new Stat();
 
-	private final Stat avgCountNotStarted = new Stat();
-	private final Stat avgCountPartiallyStarted = new Stat();
+	private final Stat avgCountUnsOrders = new Stat();
+	private final Stat avgCountUnsProducts = new Stat();
 	private final Stat avgCountStaining = new Stat();
 	private final Stat avgCountAssembling = new Stat();
 	private final Stat avgCountFitInstallation = new Stat();
 
-	private final Stat avgTimeInNotStarted = new Stat();
-	private final Stat avgTimeInPartiallyStarted = new Stat();
+	private final Stat avgTimeInUnsOrders = new Stat();
+	private final Stat avgTimeInUnsProducts = new Stat();
 	private final Stat avgTimeInStaining = new Stat();
 	private final Stat avgTimeInAssembling = new Stat();
 	private final Stat avgTimeInFitInstallation = new Stat();
+
+	private final FurnitProdState simStateData = new FurnitProdState(0, 0);
+	private final FurnitProdRepStats repResults = new FurnitProdRepStats(0);
+
+	private FurnitureFactoryAnimation animationHandler = null;
+
+	private TIME_UNIT timeUnit = TIME_UNIT.HOURS;
 
 	public MySimulation()
 	{
@@ -46,23 +66,57 @@ public class MySimulation extends OSPABA.Simulation
 
 	}
 
+	public TIME_UNIT getTimeUnit() {
+		return this.timeUnit;
+	}
+
+	public void setTimeUnit(TIME_UNIT timeUnit) {
+		this.timeUnit = timeUnit;
+	}
+
+	@Override
+	public void createAnimator() {
+		super.createAnimator();
+		if (!this.animatorExists())
+			throw new RuntimeException("Animator should be already created, but isn't");
+		// register all entities to animator here on one place
+		this.animationHandler = new FurnitureFactoryAnimation(this.animator(), this.agentFurnitProd().getDeskManager().getAllDesksCount()); // desks are internally registered
+		this.agentGroupC().registerEntities();
+		this.agentGroupB().registerEntities();
+		this.agentGroupA().registerEntities();
+		this.agentFurnitProd().registerEntities();
+	}
+
+	@Override
+	public void removeAnimator() {
+		// unregister all entities from animator here on one place
+//		this.agentGroupC().unregisterEntities();
+//		this.agentGroupB().unregisterEntities();
+//		this.agentGroupA().unregisterEntities();
+//		this.agentFurnitProd().unregisterEntities();
+//		this.animationHandler.clear();
+		super.removeAnimator();
+	}
+
 	@Override
 	public void prepareSimulation()
 	{
 		super.prepareSimulation();
 		// Create global statistcis
 		this.avgTimeOrderCompletion.clear();
+		this.avgCountOrdersCreated.clear();
 		this.avgCountOrdersCompleted.clear();
+		this.avgCountUsedDesks.clear();
 		this.avgUtilizationA.clear();
 		this.avgUtilizationB.clear();
 		this.avgUtilizationC.clear();
-		this.avgCountNotStarted.clear();
-		this.avgCountPartiallyStarted.clear();
+		this.avgCountUnsOrders.clear();
+		this.avgCountUnsProducts.clear();
 		this.avgCountStaining.clear();
 		this.avgCountAssembling.clear();
 		this.avgCountFitInstallation.clear();
-		this.avgTimeInNotStarted.clear();
-		this.avgTimeInPartiallyStarted.clear();
+		this.avgTimeInUnsOrders.clear();
+		this.avgTimeInUnsProducts.clear();
 		this.avgTimeInStaining.clear();
 		this.avgTimeInAssembling.clear();
 		this.avgTimeInFitInstallation.clear();
@@ -81,24 +135,25 @@ public class MySimulation extends OSPABA.Simulation
 		// Collect local statistics into global, update UI, etc...
 		super.replicationFinished();
 		this.avgTimeOrderCompletion.addSample(this.agentEnvironment().getAvgTimeOrderCompletion().mean());
+		this.avgCountOrdersCreated.addSample(this.agentEnvironment().getOrdersCreated());
 		this.avgCountOrdersCompleted.addSample(this.agentEnvironment().getOrdersCompleted());
-//		 todo remaining stats updating
-//		this.avgUtilizationA.addSample();
-//		this.avgUtilizationB.addSample();
-//		this.avgUtilizationC.addSample();
-//		this.avgCountNotStarted.addSample();
-//		this.avgCountPartiallyStarted.addSample();
-//		this.avgCountStaining.addSample();
-//		this.avgCountAssembling.addSample();
-//		this.avgCountFitInstallation.addSample();
-//		this.avgTimeInNotStarted.addSample();
-//		this.avgTimeInPartiallyStarted.addSample();
-//		this.avgTimeInStaining.addSample();
-//		this.avgTimeInAssembling.addSample();
-//		this.avgTimeInFitInstallation.addSample();
-		SchedulerOrderArrival sch = (SchedulerOrderArrival) agentEnvironment().findAssistant(Id.schedulerOrderArrival);
-		System.out.println("created: "+sch.getCreatedOrdersCount());
-		System.out.println("completed: "+agentEnvironment().getOrdersCompleted());
+		this.avgCountUsedDesks.addSample(this.agentFurnitProd().getStatUsedDesksCount().mean());
+
+		this.avgUtilizationA.addSample(this.agentGroupA().getGroupUtilization());
+		this.avgUtilizationB.addSample(this.agentGroupB().getGroupUtilization());
+		this.avgUtilizationC.addSample(this.agentGroupC().getGroupUtilization());
+
+		this.avgCountUnsOrders.addSample(this.agentFurnitProd().getStatUnsOrdersQL().mean());
+		this.avgCountUnsProducts.addSample(this.agentFurnitProd().getStatUnsProductsQL().mean());
+		this.avgCountStaining.addSample(this.agentFurnitProd().getStatStainingQL().mean());
+		this.avgCountAssembling.addSample(this.agentFurnitProd().getStatAssemblingQL().mean());
+		this.avgCountFitInstallation.addSample(this.agentFurnitProd().getStatFittingsQL().mean());
+
+		this.avgTimeInUnsOrders.addSample(this.agentFurnitProd().getStatUnsOrdersWT().mean());
+		this.avgTimeInUnsProducts.addSample(this.agentFurnitProd().getStatUnsProductsWT().mean());
+		this.avgTimeInStaining.addSample(this.agentFurnitProd().getStatStainingWT().mean());
+		this.avgTimeInAssembling.addSample(this.agentFurnitProd().getStatAssemblingWT().mean());
+		this.avgTimeInFitInstallation.addSample(this.agentFurnitProd().getStatFittingsWT().mean());
 	}
 
 	@Override
@@ -182,9 +237,9 @@ public AgentGroupC agentGroupC()
 		return avgTimeOrderCompletion;
 	}
 
-	public Stat getStatCountOrdersCompleted() {
-		return avgCountOrdersCompleted;
-	}
+//	public Stat getStatCountOrdersCompleted() {
+//		return avgCountOrdersCompleted;
+//	}
 
 	public Stat getStatUtilizationA() {
 		return avgUtilizationA;
@@ -198,12 +253,12 @@ public AgentGroupC agentGroupC()
 		return avgUtilizationC;
 	}
 
-	public Stat getStatCountNotStarted() {
-		return avgCountNotStarted;
+	public Stat getStatCountUnsOrders() {
+		return avgCountUnsOrders;
 	}
 
-	public Stat getStatCountPartiallyStarted() {
-		return avgCountPartiallyStarted;
+	public Stat getStatCountUnstartedProducts() {
+		return avgCountUnsProducts;
 	}
 
 	public Stat getStatCountStaining() {
@@ -218,12 +273,12 @@ public AgentGroupC agentGroupC()
 		return avgCountFitInstallation;
 	}
 
-	public Stat getStatTimeInNotStarted() {
-		return avgTimeInNotStarted;
+	public Stat getStatTimeInUnstartedOrders() {
+		return avgTimeInUnsOrders;
 	}
 
-	public Stat getStatTimeInPartiallyStarted() {
-		return avgTimeInPartiallyStarted;
+	public Stat getStatTimeInUnstartedProducts() {
+		return avgTimeInUnsProducts;
 	}
 
 	public Stat getStatTimeInStaining() {
@@ -236,5 +291,112 @@ public AgentGroupC agentGroupC()
 
 	public Stat getStatTimeInFitInstallation() {
 		return avgTimeInFitInstallation;
+	}
+
+	/**
+	 * Creates new working places and the number of these places is specified by param {@code amount}.
+	 * @param amount amount of working places for carpenters
+	 */
+	public void setAmountOfDesks(int amount) {
+		this.agentFurnitProd().setAmountOfDesks(amount);
+	}
+
+	/**
+	 * Creates {@code amountGroupA} carpenters for group A, {@code amountGroupB} carpenters for group B and
+	 * {@code amountGroupC} carpenters for group C.
+	 */
+	public void setAmountOfCarpenters(int amountGroupA, int amountGroupB, int amountGroupC) {
+		this.agentGroupA().setAmountOfCarpenters(amountGroupA);
+		this.agentGroupB().setAmountOfCarpenters(amountGroupB);
+		this.agentGroupC().setAmountOfCarpenters(amountGroupC);
+		// for results --v
+		this.simStateData.carpentersAllocation(amountGroupA, amountGroupB, amountGroupC);
+	}
+
+	public FurnitProdRepStats getReplicationResults() {
+		this.updateRepResults();
+		return this.repResults;
+	}
+
+	public FurnitProdState getSimStateData() {
+		this.updateSimStateModel();
+		return this.simStateData;
+	}
+
+	public FurnitureFactoryAnimation getAnimationHandler() {
+		return this.animationHandler;
+	}
+
+	private void updateRepResults() {
+		this.repResults.setExperimentNum(this.currentReplication());
+
+		this.repResults.setOrderTimeInSystem(this.avgTimeOrderCompletion);
+		this.repResults.setAvgCreatedOrdersCount(this.avgCountOrdersCreated);
+		this.repResults.setAvgCompletedOrdersCount(this.avgCountOrdersCompleted);
+		this.repResults.setAvgUsedDesksCount(this.avgCountUsedDesks);
+
+		this.repResults.setUtilizationGroupA(this.avgUtilizationA);
+		this.repResults.setUtilizationGroupB(this.avgUtilizationB);
+		this.repResults.setUtilizationGroupC(this.avgUtilizationC);
+		this.repResults.setUnsOrdersCount(this.avgCountUnsOrders);
+		this.repResults.setUnsProductsCount(this.avgCountUnsProducts);
+		this.repResults.setStainingCount(this.avgCountStaining);
+		this.repResults.setAssemblingCount(this.avgCountAssembling);
+		this.repResults.setFittingsCount(this.avgCountFitInstallation);
+
+		this.repResults.setUnsOrdersTime(this.avgTimeInUnsOrders);
+		this.repResults.setUnsProductsTime(this.avgTimeInUnsProducts);
+		this.repResults.setStainingTime(this.avgTimeInStaining);
+		this.repResults.setAssemblingTime(this.avgTimeInAssembling);
+		this.repResults.setFittingsTime(this.avgTimeInFitInstallation);
+	}
+
+	private void updateSimStateModel() {
+		this.simStateData.setExperimentNum(this.currentReplication());
+		this.simStateData.setSimTime(this.currentTime());
+
+		this.simStateData.setCurrentlyCreatedOrders(this.agentEnvironment().getOrdersCreated());
+		this.simStateData.setCurrentlyCompletedOrders(this.agentEnvironment().getOrdersCompleted());
+		this.simStateData.setCurrentlyUsedDesks(this.agentFurnitProd().getUsedDesksCount());
+		// carpenters
+		this.simStateData.setModelsCarpentersA(this.agentGroupA().getAllocator().getCarpenters());
+		this.simStateData.setModelsCarpentersB(this.agentGroupB().getAllocator().getCarpenters());
+		this.simStateData.setModelsCarpentersC(this.agentGroupC().getAllocator().getCarpenters());
+		// orders
+		this.simStateData.clearProducts();
+		for (Order o : this.agentFurnitProd().getQUnstarted()) {
+			for (Furniture f : o.getProducts())
+				this.simStateData.addToqUnstarted(f);
+		}
+		for (Order o : this.agentFurnitProd().getQStarted()) {
+			for (Furniture f : o.getProducts())
+				if (f.isUnstarted()) // order processing started, but some products are still unstarted
+					this.simStateData.addToqStarted(f);
+		}
+		for (Furniture f : this.agentFurnitProd().getQStaining())
+			this.simStateData.addToqStaining(f);
+		for (Furniture f : this.agentFurnitProd().getQAssembling())
+			this.simStateData.addToqAssembling(f);
+		for (Furniture f : this.agentFurnitProd().getQFittings())
+			this.simStateData.addToqFittings(f);
+		// stats
+		this.simStateData.setOrderTimeInSystem(this.agentEnvironment().getAvgTimeOrderCompletion().mean());
+		this.simStateData.setUsedDesksCount(this.agentFurnitProd().getStatUsedDesksCount().mean());
+
+		this.simStateData.setUnsOrdersCount(this.agentFurnitProd().getStatUnsOrdersQL().mean());
+		this.simStateData.setUnsProductsCount(this.agentFurnitProd().getStatUnsProductsQL().mean());
+		this.simStateData.setStainingCount(this.agentFurnitProd().getStatStainingQL().mean());
+		this.simStateData.setAssemblingCount(this.agentFurnitProd().getStatAssemblingQL().mean());
+		this.simStateData.setFittingsInstCount(this.agentFurnitProd().getStatFittingsQL().mean());
+
+		this.simStateData.setUnsOrdersTime(this.agentFurnitProd().getStatUnsOrdersWT().mean());
+		this.simStateData.setUnsProductsTime(this.agentFurnitProd().getStatUnsProductsWT().mean());
+		this.simStateData.setStainingTime(this.agentFurnitProd().getStatStainingWT().mean());
+		this.simStateData.setAssemblingTime(this.agentFurnitProd().getStatAssemblingWT().mean());
+		this.simStateData.setFittingInstTime(this.agentFurnitProd().getStatFittingsWT().mean());
+
+		this.simStateData.setUtilzA(this.agentGroupA().getGroupUtilization()*100);
+		this.simStateData.setUtilzB(this.agentGroupB().getGroupUtilization()*100);
+		this.simStateData.setUtilzC(this.agentGroupC().getGroupUtilization()*100);
 	}
 }

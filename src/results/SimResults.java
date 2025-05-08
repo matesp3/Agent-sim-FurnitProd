@@ -7,7 +7,7 @@ public class SimResults {
         this.experimentNum = experimentNum;
     }
 
-    public long getExperimentNum() {
+    public long getReplicationNum() {
         return this.experimentNum;
     }
 

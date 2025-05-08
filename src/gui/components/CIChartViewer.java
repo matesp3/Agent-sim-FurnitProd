@@ -89,7 +89,7 @@ public class CIChartViewer extends JPanel {
         seriesCollection.addSeries(this.seriesMean);
         seriesCollection.addSeries(this.seriesUpperCIBound);
 
-        this.inputPercOmit = new InputWithLabel("Omitted replications [in %]", 4, "5");
+        this.inputPercOmit = new InputWithLabel("Omitted replications [in %]", 4, "1");
         this.inputPercOmit.setBorder(BorderFactory.createRaisedBevelBorder());
         this.inputPercOmit.setBackground(FurnitureProdForm.COL_BG_TAB);
 

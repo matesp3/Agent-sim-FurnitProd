@@ -19,18 +19,22 @@ public class AgentModel extends OSPABA.Agent
 	{
 		super.prepareReplication();
 		// Setup component for the next replication
-		OrderMessage msg = new OrderMessage(this.mySim());
-		msg.setCode(Mc.init);
-		msg.setAddressee(this);
-		this.myManager().notice(msg);
+		this.startReplication();
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"
 	private void init()
 	{
 		new ManagerModel(Id.managerModel, mySim(), this);
-		addOwnMessage(Mc.orderProcessing);
 		addOwnMessage(Mc.orderArrival);
+		addOwnMessage(Mc.orderProcessingEnd);
 	}
 	//meta! tag="end"
+
+	private void startReplication() {
+		OrderMessage msg = new OrderMessage(this.mySim());
+		msg.setCode(Mc.init);
+		msg.setAddressee(this);
+		this.myManager().notice(msg);
+	}
 }

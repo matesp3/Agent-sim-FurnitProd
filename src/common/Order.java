@@ -1,8 +1,8 @@
 package common;
 
+import OSPAnimator.IAnimator;
+import animation.FurnitureFactoryAnimation;
 import utils.Formatter;
-
-import java.util.Arrays;
 
 public class Order {
     private final int orderID;
@@ -49,7 +49,7 @@ public class Order {
      * @return furniture product whose creating hasn't started yet or {@code null} if all products processing already
      * started (or even ended).
      */
-    public Furniture assignUnprocessedProduct() {
+    public Furniture assignUnstartedProduct() {
         return (this.nextToBeProcessed < this.products.length) ? this.products[this.nextToBeProcessed++] : null;
     }
 
@@ -80,6 +80,63 @@ public class Order {
         return this.products;
     }
 
+    /**
+     * @return {@code true} if all furniture products, that it consists of, are completed, else {@code false}
+     */
+    public boolean isCompleted() {
+        for (Furniture product : this.products) {
+            if (!product.isCompleted())
+                return false;
+        }
+        return true;
+    }
+
+    /**
+     * @return {@code true} if at least one of order's products has not been assigned for work yet, else {@code false}
+     */
+    public boolean hasUnassignedProduct() {
+        return this.nextToBeProcessed < this.products.length;
+    }
+
+    /**
+     *
+     * @return {@code true} if no product of this order has started its creating yet, else {@code false}
+     */
+    public boolean isUnstarted() {
+        return this.nextToBeProcessed == 0;
+    }
+
+    /**
+     * Sets waitingBT time to all its products, which are still unassigned
+     * @param time begin time of waiting
+     */
+    public void setWaitingBT(double time) {
+        for (int i = this.nextToBeProcessed; i < this.products.length; i++) {
+            this.products[i].setWaitingBT(time);
+        }
+    }
+
+    /**
+     * @return amount of products, of which order consists
+     */
+    public int getProductsCount() {
+        return this.products.length;
+    }
+
+    public void registerUnstarted(FurnitureFactoryAnimation animHandler) {
+        boolean alreadyStarted = nextToBeProcessed > 0;
+        for (int i = this.nextToBeProcessed; i < this.products.length; i++) {
+            this.products[i].initAnimatedEntity().registerEntity(animHandler.getAnimator());
+            animHandler.enqueueFurnitureInStorage(this.products[i].getAnimatedEntity(), alreadyStarted);
+        }
+    }
+
+    public void unregisterUnstarted(IAnimator animator) {
+        for (int i = this.nextToBeProcessed; i < this.products.length; i++) {
+            this.products[i].getAnimatedEntity().unregisterEntity(animator);
+        }
+    }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -93,22 +150,22 @@ public class Order {
         Order order = new Order(248, 2500710);
         Furniture[] products = new Furniture[]
                 {
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 1), Furniture.Type.WARDROBE),
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 2), Furniture.Type.CHAIR),
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 3), Furniture.Type.CHAIR),
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 4), Furniture.Type.WARDROBE),
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 5), Furniture.Type.TABLE)
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 1), Furniture.Type.WARDROBE, false),
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 2), Furniture.Type.CHAIR, false),
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 3), Furniture.Type.CHAIR, false),
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 4), Furniture.Type.WARDROBE, false),
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 5), Furniture.Type.TABLE, false)
                 };
         order.setProducts(products);
         System.out.println(order);
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
-        System.out.println(order.assignUnprocessedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
+        System.out.println(order.assignUnstartedProduct());
         // ok
     }
 }

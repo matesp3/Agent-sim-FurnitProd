@@ -1,12 +1,29 @@
 package common;
 
+import OSPAnimator.Anim;
+import OSPAnimator.AnimImageItem;
+import OSPAnimator.AnimTextItem;
+import OSPAnimator.IAnimator;
+import animation.AnimatedEntity;
+import animation.ImgResources;
+import contracts.IAnimatedEntity;
 import utils.DoubleComp;
+import utils.Formatter;
 
-public class Carpenter {
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+public class Carpenter implements IAnimatedEntity {
+
     public enum GROUP {
         A,B,C;
     }
     public static final int IN_STORAGE = -1;
+    public static final int TRANSFER_STORAGE = -2;
+    public static final int TRANSFER_DESKS = -3;
 
     private final int carpenterId;
     private final GROUP group;
@@ -15,8 +32,16 @@ public class Carpenter {
     private double productProcessingBT;
     private double productProcessingET;
     private double sumOfWorkingTime;
+    // anim
+    private AnimatedCarpenter animCarpenter;
 
-    public Carpenter(GROUP group, int carpenterID) {
+    /**
+     * @param group
+     * @param carpenterID
+     * @param createAnimatedEntity set {@code false}, if animation doesn't exist. Creating animated entity is heavy
+     *                             operation.
+     */
+    public Carpenter(GROUP group, int carpenterID, boolean createAnimatedEntity) {
         this.group = group;
         this.carpenterId = carpenterID;
         this.deskID = IN_STORAGE;
@@ -24,6 +49,9 @@ public class Carpenter {
         this.productProcessingET = -1;
         this.assignedProduct = null;
         this.sumOfWorkingTime = 0;
+
+        if (createAnimatedEntity) // very time-consuming in fast mode
+            this.animCarpenter = new AnimatedCarpenter(this);
     }
 
     public void reset() {
@@ -49,6 +77,8 @@ public class Carpenter {
         this.productProcessingBT = timeOfStart;
         this.assignedProduct = product;
 //        product.setStepBT(timeOfStart);
+        if (this.animCarpenter != null)
+            this.animCarpenter.renderEntity();
     }
 
     /**
@@ -65,6 +95,8 @@ public class Carpenter {
         this.sumOfWorkingTime += (this.productProcessingET - this.productProcessingBT);
         Furniture productToReturn = this.assignedProduct;
         this.assignedProduct = null;
+        if (this.animCarpenter != null)
+            this.animCarpenter.renderEntity();
         return productToReturn;
     }
 
@@ -93,17 +125,20 @@ public class Carpenter {
      * @throws RuntimeException if carpenter is working right now or was not working at all
      */
     public double getLastWorkDuration() throws RuntimeException {
-        if (this.isWorking() || this.deskID == IN_STORAGE)
+        if (this.isWorking() || this.deskID < 0)
             throw new RuntimeException("Carpenter is working (hasn't returned product yet) or is located in the storage");
         return this.productProcessingET - this.productProcessingBT;
     }
 
     /**
      * Sets new position of this carpenter.
-     * @param deskID deskID of assigned product or {@code Carpenter.IN_STORAGE} constant if he is located in storage
+     * @param deskID deskID of assigned product or {@code Carpenter.IN_STORAGE} constant if he is located in storage.
+     *               If he is moving, it can be set one of these options: {@code Carpenter.TRANSFER_STORAGE}, {@code Carpenter.TRANSFER_DESKS}
      */
     public void setCurrentDeskID(int deskID) {
         this.deskID = deskID;
+        if (this.animCarpenter != null)
+            this.animCarpenter.renderEntity();
     }
 
     /**
@@ -122,7 +157,7 @@ public class Carpenter {
 
     /**
      * @return ID of desk where carpenter is standing right now or {@code Carpenter.IN_STORAGE} value if he is in wood
-     * storage.
+     * storage. If he's currently moving, one of these options is present:{@code Carpenter.TRANSFER_STORAGE}, {@code Carpenter.TRANSFER_DESKS}
      */
     public int getCurrentDeskID() {
         return this.deskID;
@@ -168,6 +203,13 @@ public class Carpenter {
     }
 
     /**
+     * @return {@code true}, if {@code deskID} of carpenter = {@code Carpenter.IN_STORAGE}
+     */
+    public boolean isInStorage() {
+        return this.deskID == IN_STORAGE;
+    }
+
+    /**
      * @return amount of overall time, that carpenter has worked (and completed his work, also) from the start of
      * simulation.
      */
@@ -181,10 +223,126 @@ public class Carpenter {
                 this.isWorking() ? this.assignedProduct.getProductID() : null);
     }
 
+    @Override
+    public AnimatedEntity initAnimatedEntity() {
+        if (this.animCarpenter == null)
+            this.animCarpenter = new AnimatedCarpenter(this);
+        return this.animCarpenter;
+    }
+
+    @Override
+    public AnimatedEntity getAnimatedEntity() {
+        return this.animCarpenter;
+    }
+
+    public static class AnimatedCarpenter extends AnimatedEntity {
+        private final AnimTextItem txtWorkStatus;
+        private final Carpenter c;
+
+        public AnimatedCarpenter(Carpenter carpenter) {
+            this.c = carpenter;
+            try {
+                BufferedImage imgCarpenter = switch (carpenter.group) {
+                    case A -> ImageIO.read(new File(ImgResources.IMG_PATH_CARPENTER_A));
+                    case B -> ImageIO.read(new File(ImgResources.IMG_PATH_CARPENTER_B));
+                    case C -> ImageIO.read(new File(ImgResources.IMG_PATH_CARPENTER_C));
+                };
+                super.setImage(imgCarpenter, ImgResources.WIDTH_CARPENTER, ImgResources.HEIGHT_CARPENTER);
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            super.setToolTip(this.getStatus());
+            this.txtWorkStatus = new AnimTextItem(this.getHeaderStatus());
+            this.txtWorkStatus.setColor(new Color(9, 91, 173));
+            super.setZIndex(2);
+            this.txtWorkStatus.setZIndex(100);
+        }
+
+        @Override
+        public void registerEntity(IAnimator animator) {
+            animator.register(this.txtWorkStatus);
+            animator.register(this); // img
+        }
+
+        @Override
+        public void renderEntity() {
+            // tato metoda sa bude volat z logiky a zoberie si hodnoty atributov - zabezpeci sa aktualizacia textu
+            // o PRESUN entit sa budu starat MANAZERI. Atributy budu aktualizovat metody zdedene z AnimatedEntity
+            super.setToolTip(this.getStatus());
+            this.txtWorkStatus.setText(this.getHeaderStatus());
+        }
+
+        @Override
+        public void unregisterEntity(IAnimator animator) {
+            animator.remove(this.txtWorkStatus);
+            animator.remove(this);
+            this.txtWorkStatus.remove();
+            super.remove(); // img
+        }
+
+        @Override
+        public void setLabelsVisible(double inTime, boolean visible) {
+            this.txtWorkStatus.setVisible(inTime, visible);
+        }
+
+        @Override
+        public void setLabelsVisible(boolean visible) {
+            this.txtWorkStatus.setVisible(visible);
+        }
+
+        @Override
+        public Anim moveTo(double startTime, double duration, double x, double y) {
+            this.txtWorkStatus.moveTo(startTime, duration, x, y-18.5);
+            return super.moveTo(startTime, duration, x, y); // img
+        }
+
+        @Override
+        public Anim setPosition(double x, double y) {
+            this.txtWorkStatus.setPosition(x, y-18.5);
+            return super.setPosition(x, y); // img
+        }
+
+        @Override
+        public double getWidth() {
+            return Math.max(super.getWidth(), this.txtWorkStatus.getWidth());
+        }
+
+        @Override
+        public double getHeight() {
+            return super.getHeight() + this.txtWorkStatus.getHeight();
+        }
+
+        @Override
+        public void setZIndex(int zIndex) {
+            this.txtWorkStatus.setZIndex(zIndex);
+            super.setZIndex(zIndex);
+        }
+
+        private String getHeaderStatus() {
+            return String.format("%3d - %-7s", c.carpenterId, c.isWorking() ? "Working" : "Idle");
+        }
+
+        private String getStatus(){
+            return String.format("Carpenter [%s]:\n * Group: %s\n * deskID: %s\n * Status: %s\n * furnitureID = %s\n * work: %s\n * work-start: %s\n * work-end: %s",
+                    c.carpenterId,
+                    c.group.toString(),
+                    c.deskID != IN_STORAGE ? c.deskID : "In storage",
+                    c.isWorking() ? "Working" : "Idle",
+                    c.assignedProduct != null ? c.assignedProduct.getProductID() : "-",
+                    c.assignedProduct != null ? c.assignedProduct.getStep() : "-",
+                    Formatter.getStrDateTime(c.productProcessingBT, 8, 6),
+                    Formatter.getStrDateTime(c.productProcessingET, 8, 6)
+            );
+        }
+    }
+
+    //  -   -   -   -   -   -   M A I N -   -   -   -   -   -   -
+
     public static void main(String[] args) {
-        Carpenter carpenter = new Carpenter(GROUP.A, 1);
+        Carpenter carpenter = new Carpenter(GROUP.A, 1, false);
         Order order = new Order(1, 2500);
-        Furniture product = new Furniture(order, (order.getOrderID()+"-"+1), Furniture.Type.CHAIR);
+        Furniture product = new Furniture(order, (order.getOrderID()+"-"+1), Furniture.Type.CHAIR, true);
         product.setDeskID(1);
         carpenter.setCurrentDeskID(1);
         System.out.println(carpenter.getGroup());

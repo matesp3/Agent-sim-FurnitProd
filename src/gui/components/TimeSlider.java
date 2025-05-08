@@ -34,9 +34,11 @@ public class TimeSlider extends JPanel {
         this.resultScale.setForeground(FurnitureProdForm.COL_TEXT_FONT_1);
 
         this.sliderForSecs = new JSlider(sliderHorizontal ? JSlider.HORIZONTAL : JSlider.VERTICAL, 1, 100, 65);
-        this.initSpeedModes();
+//        this.initSpeedModes();
 //        controller.setShiftTime(this.modes[sliderForSecs.getValue()].simUnits); // initialization
 //        controller.setSleepTime(this.modes[sliderForSecs.getValue()].sleep);
+        controller.setShiftAndSleepTime(sliderForSecs.getValue()*3,
+                Math.max(1-(sliderForSecs.getValue()/100.0), 0.01)); // initial speed set
         this.resultScale.setText(formatOutput(sliderForSecs.getValue()));
 
         this.sliderForSecs.addChangeListener(new ChangeListener() {
