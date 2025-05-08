@@ -79,18 +79,21 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
         double x = getDeskBaseX(deskId) + ((ImgResources.WIDTH_DESK - furniture.getWidth()) / 3.75);
         double y = getDeskBaseY(deskId) + DESK_HOVER_OFFSET_Y - furniture.getHeight();
         furniture.setPosition(x, y);
+        furniture.setZIndex(calcFurnitureZIndex(deskId));
     }
 
     public void moveFurnitureToDesk(int deskId, AnimatedEntity furniture, double startTime, double movingDur) {
         double x = getDeskBaseX(deskId) + ((ImgResources.WIDTH_DESK - furniture.getWidth()) / 3.75);
         double y = getDeskBaseY(deskId) + DESK_HOVER_OFFSET_Y - furniture.getHeight();
         furniture.moveTo(startTime, movingDur, x, y);
+        furniture.setZIndex(calcFurnitureZIndex(deskId));
     }
 
     public void moveCarpenterToOtherDesk(int deskId, AnimatedEntity carpenter, double startTime, double dur) {
         double x = getDeskBaseX(deskId) - ImgResources.WIDTH_CARPENTER + 25;
         double y = getDeskBaseY(deskId) + ImgResources.HEIGHT_DESK - ImgResources.HEIGHT_CARPENTER + 15;
         carpenter.moveTo(startTime, dur, x, y);
+        carpenter.setZIndex(calcCarpenterZIndex(deskId));
     }
 
     public void moveCarpenterAToStorage(AnimatedEntity carpenter, double startTime, double movingDur) {
@@ -99,26 +102,37 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
 
     public void placeCarpenterAToStorage(AnimatedEntity carpenter) {
         this.carpQA.enqueue(carpenter);
+        carpenter.setZIndex(2);
+    }
+
+    public void placeCarpenterToDesk(int deskId, AnimatedEntity carpenter) {
+        carpenter.setPosition(getDeskBaseX(deskId), getDeskBaseY(deskId));
+        carpenter.setZIndex(calcCarpenterZIndex(deskId));
     }
 
     public void placeCarpenterBToStorage(AnimatedEntity carpenter) {
         this.carpQB.enqueue(carpenter);
+        carpenter.setZIndex(1);
     }
 
     public void placeCarpenterCToStorage(AnimatedEntity carpenter) {
         this.carpQC.enqueue(carpenter);
+        carpenter.setZIndex(0);
     }
 
-    public void moveCarpenterAToDesk(int deskID, AnimatedEntity animatedEntity, double v, double dur) {
-        this.carpQA.dequeue(animatedEntity, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
+    public void moveCarpenterAToDesk(int deskID, AnimatedEntity carpenter, double v, double dur) {
+        this.carpQA.dequeue(carpenter, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
+        carpenter.setZIndex(calcCarpenterZIndex(deskID));
     }
 
-    public void moveCarpenterBToDesk(int deskID, AnimatedEntity animatedEntity, double v, double dur) {
-        this.carpQB.dequeue(animatedEntity, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
+    public void moveCarpenterBToDesk(int deskID, AnimatedEntity carpenter, double v, double dur) {
+        this.carpQB.dequeue(carpenter, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
+        carpenter.setZIndex(calcCarpenterZIndex(deskID));
     }
 
-    public void moveCarpenterCToDesk(int deskID, AnimatedEntity animatedEntity, double v, double dur) {
-        this.carpQC.dequeue(animatedEntity, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
+    public void moveCarpenterCToDesk(int deskID, AnimatedEntity carpenter, double v, double dur) {
+        this.carpQC.dequeue(carpenter, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
+        carpenter.setZIndex(calcCarpenterZIndex(deskID));
     }
 
     public IAnimator getAnimator() {
@@ -136,6 +150,7 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
         AnimImageItem[] animDesks = new AnimImageItem[this.desksCount];
         for (int deskId = 0; deskId < this.desksCount; deskId++) {
             animDesks[deskId] = ImgResources.createDesk(getDeskBaseX(deskId), getDeskBaseY(deskId));
+            animDesks[deskId].setZIndex(calcDeskZIndex(deskId));
             this.animator.register(animDesks[deskId]);
         }
     }
@@ -210,6 +225,18 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
      */
     private static double getDeskBaseY(int deskId) {
         return BASE_POS.getY() + DESKS_DIST_Y * (deskId / DESKS_PER_ROW);
+    }
+
+    private static int calcDeskZIndex(int deskId) {
+        return (deskId / DESKS_PER_ROW) * 3;
+    }
+
+    private static int calcFurnitureZIndex(int deskId) {
+        return 1 + (deskId / DESKS_PER_ROW) * 3;
+    }
+
+    private static int calcCarpenterZIndex(int deskId) {
+        return 2 + (deskId / DESKS_PER_ROW) * 3;
     }
 
     private static int getMax(int[] values) {

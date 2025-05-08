@@ -6,6 +6,7 @@ import OSPRNG.RNG;
 import animation.FurnitureFactoryAnimation;
 import common.Carpenter;
 import common.CarpenterGroup;
+import common.Furniture;
 import contracts.IAgentWithEntity;
 import contracts.ICarpenterGroup;
 import contracts.IFittingsInstaller;
@@ -74,7 +75,19 @@ public class AgentGroupA extends OSPABA.Agent implements IFittingsInstaller, ICa
 		FurnitureFactoryAnimation animHandler = ((MySimulation)this.mySim()).getAnimationHandler();
 		for (Carpenter c : this.allocator.getCarpenters()) {
 			c.initAnimatedEntity().registerEntity(animator);
-			animHandler.placeCarpenterAToStorage(c.getAnimatedEntity());
+			if (c.isWorking()) {
+				switch (c.getAssignedProduct().getStep()) {
+					case null -> animHandler.placeCarpenterAToStorage(c.getAnimatedEntity());
+					case Furniture.TechStep.WOOD_PREPARATION -> animHandler.placeCarpenterAToStorage(c.getAnimatedEntity());
+					default -> animHandler.placeCarpenterToDesk(c.getAssignedProduct().getDeskID(), c.getAnimatedEntity());
+				}
+			}
+			else {
+				if (c.isInStorage())
+					animHandler.placeCarpenterAToStorage(c.getAnimatedEntity());
+				else
+					animHandler.placeCarpenterToDesk(c.getCurrentDeskID(), c.getAnimatedEntity());
+			}
 		}
 	}
 

@@ -5,6 +5,7 @@ import OSPAnimator.IAnimator;
 import animation.FurnitureFactoryAnimation;
 import common.Carpenter;
 import common.CarpenterGroup;
+import common.Furniture;
 import contracts.IAgentWithEntity;
 import contracts.ICarpenterGroup;
 import simulation.*;
@@ -64,7 +65,15 @@ public class AgentGroupB extends OSPABA.Agent implements ICarpenterGroup, IAgent
 		FurnitureFactoryAnimation animHandler = ((MySimulation)this.mySim()).getAnimationHandler();
 		for (Carpenter c : this.allocator.getCarpenters()) {
 			c.initAnimatedEntity().registerEntity(animator);
-			animHandler.placeCarpenterBToStorage(c.getAnimatedEntity());
+			if (c.isWorking()) {
+				animHandler.placeCarpenterToDesk(c.getAssignedProduct().getDeskID(), c.getAnimatedEntity());
+			}
+			else {
+				if (c.isInStorage())
+					animHandler.placeCarpenterBToStorage(c.getAnimatedEntity());
+				else
+					animHandler.placeCarpenterToDesk(c.getCurrentDeskID(), c.getAnimatedEntity());
+			}
 		}
 	}
 

@@ -255,7 +255,7 @@ public class Carpenter implements IAnimatedEntity {
             super.setToolTip(this.getStatus());
             this.txtWorkStatus = new AnimTextItem(this.getHeaderStatus());
             this.txtWorkStatus.setColor(new Color(9, 91, 173));
-            super.setZIndex(99);
+            super.setZIndex(2);
             this.txtWorkStatus.setZIndex(100);
         }
 
@@ -311,6 +311,12 @@ public class Carpenter implements IAnimatedEntity {
         @Override
         public double getHeight() {
             return super.getHeight() + this.txtWorkStatus.getHeight();
+        }
+
+        @Override
+        public void setZIndex(int zIndex) {
+            this.txtWorkStatus.setZIndex(zIndex);
+            super.setZIndex(zIndex);
         }
 
         private String getHeaderStatus() {

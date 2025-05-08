@@ -314,6 +314,7 @@ public class Furniture implements IAnimatedEntity {
             this.txtTechStep = new AnimTextItem(this.getStatus());
             super.setToolTip(this.getFurnitureInfo());
             this.txtTechStep.setColor(new Color(255, 242, 137));
+            super.setZIndex(1);
         }
 
         @Override
@@ -370,6 +371,12 @@ public class Furniture implements IAnimatedEntity {
 
         private String getStatus() {
             return String.format("[ID=%s] %10s", f.getProductID(), (f.step != null ? f.step.toString() : "Waiting"));
+        }
+
+        @Override
+        public void setZIndex(int zIndex) {
+            this.txtTechStep.setZIndex(zIndex);
+            super.setZIndex(zIndex);
         }
 
         private String getFurnitureInfo() {

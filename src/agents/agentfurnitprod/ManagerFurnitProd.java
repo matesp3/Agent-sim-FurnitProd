@@ -494,9 +494,12 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		product.setStep(Furniture.TechStep.WOOD_PREPARATION);
 		product.setProcessingBT(this.mySim().currentTime());
 		// - - ANIM
-		if (this.mySim().animatorExists())
-			((MySimulation)this.mySim()).getAnimationHandler().moveFurnitureToDesk(product.getDeskID(),
+		if (this.mySim().animatorExists()) {
+			if (product.getAnimatedEntity() == null)
+				product.initAnimatedEntity().registerEntity(this.mySim().animator());
+			((MySimulation) this.mySim()).getAnimationHandler().moveFurnitureToDesk(product.getDeskID(),
 					product.getAnimatedEntity(), this.mySim().currentTime(), 0.1);
+		}
 		// - -
 		if (tsMsg.getCarpenter().isInStorage()) {
 			this.sendTechStepRequest(Mc.woodPrep, Id.agentGroupA, tsMsg);

@@ -74,7 +74,15 @@ public class AgentGroupC extends OSPABA.Agent implements IFittingsInstaller, ICa
 		FurnitureFactoryAnimation animHandler = ((MySimulation)this.mySim()).getAnimationHandler();
 		for (Carpenter c : this.allocator.getCarpenters()) {
 			c.initAnimatedEntity().registerEntity(animator);
-			animHandler.placeCarpenterCToStorage(c.getAnimatedEntity());
+			if (c.isWorking()) {
+				animHandler.placeCarpenterToDesk(c.getAssignedProduct().getDeskID(), c.getAnimatedEntity());
+			}
+			else {
+				if (c.isInStorage())
+					animHandler.placeCarpenterBToStorage(c.getAnimatedEntity());
+				else
+					animHandler.placeCarpenterToDesk(c.getCurrentDeskID(), c.getAnimatedEntity());
+			}
 		}
 	}
 
