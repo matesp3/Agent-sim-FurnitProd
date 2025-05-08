@@ -137,8 +137,8 @@ public class Carpenter implements IAnimatedEntity {
      */
     public void setCurrentDeskID(int deskID) {
         this.deskID = deskID;
-//        if (this.animCarpenter != null)
-//            this.animCarpenter.renderEntity();
+        if (this.animCarpenter != null)
+            this.animCarpenter.renderEntity();
     }
 
     /**
@@ -255,6 +255,8 @@ public class Carpenter implements IAnimatedEntity {
             super.setToolTip(this.getStatus());
             this.txtWorkStatus = new AnimTextItem(this.getHeaderStatus());
             this.txtWorkStatus.setColor(new Color(9, 91, 173));
+            super.setZIndex(99);
+            this.txtWorkStatus.setZIndex(100);
         }
 
         @Override

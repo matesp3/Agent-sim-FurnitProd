@@ -78,7 +78,7 @@ public class Furniture implements IAnimatedEntity {
         this.waitingBT = -1;
         this.timeCompleted = -1;
         this.step = null;
-        this.animFurniture = new AnimatedFurniture(this);
+        this.animFurniture = null;
     }
     /**
      * @return unique identifier of order
@@ -112,6 +112,8 @@ public class Furniture implements IAnimatedEntity {
         if (this.deskID > -1)
             throw new RuntimeException("DeskID has already been set (it is set only once)");
         this.deskID = deskID;
+        if (this.animFurniture != null)
+            this.animFurniture.renderEntity();
     }
 
     /**
@@ -146,16 +148,22 @@ public class Furniture implements IAnimatedEntity {
     public void setStepBT(double time) {
         this.stepBT = time;
         this.stepET = -1;
+        if (this.animFurniture != null)
+            this.animFurniture.renderEntity();
     }
 
     public void setStepBT(TechStep next, double time) {
         this.stepCheck(next);
         this.step = next;
         this.setStepBT(time);
+        if (this.animFurniture != null)
+            this.animFurniture.renderEntity();
     }
 
     public void setStepET(double time) {
         this.stepET = time;
+        if (this.animFurniture != null)
+            this.animFurniture.renderEntity();
     }
 
     public boolean isLacqueringRequired() {
@@ -183,6 +191,8 @@ public class Furniture implements IAnimatedEntity {
         if (DoubleComp.compare(this.processingBT, 0) == 1)
             throw new RuntimeException("ProcessingBT has already been set (it is set only once)");
         this.processingBT = processingBT;
+        if (this.animFurniture != null)
+            this.animFurniture.renderEntity();
     }
 
     /**
@@ -197,6 +207,8 @@ public class Furniture implements IAnimatedEntity {
      */
     public void setTimeCompleted(double timeCompleted) {
         this.timeCompleted = timeCompleted;
+        if (this.animFurniture != null)
+            this.animFurniture.renderEntity();
     }
 
     /**
@@ -212,6 +224,8 @@ public class Furniture implements IAnimatedEntity {
      */
     public void setWaitingBT(double waitingBT) {
         this.waitingBT = waitingBT;
+        if (this.animFurniture != null)
+            this.animFurniture.renderEntity();
     }
 
     /**

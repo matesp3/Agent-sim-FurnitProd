@@ -42,6 +42,8 @@ public class FurnitProdSimController {
                 this.sim.registerDelegate(this.gui);
                 this.sim.onReplicationWillStart(s ->
                 {
+                    if (this.sim.currentReplication() == 0)
+                        return;
                     if (this.sim.animatorExists()) {
                         this.gui.unregisterAnimator();
                         this.sim.removeAnimator();

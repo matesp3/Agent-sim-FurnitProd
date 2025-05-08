@@ -443,7 +443,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	 * Creates new request for storage transfer with already assigned {@code carpenter}
 	 */
 	private void sendStorageTransferRequest(TechStepMessage tsMsg) {
-		tsMsg.getCarpenter().setCurrentDeskID(Carpenter.TRANSFER_STORAGE);
+//		tsMsg.getCarpenter().setCurrentDeskID(Carpenter.TRANSFER_STORAGE);
 		tsMsg.setCode(Mc.storageTransfer);
 		tsMsg.setAddressee(Id.agentTransfer);
 		this.request(tsMsg);
@@ -493,6 +493,11 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		product.setDeskID(this.myAgent().getDeskManager().occupyDesk(product));
 		product.setStep(Furniture.TechStep.WOOD_PREPARATION);
 		product.setProcessingBT(this.mySim().currentTime());
+		// - - ANIM
+		if (this.mySim().animatorExists())
+			((MySimulation)this.mySim()).getAnimationHandler().moveFurnitureToDesk(product.getDeskID(),
+					product.getAnimatedEntity(), this.mySim().currentTime(), 0.1);
+		// - -
 		if (tsMsg.getCarpenter().isInStorage()) {
 			this.sendTechStepRequest(Mc.woodPrep, Id.agentGroupA, tsMsg);
 		}
@@ -629,15 +634,17 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		Furniture f = null;
 		if (o != null) {
 			f = o.assignUnstartedProduct();
-			if (!o.hasUnassignedProduct()) // this was the last unstarted product in its order
+			if (!o.hasUnassignedProduct()) { // this was the last unstarted product in its order
 				this.myAgent().getQStarted().remove(); // removes the oldest order
+			}
 		}
 		else { // nothing in qStarted, trying to get something from qUnstarted
 			o = this.pollFromQUnstartedOrders(); // always removed from qUnstarted, because it is not unstarted from now
 			if (o != null) {
 				f = o.assignUnstartedProduct();
-				if (o.hasUnassignedProduct())
+				if (o.hasUnassignedProduct()) {
 					this.myAgent().getQStarted().add(o); // something remains unstarted in order, so it is enqueued for remaining products
+				}
 			}
 		}
 		if (f != null) {

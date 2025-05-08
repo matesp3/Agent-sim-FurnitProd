@@ -1,9 +1,6 @@
 package animation;
 
-import OSPAnimator.AnimImageItem;
-import OSPAnimator.AnimQueue;
-import OSPAnimator.AnimTextItem;
-import OSPAnimator.IAnimator;
+import OSPAnimator.*;
 import contracts.IAnimatorHandler;
 
 import javax.imageio.ImageIO;
@@ -43,11 +40,9 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
 
     private IAnimator animator;
 
-    private AnimQueue qCarpsInStorageA;
-    private AnimQueue qCarpsInStorageB;
-    private AnimQueue qCarpsInStorageC;
-    private AnimQueue qWaitingOrdersStarted;
-    private AnimQueue qWaitingOrdersUnstarted;
+    private final CarpenterStorageQueue carpQA;
+    private final CarpenterStorageQueue carpQB;
+    private final CarpenterStorageQueue carpQC;
     private int desksCount;
 
     /**
@@ -64,34 +59,20 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
         }
         this.animator = animator;
         this.desksCount = desksCount;
-        this.qCarpsInStorageA = new AnimQueue(animator, STORAGE_Q_CARPS_A_START, STORAGE_Q_CARPS_A_END, 0);
-        this.qCarpsInStorageA.setVisible(true); // visibility of queue stats
-        this.qCarpsInStorageB = new AnimQueue(animator, STORAGE_Q_CARPS_B_START, STORAGE_Q_CARPS_B_END, 0);
-        this.qCarpsInStorageB.setVisible(true); // visibility of queue stats
-        this.qCarpsInStorageC = new AnimQueue(animator, STORAGE_Q_CARPS_C_START, STORAGE_Q_CARPS_C_END, 0);
-        this.qCarpsInStorageC.setVisible(true); // visibility of queue stats
-        this.qWaitingOrdersStarted = new AnimQueue(animator, STORAGE_UNSTARTED_POS_START, STORAGE_UNSTARTED_POS_END, 0);
-        this.qWaitingOrdersStarted.setAutoRemoveStuckItems(true);
+
+        this.carpQA = new CarpenterStorageQueue(50, STORAGE_Q_CARPS_A_START.getX(), STORAGE_Q_CARPS_A_START.getY());
+        this.carpQB = new CarpenterStorageQueue(50, STORAGE_Q_CARPS_B_START.getX(), STORAGE_Q_CARPS_B_START.getY());
+        this.carpQC = new CarpenterStorageQueue(50, STORAGE_Q_CARPS_C_START.getX(), STORAGE_Q_CARPS_C_START.getY());
+
         AnimTextItem txtQWaitingLabel1 = new AnimTextItem("Unstarted Orders Waiting for creating:");
-        txtQWaitingLabel1.setPosition(STORAGE_UNSTARTED_POS_START.getX(), STORAGE_UNSTARTED_POS_START.getY() - 20);
+        txtQWaitingLabel1.setPosition(STORAGE_UNSTARTED_POS_START.getX(), STORAGE_UNSTARTED_POS_START.getY() - 15);
         txtQWaitingLabel1.setColor(new Color(37, 119, 32));
         animator.register(txtQWaitingLabel1);
-        this.qWaitingOrdersUnstarted = new AnimQueue(animator, STORAGE_STARTED_POS_START, STORAGE_STARTED_POS_END, 0);
-        this.qWaitingOrdersUnstarted.setAutoRemoveStuckItems(true);
-        AnimTextItem txtQWaitingLabel2 = new AnimTextItem("Partially Started Orders Waiting for creating:");
-        txtQWaitingLabel2.setPosition(STORAGE_STARTED_POS_START.getX(), STORAGE_STARTED_POS_START.getY() - 20);
-        txtQWaitingLabel2.setColor(new Color(37, 119, 32));
-        animator.register(txtQWaitingLabel2);
         this.initDesks();
     }
 
     public void enqueueFurnitureInStorage(AnimatedEntity furniture, boolean alreadyStartedOrder) {
         furniture.setPosition(STORAGE_UNSTARTED_POS_START); // first anim - bcs of nullptrException
-        if (alreadyStartedOrder)
-            this.qWaitingOrdersStarted.insert(furniture);
-        else
-            this.qWaitingOrdersUnstarted.insert(furniture);
-//        this.qWaitingFurniture.removeNow()
     }
 
     public void placeFurnitureOnDesk(int deskId, AnimatedEntity furniture) {
@@ -100,44 +81,44 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
         furniture.setPosition(x, y);
     }
 
-    public void moveFurnitureToDesk(int deskId, AnimatedEntity furniture, double timeOfArrivalToDesk) {
+    public void moveFurnitureToDesk(int deskId, AnimatedEntity furniture, double startTime, double movingDur) {
         double x = getDeskBaseX(deskId) + ((ImgResources.WIDTH_DESK - furniture.getWidth()) / 3.75);
         double y = getDeskBaseY(deskId) + DESK_HOVER_OFFSET_Y - furniture.getHeight();
-//        furniture.moveTo(x, y); // todo ziskavat sim. cas
+        furniture.moveTo(startTime, movingDur, x, y);
     }
 
-    public void leaveDesk(int deskId) {
-
-    }
-
-    public void moveCarpenterToDesk(int deskId, double timeOfArrivalToDesk, AnimatedEntity carpenter) {
+    public void moveCarpenterToOtherDesk(int deskId, AnimatedEntity carpenter, double startTime, double dur) {
         double x = getDeskBaseX(deskId) - ImgResources.WIDTH_CARPENTER + 25;
         double y = getDeskBaseY(deskId) + ImgResources.HEIGHT_DESK - ImgResources.HEIGHT_CARPENTER + 15;
-        carpenter.setPosition(x, y);
+        carpenter.moveTo(startTime, dur, x, y);
+    }
+
+    public void moveCarpenterAToStorage(AnimatedEntity carpenter, double startTime, double movingDur) {
+        this.carpQA.enqueue(carpenter, startTime, movingDur);
     }
 
     public void placeCarpenterAToStorage(AnimatedEntity carpenter) {
-        this.enqueueCarpenterInStorage(carpenter, this.qCarpsInStorageA);
+        this.carpQA.enqueue(carpenter);
     }
 
     public void placeCarpenterBToStorage(AnimatedEntity carpenter) {
-        this.enqueueCarpenterInStorage(carpenter, this.qCarpsInStorageB);
+        this.carpQB.enqueue(carpenter);
     }
 
     public void placeCarpenterCToStorage(AnimatedEntity carpenter) {
-        this.enqueueCarpenterInStorage(carpenter, this.qCarpsInStorageC);
+        this.carpQC.enqueue(carpenter);
     }
 
-    public void takeCarpenterAFromStorage(AnimatedEntity carpenter) {
-        this.dequeueCarpenterFromStorage(carpenter, this.qCarpsInStorageA);
+    public void moveCarpenterAToDesk(int deskID, AnimatedEntity animatedEntity, double v, double dur) {
+        this.carpQA.dequeue(animatedEntity, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
     }
 
-    public void takeCarpenterBFromStorage(AnimatedEntity carpenter) {
-        this.dequeueCarpenterFromStorage(carpenter, this.qCarpsInStorageB);
+    public void moveCarpenterBToDesk(int deskID, AnimatedEntity animatedEntity, double v, double dur) {
+        this.carpQB.dequeue(animatedEntity, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
     }
 
-    public void takeCarpenterCFromStorage(AnimatedEntity carpenter) {
-        this.dequeueCarpenterFromStorage(carpenter, this.qCarpsInStorageC);
+    public void moveCarpenterCToDesk(int deskID, AnimatedEntity animatedEntity, double v, double dur) {
+        this.carpQC.dequeue(animatedEntity, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
     }
 
     public IAnimator getAnimator() {
@@ -149,23 +130,6 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
     }
 
     public void clear() {
-        this.qWaitingOrdersStarted = null;
-        this.qWaitingOrdersUnstarted = null;
-        this.qCarpsInStorageA = null;
-        this.qCarpsInStorageB = null;
-        this.qCarpsInStorageC = null;
-    }
-
-    private void enqueueCarpenterInStorage(AnimatedEntity animatedCarpenter, AnimQueue queue) {
-        animatedCarpenter.setLabelsVisible(false);
-        animatedCarpenter.setPosition(0,0);
-        queue.insert(animatedCarpenter);
-    }
-
-    private void dequeueCarpenterFromStorage(AnimatedEntity animatedCarpenter, AnimQueue queue) {
-        animatedCarpenter.setLabelsVisible(true);
-        animatedCarpenter.setPosition(0,0);
-        queue.remove(animatedCarpenter);
     }
 
     private void initDesks() {
@@ -176,6 +140,62 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
         }
     }
 
+    private class CarpenterStorageQueue {
+        static final double GAP = ImgResources.WIDTH_CARPENTER*5/4.0;
+        final double baseX;
+        final double baseY;
+        AnimatedEntity[] queue;
+        int free;
+        CarpenterStorageQueue(int capacity, double x, double y) {
+            this.free = 0;
+            this.baseX = x;
+            this.baseY = y;
+            this.queue = new AnimatedEntity[capacity];
+        }
+        
+        public void enqueue(AnimatedEntity e, double timeStart, double dur) {
+            double x = this.calcX(this.free);
+            this.queue[this.free] = e;
+            e.moveTo(timeStart, dur, x, baseY);
+            this.free++;
+        }
+
+        public void enqueue(AnimatedEntity e) {
+            double x = this.calcX(this.free);
+            this.queue[this.free] = e;
+            e.setPosition(x, baseY);
+            this.free++;
+        }
+        
+        public void dequeue(AnimatedEntity e, double timeStart, double dur, double destX, double destY) {
+            e.moveTo(timeStart, dur, destX, destY);
+            this.moveRemaining(this.idxOf(e)+1, timeStart);
+        }
+        
+        private int idxOf(AnimatedEntity e) {
+            for (int j = 0; j < this.queue.length; j++) {
+                if (this.queue[j] == e)
+                    return j;
+            }
+            throw new RuntimeException("Entity not found in queue");
+        }
+        
+        private void moveRemaining(int from, double timeStart) {
+            double x;
+            for (int i = from; i < this.free; i++) {
+                x = this.calcX(i) - GAP;
+                this.queue[i-1] = this.queue[i];
+                this.queue[i].moveTo(timeStart, 1, x, baseY);
+            }
+            this.free--; // moved towards
+            this.queue[free] = null;
+        }
+        
+        private double calcX(int i) {
+            return baseX + i*GAP;
+        }
+    }
+    
     /**
      * @param deskId number of desk, by which is computed position of desk
      * @return Top-left corner position X of desk picture
