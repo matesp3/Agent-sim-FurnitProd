@@ -77,4 +77,11 @@ public class AgentGroupA extends OSPABA.Agent implements IFittingsInstaller, ICa
 			animHandler.placeCarpenterAToStorage(c.getAnimatedEntity());
 		}
 	}
+
+	@Override
+	public void unregisterEntities() {
+		for (Carpenter c : this.allocator.getCarpenters()) {
+			c.initAnimatedEntity().unregisterEntity(this.mySim().animator());
+		}
+	}
 }

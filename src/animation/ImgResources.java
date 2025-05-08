@@ -26,7 +26,7 @@ public class ImgResources {
     public static final int HEIGHT_TABLE = 75;
     /** original: 250x452 px */
     public static final String IMG_PATH_CHAIR = DIR_IMAGES + "order-stolicka.png";
-    public static final int WIDTH_CHAIR = 30;
+    public static final int WIDTH_CHAIR = 55;
     public static final int HEIGHT_CHAIR = 95;
     /** original: 350x662 px */
     public static final String IMG_PATH_WARDROBE = DIR_IMAGES + "order-skrina.png";

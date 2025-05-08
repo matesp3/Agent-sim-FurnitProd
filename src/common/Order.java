@@ -1,5 +1,7 @@
 package common;
 
+import OSPAnimator.IAnimator;
+import animation.FurnitureFactoryAnimation;
 import utils.Formatter;
 
 public class Order {
@@ -121,6 +123,20 @@ public class Order {
         return this.products.length;
     }
 
+    public void registerUnstarted(FurnitureFactoryAnimation animHandler) {
+        boolean alreadyStarted = nextToBeProcessed > 0;
+        for (int i = this.nextToBeProcessed; i < this.products.length; i++) {
+            this.products[i].initAnimatedEntity().registerEntity(animHandler.getAnimator());
+            animHandler.enqueueFurnitureInStorage(this.products[i].getAnimatedEntity(), alreadyStarted);
+        }
+    }
+
+    public void unregisterUnstarted(IAnimator animator) {
+        for (int i = this.nextToBeProcessed; i < this.products.length; i++) {
+            this.products[i].getAnimatedEntity().unregisterEntity(animator);
+        }
+    }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -134,11 +150,11 @@ public class Order {
         Order order = new Order(248, 2500710);
         Furniture[] products = new Furniture[]
                 {
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 1), Furniture.Type.WARDROBE, false, false),
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 2), Furniture.Type.CHAIR, false, false),
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 3), Furniture.Type.CHAIR, false, false),
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 4), Furniture.Type.WARDROBE, false, false),
-                    new Furniture(order, ("" + order.getOrderID() + "-" + 5), Furniture.Type.TABLE, false, false)
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 1), Furniture.Type.WARDROBE, false),
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 2), Furniture.Type.CHAIR, false),
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 3), Furniture.Type.CHAIR, false),
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 4), Furniture.Type.WARDROBE, false),
+                    new Furniture(order, ("" + order.getOrderID() + "-" + 5), Furniture.Type.TABLE, false)
                 };
         order.setProducts(products);
         System.out.println(order);

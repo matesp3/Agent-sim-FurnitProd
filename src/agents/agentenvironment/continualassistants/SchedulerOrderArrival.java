@@ -5,6 +5,7 @@ import OSPRNG.ExponentialRNG;
 import OSPRNG.RNG;
 import OSPRNG.UniformContinuousRNG;
 import OSPRNG.UniformDiscreteRNG;
+import animation.FurnitureFactoryAnimation;
 import common.Furniture;
 import common.Order;
 import simulation.*;
@@ -105,11 +106,19 @@ public class SchedulerOrderArrival extends OSPABA.Scheduler
 		for (int i = 0; i < orderedProducts.length; i++) {
 			orderedProducts[i] = new Furniture(order,
 					String.format("%d-%c", order.getOrderID(), (char)(65+i)), this.nextProductType(),
-					DoubleComp.compare( this.rndLacquering.sample(), THRESHOLD_LACQUERING ) == -1,
-					this.mySim().animatorExists()
+					DoubleComp.compare( this.rndLacquering.sample(), THRESHOLD_LACQUERING ) == -1
 			);
 		}
 		order.setProducts(orderedProducts);
+		// --- ANIMATION
+		if (this.mySim().animatorExists()) {
+			FurnitureFactoryAnimation animHandler = ((MySimulation) this.mySim()).getAnimationHandler();
+			for (int i = 0; i < orderedProducts.length; i++) {
+				orderedProducts[i].initAnimatedEntity().registerEntity(this.mySim().animator());
+				animHandler.enqueueFurnitureInStorage(orderedProducts[i].getAnimatedEntity(), false);
+			}
+		}
+		// ---
 		return order;
 	}
 

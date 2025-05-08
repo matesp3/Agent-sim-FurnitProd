@@ -272,7 +272,9 @@ public class Carpenter implements IAnimatedEntity {
         }
 
         @Override
-        public void unregisterEntity() {
+        public void unregisterEntity(IAnimator animator) {
+            animator.remove(this.txtWorkStatus);
+            animator.remove(this);
             this.txtWorkStatus.remove();
             super.remove(); // img
         }
@@ -332,7 +334,7 @@ public class Carpenter implements IAnimatedEntity {
     public static void main(String[] args) {
         Carpenter carpenter = new Carpenter(GROUP.A, 1, false);
         Order order = new Order(1, 2500);
-        Furniture product = new Furniture(order, (order.getOrderID()+"-"+1), Furniture.Type.CHAIR, true, false);
+        Furniture product = new Furniture(order, (order.getOrderID()+"-"+1), Furniture.Type.CHAIR, true);
         product.setDeskID(1);
         carpenter.setCurrentDeskID(1);
         System.out.println(carpenter.getGroup());

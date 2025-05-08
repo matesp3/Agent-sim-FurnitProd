@@ -1,22 +1,24 @@
 package agents.agentfurnitprod;
 
 import OSPABA.*;
+import OSPAnimator.IAnimator;
 import OSPStat.Stat;
 import OSPStat.WStat;
+import animation.FurnitureFactoryAnimation;
 import common.DeskAllocation;
 import common.Furniture;
 import common.Order;
+import contracts.IAgentWithEntity;
 import simulation.*;
 import utils.DoubleComp;
 
 import java.util.Comparator;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 
 //meta! id="24"
-public class AgentFurnitProd extends OSPABA.Agent
+public class AgentFurnitProd extends OSPABA.Agent implements IAgentWithEntity
 {
 	private final Queue<Order> qUnstarted;
 	private final Queue<Order> qStarted; // at least one furniture product is being processed
@@ -216,4 +218,25 @@ public class AgentFurnitProd extends OSPABA.Agent
 	public WStat getStatUsedDesksCount() {
 		return this.deskManager.getStatUsedDesksCount();
 	}
+
+	@Override
+	public void registerEntities() {
+		IAnimator animator = this.mySim().animator();
+		FurnitureFactoryAnimation animHandler = ((MySimulation)this.mySim()).getAnimationHandler();
+		this.deskManager.registerDesks(animHandler);
+		for (Order o : this.qStarted)
+			o.registerUnstarted(animHandler);
+		for (Order o : this.qUnstarted)
+			o.registerUnstarted(animHandler);
+	}
+
+	@Override
+	public void unregisterEntities() {
+		this.deskManager.unregisterDesks(this.mySim().animator());
+		for (Order o : this.qStarted)
+			o.unregisterUnstarted(this.mySim().animator());
+		for (Order o : this.qUnstarted)
+			o.unregisterUnstarted(this.mySim().animator());
+	}
+
 }

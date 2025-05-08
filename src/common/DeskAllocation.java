@@ -1,12 +1,9 @@
 package common;
 
-import OSPAnimator.AnimImageItem;
+import OSPAnimator.IAnimator;
 import OSPStat.WStat;
-import animation.ImgResources;
-import contracts.IAnimatedEntity;
+import animation.FurnitureFactoryAnimation;
 
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
@@ -94,6 +91,23 @@ public class DeskAllocation {
 
     public WStat getStatUsedDesksCount() {
         return this.statCount;
+    }
+
+    public void registerDesks(FurnitureFactoryAnimation animHandler) {
+        for (int i = 0; i < this.desks.length; i++) {
+            if (this.desks[i] != null) {
+                this.desks[i].initAnimatedEntity().registerEntity(animHandler.getAnimator());
+                animHandler.placeFurnitureOnDesk(i, this.desks[i].getAnimatedEntity());
+            }
+        }
+    }
+
+    public void unregisterDesks(IAnimator animator) {
+        for (int i = 0; i < this.desks.length; i++) {
+            if (this.desks[i] != null) {
+                this.desks[i].getAnimatedEntity().unregisterEntity(animator);
+            }
+        }
     }
 
     @Override

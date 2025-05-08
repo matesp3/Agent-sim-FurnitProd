@@ -64,10 +64,8 @@ public class Furniture implements IAnimatedEntity {
      * Technological step is automatically {@code null}.
      * @param order order to which this furniture instance belongs
      * @param productID is unique identifier of furniture product within system in format {orderID}-{nr. of product in order}
-     * @param createAnimatedEntity set {@code false}, if animation doesn't exist. Creating animated entity is heavy
-     *                      operation.
      */
-    public Furniture(Order order, String productID, Type furnitureType, boolean lacquering, boolean createAnimatedEntity) {
+    public Furniture(Order order, String productID, Type furnitureType, boolean lacquering) {
         this.order = order;
         this.productID = productID;
         this.productType = furnitureType;
@@ -80,9 +78,7 @@ public class Furniture implements IAnimatedEntity {
         this.waitingBT = -1;
         this.timeCompleted = -1;
         this.step = null;
-
-        if (createAnimatedEntity) // very time-consuming in fast mode
-            this.animFurniture = new AnimatedFurniture(this);
+        this.animFurniture = new AnimatedFurniture(this);
     }
     /**
      * @return unique identifier of order
@@ -319,7 +315,9 @@ public class Furniture implements IAnimatedEntity {
         }
 
         @Override
-        public void unregisterEntity() {
+        public void unregisterEntity(IAnimator animator) {
+            animator.remove(this.txtTechStep);
+            animator.remove(this);
             this.txtTechStep.remove();
             super.remove(); // img
         }
@@ -377,7 +375,7 @@ public class Furniture implements IAnimatedEntity {
 
     public static void main(String[] args) throws InterruptedException {
         Order order = new Order(1, 2500);
-        Furniture product = new Furniture(order, ("" + order.getOrderID() + "-" + 1), Type.WARDROBE, true, false);
+        Furniture product = new Furniture(order, ("" + order.getOrderID() + "-" + 1), Type.WARDROBE, true);
         System.out.println(product);
         product.setProcessingBT(4.5);
         product.setStepBT(TechStep.WOOD_PREPARATION, 4.5);

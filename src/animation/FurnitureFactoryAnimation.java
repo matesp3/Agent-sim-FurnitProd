@@ -35,15 +35,19 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
     private static final Point2D STORAGE_Q_CARPS_A_START = new Point2D.Double(BASE_STORAGE_POS.getX() + 600,BASE_STORAGE_POS.getY() + ImgResources.HEIGHT_CARPENTER*3/2.0);
     private static final Point2D STORAGE_Q_CARPS_A_END = new Point2D.Double(STORAGE_Q_CARPS_A_START.getX()+1, STORAGE_Q_CARPS_A_START.getY());
 
-    private static final Point2D STORAGE_FURNITURE_POS_START = new Point2D.Double(STORAGE_Q_CARPS_A_START.getX() - 200, STORAGE_Q_CARPS_A_START.getY() + ImgResources.HEIGHT_CARPENTER*3/2.0);
-    private static final Point2D STORAGE_FURNITURE_POS_END = new Point2D.Double(STORAGE_FURNITURE_POS_START.getX()+10, STORAGE_FURNITURE_POS_START.getY());
+    private static final Point2D STORAGE_UNSTARTED_POS_START = new Point2D.Double(STORAGE_Q_CARPS_A_START.getX() - 200, STORAGE_Q_CARPS_A_START.getY() + ImgResources.HEIGHT_CARPENTER+10);
+    private static final Point2D STORAGE_UNSTARTED_POS_END = new Point2D.Double(STORAGE_UNSTARTED_POS_START.getX()+10, STORAGE_UNSTARTED_POS_START.getY());
+
+    private static final Point2D STORAGE_STARTED_POS_START = new Point2D.Double(STORAGE_UNSTARTED_POS_START.getX() - 20, STORAGE_UNSTARTED_POS_START.getY() + W+10);
+    private static final Point2D STORAGE_STARTED_POS_END = new Point2D.Double(STORAGE_STARTED_POS_START.getX()+10, STORAGE_STARTED_POS_START.getY());
 
     private IAnimator animator;
 
     private AnimQueue qCarpsInStorageA;
     private AnimQueue qCarpsInStorageB;
     private AnimQueue qCarpsInStorageC;
-    private AnimQueue qWaitingFurniture;
+    private AnimQueue qWaitingOrdersStarted;
+    private AnimQueue qWaitingOrdersUnstarted;
     private int desksCount;
 
     /**
@@ -66,23 +70,40 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
         this.qCarpsInStorageB.setVisible(true); // visibility of queue stats
         this.qCarpsInStorageC = new AnimQueue(animator, STORAGE_Q_CARPS_C_START, STORAGE_Q_CARPS_C_END, 0);
         this.qCarpsInStorageC.setVisible(true); // visibility of queue stats
-        this.qWaitingFurniture = new AnimQueue(animator, STORAGE_FURNITURE_POS_START, STORAGE_FURNITURE_POS_END, 0);
-        AnimTextItem txtQWaitingLabel = new AnimTextItem("Waiting for creating:");
-        txtQWaitingLabel.setPosition(STORAGE_FURNITURE_POS_START.getX(), STORAGE_FURNITURE_POS_START.getY() - 20);
-        txtQWaitingLabel.setColor(new Color(37, 119, 32));
-        animator.register(txtQWaitingLabel);
+        this.qWaitingOrdersStarted = new AnimQueue(animator, STORAGE_UNSTARTED_POS_START, STORAGE_UNSTARTED_POS_END, 0);
+        this.qWaitingOrdersStarted.setAutoRemoveStuckItems(true);
+        AnimTextItem txtQWaitingLabel1 = new AnimTextItem("Unstarted Orders Waiting for creating:");
+        txtQWaitingLabel1.setPosition(STORAGE_UNSTARTED_POS_START.getX(), STORAGE_UNSTARTED_POS_START.getY() - 20);
+        txtQWaitingLabel1.setColor(new Color(37, 119, 32));
+        animator.register(txtQWaitingLabel1);
+        this.qWaitingOrdersUnstarted = new AnimQueue(animator, STORAGE_STARTED_POS_START, STORAGE_STARTED_POS_END, 0);
+        this.qWaitingOrdersUnstarted.setAutoRemoveStuckItems(true);
+        AnimTextItem txtQWaitingLabel2 = new AnimTextItem("Partially Started Orders Waiting for creating:");
+        txtQWaitingLabel2.setPosition(STORAGE_STARTED_POS_START.getX(), STORAGE_STARTED_POS_START.getY() - 20);
+        txtQWaitingLabel2.setColor(new Color(37, 119, 32));
+        animator.register(txtQWaitingLabel2);
         this.initDesks();
     }
 
-    public void enqueueFurnitureInStorage(AnimatedEntity furniture) {
-        furniture.setPosition(STORAGE_FURNITURE_POS_START); // first anim - bcs of nullptrException
-        this.qWaitingFurniture.insert(furniture);
+    public void enqueueFurnitureInStorage(AnimatedEntity furniture, boolean alreadyStartedOrder) {
+        furniture.setPosition(STORAGE_UNSTARTED_POS_START); // first anim - bcs of nullptrException
+        if (alreadyStartedOrder)
+            this.qWaitingOrdersStarted.insert(furniture);
+        else
+            this.qWaitingOrdersUnstarted.insert(furniture);
+//        this.qWaitingFurniture.removeNow()
     }
 
-    public void moveFurnitureOnDesk(int deskId, double timeOfArrivalToDesk, AnimatedEntity furniture) {
+    public void placeFurnitureOnDesk(int deskId, AnimatedEntity furniture) {
         double x = getDeskBaseX(deskId) + ((ImgResources.WIDTH_DESK - furniture.getWidth()) / 3.75);
         double y = getDeskBaseY(deskId) + DESK_HOVER_OFFSET_Y - furniture.getHeight();
         furniture.setPosition(x, y);
+    }
+
+    public void moveFurnitureToDesk(int deskId, AnimatedEntity furniture, double timeOfArrivalToDesk) {
+        double x = getDeskBaseX(deskId) + ((ImgResources.WIDTH_DESK - furniture.getWidth()) / 3.75);
+        double y = getDeskBaseY(deskId) + DESK_HOVER_OFFSET_Y - furniture.getHeight();
+//        furniture.moveTo(x, y); // todo ziskavat sim. cas
     }
 
     public void leaveDesk(int deskId) {
@@ -125,6 +146,14 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
 
     public void setAnimator(IAnimator animator) {
         this.animator = animator;
+    }
+
+    public void clear() {
+        this.qWaitingOrdersStarted = null;
+        this.qWaitingOrdersUnstarted = null;
+        this.qCarpsInStorageA = null;
+        this.qCarpsInStorageB = null;
+        this.qCarpsInStorageC = null;
     }
 
     private void enqueueCarpenterInStorage(AnimatedEntity animatedCarpenter, AnimQueue queue) {

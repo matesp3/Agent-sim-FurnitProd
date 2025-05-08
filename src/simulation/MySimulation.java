@@ -79,77 +79,23 @@ public class MySimulation extends OSPABA.Simulation
 		super.createAnimator();
 		if (!this.animatorExists())
 			throw new RuntimeException("Animator should be already created, but isn't");
-		// register all entities to animator here in one place
+		// register all entities to animator here on one place
 		this.animationHandler = new FurnitureFactoryAnimation(this.animator(), this.agentFurnitProd().getDeskManager().getAllDesksCount()); // desks are internally registered
 		this.agentGroupC().registerEntities();
 		this.agentGroupB().registerEntities();
 		this.agentGroupA().registerEntities();
-//		Carpenter c1 = new Carpenter(Carpenter.GROUP.A, 1, true);
-//		Carpenter c2 = new Carpenter(Carpenter.GROUP.B, 2, true);
-//		Carpenter c3 = new Carpenter(Carpenter.GROUP.C, 3, true);
-//		c1.getAnimatedEntity().registerEntity(this.animator());
-//		c2.getAnimatedEntity().registerEntity(this.animator());
-//		c3.getAnimatedEntity().registerEntity(this.animator());
-//		this.animationHandler.moveCarpenterToDesk(0, 0, c1.getAnimatedEntity());
-//		this.animationHandler.moveCarpenterToDesk(6, 0, c2.getAnimatedEntity());
-//		this.animationHandler.moveCarpenterToDesk(12, 0, c3.getAnimatedEntity());
-//
-//		Order o = new Order(24, 15475);
-//		Furniture f1 = new Furniture(o, "1-A", Furniture.Type.WARDROBE, false, true);
-//		Furniture f2 = new Furniture(o, "1-B", Furniture.Type.WARDROBE, false, true);
-//		Furniture f3 = new Furniture(o, "1-C", Furniture.Type.TABLE, false, true);
-//		this.animator().register(f1.getAnimatedEntity());
-//		this.animator().register(f2.getAnimatedEntity());
-//		this.animator().register(f3.getAnimatedEntity());
-//		this.animationHandler.enqueueFurnitureInStorage(f1.getAnimatedEntity());
-//		this.animationHandler.enqueueFurnitureInStorage(f2.getAnimatedEntity());
-//		this.animationHandler.enqueueFurnitureInStorage(f3.getAnimatedEntity());
-		
-//		f1.setStep(Furniture.TechStep.WOOD_PREPARATION);
-//		c1.receiveProduct(f1, 50);
-//		f1.getAnimatedEntity().registerEntity(this.animator());
-//		f2.getAnimatedEntity().registerEntity(this.animator());
-//		f3.getAnimatedEntity().registerEntity(this.animator());
-//		this.animationHandler.moveFurnitureOnDesk(0, 0, f1.getAnimatedEntity());
-//		this.animationHandler.moveFurnitureOnDesk(6, 0, f2.getAnimatedEntity());
-//		this.animationHandler.moveFurnitureOnDesk(12, 0, f3.getAnimatedEntity());
-//		// - - - - - - - - - - - - - -- -
-//		Carpenter c11 = new Carpenter(Carpenter.GROUP.A, 1, true);
-//		Carpenter c12 = new Carpenter(Carpenter.GROUP.B, 2, true);
-//		Carpenter c13 = new Carpenter(Carpenter.GROUP.C, 3, true);
-//		Carpenter c14 = new Carpenter(Carpenter.GROUP.A, 1, true);
-//		Carpenter c15 = new Carpenter(Carpenter.GROUP.B, 2, true);
-//		Carpenter c16 = new Carpenter(Carpenter.GROUP.C, 3, true);
-//		Carpenter c17 = new Carpenter(Carpenter.GROUP.A, 1, true);
-//		Carpenter c18 = new Carpenter(Carpenter.GROUP.B, 2, true);
-//		Carpenter c19 = new Carpenter(Carpenter.GROUP.C, 3, true);
-//		Carpenter c20 = new Carpenter(Carpenter.GROUP.A, 1, true);
-//		Carpenter c21 = new Carpenter(Carpenter.GROUP.B, 2, true);
-//		Carpenter c22 = new Carpenter(Carpenter.GROUP.C, 3, true);
-//		c11.getAnimatedEntity().registerEntity(this.animator());
-//		c12.getAnimatedEntity().registerEntity(this.animator());
-//		c13.getAnimatedEntity().registerEntity(this.animator());
-//		c14.getAnimatedEntity().registerEntity(this.animator());
-//		c15.getAnimatedEntity().registerEntity(this.animator());
-//		c16.getAnimatedEntity().registerEntity(this.animator());
-//		c17.getAnimatedEntity().registerEntity(this.animator());
-//		c18.getAnimatedEntity().registerEntity(this.animator());
-//		c19.getAnimatedEntity().registerEntity(this.animator());
-//		c20.getAnimatedEntity().registerEntity(this.animator());
-//		c21.getAnimatedEntity().registerEntity(this.animator());
-//		c22.getAnimatedEntity().registerEntity(this.animator());
-//		this.animationHandler.placeCarpenterAToStorage(c11.getAnimatedEntity());
-//		this.animationHandler.placeCarpenterBToStorage(c12.getAnimatedEntity());
-//		this.animationHandler.placeCarpenterCToStorage(c13.getAnimatedEntity());
-//		this.animationHandler.placeCarpenterAToStorage(c14.getAnimatedEntity());
-//		this.animationHandler.placeCarpenterBToStorage(c15.getAnimatedEntity());
-//		this.animationHandler.placeCarpenterCToStorage(c16.getAnimatedEntity());
-//		this.animationHandler.placeCarpenterAToStorage(c17.getAnimatedEntity());
-//		this.animationHandler.placeCarpenterBToStorage(c18.getAnimatedEntity());
-//		this.animationHandler.placeCarpenterCToStorage(c19.getAnimatedEntity());
-//		this.animationHandler.placeCarpenterAToStorage(c20.getAnimatedEntity());
-//		this.animationHandler.placeCarpenterBToStorage(c21.getAnimatedEntity());
-//		this.animationHandler.placeCarpenterCToStorage(c22.getAnimatedEntity());
+		this.agentFurnitProd().registerEntities();
+	}
+
+	@Override
+	public void removeAnimator() {
+		// unregister all entities from animator here on one place
+//		this.agentGroupC().unregisterEntities();
+//		this.agentGroupB().unregisterEntities();
+//		this.agentGroupA().unregisterEntities();
+//		this.agentFurnitProd().unregisterEntities();
+//		this.animationHandler.clear();
+		super.removeAnimator();
 	}
 
 	@Override
