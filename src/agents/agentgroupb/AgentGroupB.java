@@ -5,7 +5,6 @@ import OSPAnimator.IAnimator;
 import animation.FurnitureFactoryAnimation;
 import common.Carpenter;
 import common.CarpenterGroup;
-import common.Furniture;
 import contracts.IAgentWithEntity;
 import contracts.ICarpenterGroup;
 import simulation.*;

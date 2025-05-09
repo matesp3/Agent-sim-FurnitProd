@@ -101,8 +101,25 @@ public class ManagerGroupA extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.assignCarpenterA:
-			processAssignCarpenterA(message);
+		case Mc.finish:
+			switch (message.sender().id())
+			{
+			case Id.processCarving:
+				processFinishProcessCarving(message);
+			break;
+
+			case Id.processFitInstA:
+				processFinishProcessFitInstA(message);
+			break;
+
+			case Id.processWoodPrep:
+				processFinishProcessWoodPrep(message);
+			break;
+			}
+		break;
+
+		case Mc.woodPrep:
+			processWoodPrep(message);
 		break;
 
 		case Mc.fittingsInstallation:
@@ -113,29 +130,12 @@ public class ManagerGroupA extends OSPABA.Manager
 			processCarving(message);
 		break;
 
-		case Mc.finish:
-			switch (message.sender().id())
-			{
-			case Id.processFitInstA:
-				processFinishProcessFitInstA(message);
-			break;
-
-			case Id.processCarving:
-				processFinishProcessCarving(message);
-			break;
-
-			case Id.processWoodPrep:
-				processFinishProcessWoodPrep(message);
-			break;
-			}
+		case Mc.assignCarpenterA:
+			processAssignCarpenterA(message);
 		break;
 
 		case Mc.releaseCarpenterA:
 			processReleaseCarpenterA(message);
-		break;
-
-		case Mc.woodPrep:
-			processWoodPrep(message);
 		break;
 
 		default:

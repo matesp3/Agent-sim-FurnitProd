@@ -1,5 +1,6 @@
 package simulation;
 
+import OSPABA.*;
 import OSPRNG.RNG;
 import OSPRNG.UniformContinuousRNG;
 import OSPStat.Stat;
@@ -11,12 +12,12 @@ import agents.agentgroupb.*;
 import agents.agentgroupc.*;
 import agents.agentfurnitprod.*;
 import animation.FurnitureFactoryAnimation;
-import common.Carpenter;
 import common.Furniture;
 import common.Order;
 import results.FurnitProdRepStats;
 import results.FurnitProdState;
 import utils.SeedGen;
+
 
 public class MySimulation extends OSPABA.Simulation
 {

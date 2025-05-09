@@ -72,20 +72,20 @@ public class ManagerGroupB extends OSPABA.Manager
 	{
 		switch (message.code())
 		{
-		case Mc.assignCarpenterB:
-			processAssignCarpenterB(message);
+		case Mc.finish:
+			processFinish(message);
 		break;
 
 		case Mc.releaseCarpenterB:
 			processReleaseCarpenterB(message);
 		break;
 
-		case Mc.assembling:
-			processAssembling(message);
+		case Mc.assignCarpenterB:
+			processAssignCarpenterB(message);
 		break;
 
-		case Mc.finish:
-			processFinish(message);
+		case Mc.assembling:
+			processAssembling(message);
 		break;
 
 		default:

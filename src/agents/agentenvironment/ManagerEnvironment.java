@@ -71,12 +71,12 @@ public class ManagerEnvironment extends OSPABA.Manager
 			processOrderCompleted(message);
 		break;
 
-		case Mc.init:
-			processInit(message);
-		break;
-
 		case Mc.finish:
 			processFinish(message);
+		break;
+
+		case Mc.init:
+			processInit(message);
 		break;
 
 		default:

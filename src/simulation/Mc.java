@@ -21,6 +21,7 @@ public class Mc extends OSPABA.IdList
 	public static final int orderProcessingEnd = 1020;
 	public static final int storageTransfer = 1005;
 	public static final int deskTransfer = 1006;
+	public static final int checkPieces = 1021;
 	public static final int assignCarpenterA = 1007;
 	public static final int woodPrep = 1008;
 	//meta! tag="end"

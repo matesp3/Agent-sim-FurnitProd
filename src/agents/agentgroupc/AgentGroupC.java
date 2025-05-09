@@ -39,11 +39,13 @@ public class AgentGroupC extends OSPABA.Agent implements IFittingsInstaller, ICa
 	{
 		new ManagerGroupC(Id.managerGroupC, mySim(), this);
 		new ProcessFitInstC(Id.processFitInstC, mySim(), this);
-		new ProcessStaining(Id.processStaining, mySim(), this);
+		new ProcessCheckPieces(Id.processCheckPieces, mySim(), this);
 		new ProcessPaintcoat(Id.processPaintcoat, mySim(), this);
+		new ProcessStaining(Id.processStaining, mySim(), this);
 		addOwnMessage(Mc.releaseCarpenterC);
-		addOwnMessage(Mc.stainingAndPaintcoat);
+		addOwnMessage(Mc.checkPieces);
 		addOwnMessage(Mc.assignCarpenterC);
+		addOwnMessage(Mc.stainingAndPaintcoat);
 		addOwnMessage(Mc.fittingsInstallation);
 	}
 	//meta! tag="end"
