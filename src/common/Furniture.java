@@ -23,7 +23,7 @@ public class Furniture implements IAnimatedEntity {
 
     }
     public enum TechStep {
-        WOOD_PREPARATION("Wood Prep."), CARVING("Carving"),
+        WOOD_PREPARATION("Wood Prep."), CARVING("Carving"), CHECK_PIECES("Check piec"),
         STAINING("Staining"), LACQUERING("Lacquering"),
         ASSEMBLING("Assembling"), FIT_INSTALLATION("Fit. Inst.");
         private final String description;
@@ -283,6 +283,12 @@ public class Furniture implements IAnimatedEntity {
     @Override
     public AnimatedEntity getAnimatedEntity() {
         return this.animFurniture;
+    }
+
+    @Override
+    public void removeAnimatedEntity(IAnimator from) {
+        this.animFurniture.unregisterEntity(from);
+        this.animFurniture = null;
     }
 
     public static class AnimatedFurniture extends AnimatedEntity {

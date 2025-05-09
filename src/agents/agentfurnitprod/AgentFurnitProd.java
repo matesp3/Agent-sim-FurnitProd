@@ -25,6 +25,7 @@ public class AgentFurnitProd extends OSPABA.Agent implements IAgentWithEntity
 	private final Queue<Furniture> qStaining;
 	private final Queue<Furniture> qAssembling;
 	private final Queue<Furniture> qFittings;
+	private final Queue<Furniture> qChecks;
 	private DeskAllocation deskManager;
 	// statistics: 'WT' - WaitingTime
 	private final Stat statUnsOrdersWT = new Stat();
@@ -32,12 +33,14 @@ public class AgentFurnitProd extends OSPABA.Agent implements IAgentWithEntity
 	private final Stat statStainingWT = new Stat();
 	private final Stat statAssemblingWT = new Stat();
 	private final Stat statFittingsWT = new Stat();
+	private final Stat statChecksWT = new Stat();
 	// statistics: 'QL' - QueueLength
 	private final WStat statUnsOrdersQL = new WStat(this.mySim());
 	private final WStat statUnsProductsQL = new WStat(this.mySim());
 	private final WStat statStainingQL = new WStat(this.mySim());
 	private final WStat statAssemblingQL = new WStat(this.mySim());
 	private final WStat statFittingsQL = new WStat(this.mySim());
+	private final WStat statChecksQL = new WStat(this.mySim());
 
 	public AgentFurnitProd(int id, Simulation mySim, Agent parent)
 	{
@@ -57,6 +60,7 @@ public class AgentFurnitProd extends OSPABA.Agent implements IAgentWithEntity
 		this.qStaining = new PriorityBlockingQueue<>(50, furnitureCmp);
 		this.qAssembling = new PriorityBlockingQueue<>(50, furnitureCmp);
 		this.qFittings = new PriorityBlockingQueue<>(50, furnitureCmp);
+		this.qChecks = new PriorityBlockingQueue<>(50, furnitureCmp);
 		this.deskManager = null;
 	}
 
@@ -70,6 +74,7 @@ public class AgentFurnitProd extends OSPABA.Agent implements IAgentWithEntity
 		this.qStaining.clear();
 		this.qAssembling.clear();
 		this.qFittings.clear();
+		this.qChecks.clear();
 		this.deskManager.freeAllDesks();
 		// statistics: 'WT' - WaitingTime
 		this.statUnsOrdersWT.clear();
@@ -77,12 +82,14 @@ public class AgentFurnitProd extends OSPABA.Agent implements IAgentWithEntity
 		this.statStainingWT.clear();
 		this.statAssemblingWT.clear();
 		this.statFittingsWT.clear();
+		this.statChecksWT.clear();
 		// statistics: 'QL' - QueueLength
 		this.statUnsOrdersQL.clear();
 		this.statUnsProductsQL.clear();
 		this.statStainingQL.clear();
 		this.statAssemblingQL.clear();
 		this.statFittingsQL.clear();
+		this.statChecksQL.clear();
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"
@@ -125,6 +132,10 @@ public class AgentFurnitProd extends OSPABA.Agent implements IAgentWithEntity
 		return this.qFittings;
 	}
 
+	public Queue<Furniture> getQChecks() {
+		return this.qChecks;
+	}
+
 	/**
 	 * @return waiting time of unstarted orders
 	 */
@@ -160,6 +171,10 @@ public class AgentFurnitProd extends OSPABA.Agent implements IAgentWithEntity
 		return statFittingsWT;
 	}
 
+	public Stat getStatChecksWT() {
+		return statChecksWT;
+	}
+
 	/**
 	 * @return unstarted orders queue length
 	 */
@@ -193,6 +208,10 @@ public class AgentFurnitProd extends OSPABA.Agent implements IAgentWithEntity
 	 */
 	public WStat getStatFittingsQL() {
 		return statFittingsQL;
+	}
+
+	public WStat getStatChecksQL() {
+		return statChecksQL;
 	}
 
 	public DeskAllocation getDeskManager() {
@@ -234,10 +253,10 @@ public class AgentFurnitProd extends OSPABA.Agent implements IAgentWithEntity
 	@Override
 	public void unregisterEntities() {
 		this.deskManager.unregisterDesks(this.mySim().animator());
-		for (Order o : this.qStarted)
-			o.unregisterUnstarted(this.mySim().animator());
-		for (Order o : this.qUnstarted)
-			o.unregisterUnstarted(this.mySim().animator());
+//		for (Order o : this.qStarted)
+//			o.unregisterUnstarted(this.mySim().animator());
+//		for (Order o : this.qUnstarted)
+//			o.unregisterUnstarted(this.mySim().animator());
 	}
 
 }

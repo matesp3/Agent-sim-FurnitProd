@@ -57,6 +57,7 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	{
 		TechStepMessage tsMsg = (TechStepMessage) message;
 		switch (tsMsg.getProductToProcess().getStep()) {
+			case CHECK_PIECES		-> this.sendTechStepRequest(Mc.checkPieces, Id.agentGroupC, tsMsg);
 			case STAINING			-> this.sendTechStepRequest(Mc.stainingAndPaintcoat, Id.agentGroupC, tsMsg);
 			case ASSEMBLING			-> this.sendTechStepRequest(Mc.assembling, Id.agentGroupB, tsMsg);
 			case FIT_INSTALLATION	-> this.sendTechStepRequest(Mc.fittingsInstallation,
@@ -83,6 +84,9 @@ public class ManagerFurnitProd extends OSPABA.Manager
 				break;
 			case CARVING:
 				this.sendTechStepRequest(Mc.carving, Id.agentGroupA, tsMsg);
+				break;
+			case CHECK_PIECES:
+				this.sendTechStepRequest(Mc.checkPieces, Id.agentGroupC, tsMsg);
 				break;
 			case STAINING:
 				this.sendTechStepRequest(Mc.stainingAndPaintcoat, Id.agentGroupC, tsMsg);
@@ -163,20 +167,27 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		this.freeAssignMsgInstance = asgMsg;
 
 		if (asgMsg.getCarpenter() == null) { // ENQUEUE
-			if (asgMsg.getProduct().getStep() == STAINING)
-				this.enqueueProduct(asgMsg.getProduct(), this.myAgent().getQStaining(), this.myAgent().getStatStainingQL());
-			else 						//	  == FIT_INST
-				this.enqueueProduct(asgMsg.getProduct(), this.myAgent().getQFittings(), this.myAgent().getStatFittingsQL());
+			switch (asgMsg.getProduct().getStep()) {
+				case CHECK_PIECES -> 	this.enqueueProduct(asgMsg.getProduct(), this.myAgent().getQChecks(), this.myAgent().getStatChecksQL());
+				case STAINING -> 		this.enqueueProduct(asgMsg.getProduct(), this.myAgent().getQStaining(), this.myAgent().getStatStainingQL());
+				case FIT_INSTALLATION ->this.enqueueProduct(asgMsg.getProduct(), this.myAgent().getQFittings(), this.myAgent().getStatFittingsQL());
+			}
 			return;
 		}
 		// START WORK
-		if (asgMsg.getProduct().getStep() == STAINING) {
-			this.myAgent().getStatStainingWT().addSample(0);
-			this.startNextStep(asgMsg.getCarpenter(), asgMsg.getProduct(), Mc.stainingAndPaintcoat, Id.agentGroupC);
-		}
-		else {                        //	  == FIT_INST
-			this.myAgent().getStatFittingsWT().addSample(0);
-			this.startNextStep(asgMsg.getCarpenter(), asgMsg.getProduct(), Mc.fittingsInstallation, Id.agentGroupC);
+		switch (asgMsg.getProduct().getStep()) {
+			case CHECK_PIECES -> {
+				this.myAgent().getStatChecksWT().addSample(0);
+				this.startNextStep(asgMsg.getCarpenter(), asgMsg.getProduct(), Mc.checkPieces, Id.agentGroupC);
+			}
+			case STAINING -> {
+				this.myAgent().getStatStainingWT().addSample(0);
+				this.startNextStep(asgMsg.getCarpenter(), asgMsg.getProduct(), Mc.stainingAndPaintcoat, Id.agentGroupC);
+			}
+			case FIT_INSTALLATION -> {
+				this.myAgent().getStatFittingsWT().addSample(0);
+				this.startNextStep(asgMsg.getCarpenter(), asgMsg.getProduct(), Mc.fittingsInstallation, Id.agentGroupC);
+			}
 		}
 	}
 
@@ -234,14 +245,23 @@ public class ManagerFurnitProd extends OSPABA.Manager
 			  	2.1 if yes, start transfer of carpenter or staining process
 			  	2.2 else, release carpenter A
 		 */
-		// CONTINUE WORKING ON CURRENT PRODUCT WITH NEXT STEP (STAINING)
+		// CONTINUE WORKING ON CURRENT PRODUCT WITH NEXT STEP (CHECK_PIECES)
 		TechStepMessage tsMsg = (TechStepMessage) message;
 		Furniture f = tsMsg.getCarpenter().returnProduct(this.mySim().currentTime());
-		f.setStep(STAINING);
+		f.setStep(CHECK_PIECES);
 		this.sendAssignRequestForProduct(Mc.assignCarpenterC, Id.agentGroupC, f);
 
 		// PLAN NEXT JOB FOR CARPENTER 'A'
 		this.tryAssignNextWorkForCarpenterA(tsMsg);
+	}
+
+	private void processCheckPieces(MessageForm message) {
+		// CONTINUE WORKING ON CURRENT PRODUCT WITH NEXT STEP (STAINING)
+		TechStepMessage tsMsg = (TechStepMessage) message;
+//		Furniture f = tsMsg.getCarpenter().returnProduct(this.mySim().currentTime());
+		tsMsg.getProductToProcess().setStep(STAINING);
+//		this.sendAssignRequestForProduct(Mc.assignCarpenterC, Id.agentGroupC, f);
+		this.sendTechStepRequest(Mc.stainingAndPaintcoat, Id.agentGroupC, tsMsg);
 	}
 
 	//meta! sender="AgentModel", id="158", type="Notice"
@@ -324,6 +344,11 @@ public class ManagerFurnitProd extends OSPABA.Manager
 			processAssignCarpenterC(message);
 		break;
 
+		// mnou pridane
+		case Mc.checkPieces:
+			processCheckPieces(message);
+		// mnou pridane
+
 		default:
 			processDefault(message);
 		break;
@@ -347,7 +372,8 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		this.myAgent().getDeskManager().setDeskFree(f.getDeskID(), f); // release desk
 
 		if (f.getAnimatedEntity() != null && this.mySim().animatorExists())
-			f.getAnimatedEntity().unregisterEntity(this.mySim().animator());
+			f.removeAnimatedEntity(this.mySim().animator());
+//			f.getAnimatedEntity().unregisterEntity(this.mySim().animator());
 
 		if (f.getMyOrder().isCompleted()) { // if all furniture products of this order are completed
 			f.getMyOrder().setCompletedAt(this.mySim().currentTime());
@@ -553,7 +579,10 @@ public class ManagerFurnitProd extends OSPABA.Manager
 	 * @param tsMsg msg to be reused with set carpenter
 	 */
 	private void tryAssignNextWorkForCarpenterC(TechStepMessage tsMsg) {
-		if (this.tryToStartFittingsInstallation(tsMsg, Id.agentGroupC)) {
+		if (this.tryToStartCheckingPieces(tsMsg)) {
+			return;
+		}
+		else if (this.tryToStartFittingsInstallation(tsMsg, Id.agentGroupC)) {
 			return;
 		}
 		else { // no fittings montage work -> check if some furniture is waiting for staining (with optional lacquering)
@@ -567,6 +596,16 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		}
 		// carpenter C has no potential work
 		this.releaseCarpenter(Mc.releaseCarpenterC, Id.agentGroupC, tsMsg);
+	}
+
+	private boolean tryToStartCheckingPieces(TechStepMessage tsMsg) {
+		Furniture f = this.myAgent().getQChecks().poll();
+		if (f == null)
+			return false;
+		this.myAgent().getStatChecksQL().addSample( this.myAgent().getQChecks().size() );
+		this.updateStatWaitingTime(f, this.myAgent().getStatChecksWT());
+		this.startNextStep(tsMsg, f, Mc.checkPieces, Id.agentGroupC);
+		return true;
 	}
 
 	/**

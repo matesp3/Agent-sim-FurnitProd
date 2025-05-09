@@ -1,6 +1,5 @@
 package simulation;
 
-import OSPABA.*;
 import OSPRNG.RNG;
 import OSPRNG.UniformContinuousRNG;
 import OSPStat.Stat;
@@ -91,11 +90,13 @@ public class MySimulation extends OSPABA.Simulation
 	@Override
 	public void removeAnimator() {
 		// unregister all entities from animator here on one place
-//		this.agentGroupC().unregisterEntities();
-//		this.agentGroupB().unregisterEntities();
-//		this.agentGroupA().unregisterEntities();
-//		this.agentFurnitProd().unregisterEntities();
-//		this.animationHandler.clear();
+		synchronized (this) {
+			this.agentGroupC().unregisterEntities();
+			this.agentGroupB().unregisterEntities();
+			this.agentGroupA().unregisterEntities();
+			this.agentFurnitProd().unregisterEntities();
+			this.animationHandler.unregisterFurnitureInStorage();
+		}
 		super.removeAnimator();
 	}
 

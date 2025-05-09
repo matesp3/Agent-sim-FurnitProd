@@ -133,7 +133,8 @@ public class Order {
 
     public void unregisterUnstarted(IAnimator animator) {
         for (int i = this.nextToBeProcessed; i < this.products.length; i++) {
-            this.products[i].getAnimatedEntity().unregisterEntity(animator);
+            this.products[i].removeAnimatedEntity(animator);
+//            this.products[i].getAnimatedEntity().unregisterEntity(animator);
         }
     }
 

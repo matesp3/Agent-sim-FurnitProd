@@ -94,11 +94,16 @@ public class ManagerGroupC extends OSPABA.Manager
 	//meta! sender="AgentFurnitProd", id="166", type="Request"
 	public void processCheckPieces(MessageForm message)
 	{
+		// start checking
+		message.setAddressee(this.myAgent().findAssistant(Id.processCheckPieces));
+		this.startContinualAssistant(message);
 	}
 
 	//meta! sender="ProcessCheckPieces", id="170", type="Finish"
 	public void processFinishProcessCheckPieces(MessageForm message)
 	{
+		message.setCode(Mc.checkPieces);
+		this.response(message);
 	}
 
 	//meta! userInfo="Generated code: do not modify", tag="begin"

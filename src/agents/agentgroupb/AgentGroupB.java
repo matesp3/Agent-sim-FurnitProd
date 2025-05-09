@@ -79,7 +79,8 @@ public class AgentGroupB extends OSPABA.Agent implements ICarpenterGroup, IAgent
 	@Override
 	public void unregisterEntities() {
 		for (Carpenter c : this.allocator.getCarpenters()) {
-			c.initAnimatedEntity().unregisterEntity(this.mySim().animator());
+			c.removeAnimatedEntity(this.mySim().animator());
+//			c.getAnimatedEntity().unregisterEntity(this.mySim().animator());
 		}
 	}
 }
