@@ -339,10 +339,10 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         inputsPanel.setBorder(BorderFactory.createSoftBevelBorder(0, new Color(193, 239, 255), COL_BTN));
         inputsPanel.setBackground(COL_BG);
 
-        this.inputA = new InputWithLabel("Amount A:", 2, "8");
-        this.inputB = new InputWithLabel("Amount B:", 2, "7");
+        this.inputA = new InputWithLabel("Amount A:", 2, "6");
+        this.inputB = new InputWithLabel("Amount B:", 2, "5");
         this.inputC = new InputWithLabel("Amount C:", 2, "38");
-        this.inputDesksCount = new InputWithLabel("Nr. of desks:", 2, "50");
+        this.inputDesksCount = new InputWithLabel("Nr. of desks:", 2, "58");
         this.inputSimDur = new InputWithLabel("Dur [days]:", 3, "249");
         this.inputExperiments = new InputWithLabel("Experiments:", 6, "1000");
         JLabel lblConf = new JLabel("Params:");

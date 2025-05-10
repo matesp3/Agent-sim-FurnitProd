@@ -237,8 +237,10 @@ public class Carpenter implements IAnimatedEntity {
 
     @Override
     public void removeAnimatedEntity(IAnimator from) {
-        this.animCarpenter.unregisterEntity(from);
-        this.animCarpenter = null;
+        if (this.animCarpenter != null) {
+            this.animCarpenter.unregisterEntity(from);
+            this.animCarpenter = null;
+        }
     }
 
     public static class AnimatedCarpenter extends AnimatedEntity {

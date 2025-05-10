@@ -59,7 +59,7 @@ public class MySimulation extends OSPABA.Simulation
 	{
 		init();
 		// fit installation is one random phenomenon
-		RNG<Double> rndFitInstDur = new UniformContinuousRNG(15.0, 25.0, SeedGen.getSeedRNG());
+		RNG<Double> rndFitInstDur = new UniformContinuousRNG(15.0*60.0, 25.0*60.0, SeedGen.getSeedRNG());
 		this.agentGroupA().setFitInstGenerator(rndFitInstDur);
 		this.agentGroupC().setFitInstGenerator(rndFitInstDur);
 
