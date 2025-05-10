@@ -27,8 +27,10 @@ public class ExperimentsRunner {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final Comparator<Results> RESULTS_CMP = (r1, r2) -> {
-        int cmp = DoubleComp.compare(r1.lOrderTimeInSystem, r2.lOrderTimeInSystem);
-        return (cmp != 0) ? cmp : DoubleComp.compare(r1.hOrderTimeInSystem -r1.lOrderTimeInSystem, r2.hOrderTimeInSystem -r2.lOrderTimeInSystem);
+        int cmp0 = DoubleComp.compare(r1.lOrderTimeInSystem, r2.lOrderTimeInSystem);
+        int cmp1 = Integer.compare((r1.countA+r1.countB+r1.countC), (r2.countA+r2.countB+r2.countC));
+        int cmp2 = Integer.compare(r1.desksCount, r2.desksCount);
+        return (cmp0 != 0) ? cmp0 : ((cmp1 != 0) ? cmp1 : cmp2);
     };
     private int[][] configs;
     private Results[] results;
