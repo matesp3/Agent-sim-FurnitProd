@@ -285,6 +285,12 @@ public class Furniture implements IAnimatedEntity {
         return this.animFurniture;
     }
 
+    @Override
+    public void removeAnimatedEntity(IAnimator from) {
+        this.animFurniture.unregisterEntity(from);
+        this.animFurniture = null;
+    }
+
     public static class AnimatedFurniture extends AnimatedEntity {
         private AnimTextItem txtTechStep;
         private Furniture f;

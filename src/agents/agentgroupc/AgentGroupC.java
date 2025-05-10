@@ -79,7 +79,7 @@ public class AgentGroupC extends OSPABA.Agent implements IFittingsInstaller, ICa
 			}
 			else {
 				if (c.isInStorage())
-					animHandler.placeCarpenterBToStorage(c.getAnimatedEntity());
+					animHandler.placeCarpenterCToStorage(c.getAnimatedEntity());
 				else
 					animHandler.placeCarpenterToDesk(c.getCurrentDeskID(), c.getAnimatedEntity());
 			}
@@ -89,7 +89,8 @@ public class AgentGroupC extends OSPABA.Agent implements IFittingsInstaller, ICa
 	@Override
 	public void unregisterEntities() {
 		for (Carpenter c : this.allocator.getCarpenters()) {
-			c.initAnimatedEntity().unregisterEntity(this.mySim().animator());
+			c.removeAnimatedEntity(this.mySim().animator());
+//			c.getAnimatedEntity().unregisterEntity(this.mySim().animator());
 		}
 	}
 }

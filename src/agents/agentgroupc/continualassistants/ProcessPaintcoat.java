@@ -39,6 +39,8 @@ public class ProcessPaintcoat extends OSPABA.Process
 		TechStepMessage tsMsg = (TechStepMessage) message;
 		tsMsg.getProductToProcess().setStepBT(this.mySim().currentTime());
 		tsMsg.getProductToProcess().setStep(Furniture.TechStep.LACQUERING);
+		if (this.mySim().animatorExists())
+			tsMsg.getCarpenter().getAnimatedEntity().renderEntity();
 		tsMsg.setCode(Mc.stainingAndPaintcoat);
 		switch (tsMsg.getProductToProcess().getProductType()) {
 			case TABLE		-> this.hold((double) this.rndTableLacquering.sample(), tsMsg);

@@ -11,7 +11,6 @@ import agents.agentgroupb.*;
 import agents.agentgroupc.*;
 import agents.agentfurnitprod.*;
 import animation.FurnitureFactoryAnimation;
-import common.Carpenter;
 import common.Furniture;
 import common.Order;
 import results.FurnitProdRepStats;
@@ -90,11 +89,13 @@ public class MySimulation extends OSPABA.Simulation
 	@Override
 	public void removeAnimator() {
 		// unregister all entities from animator here on one place
-//		this.agentGroupC().unregisterEntities();
-//		this.agentGroupB().unregisterEntities();
-//		this.agentGroupA().unregisterEntities();
-//		this.agentFurnitProd().unregisterEntities();
-//		this.animationHandler.clear();
+		synchronized (this) {
+			this.agentGroupC().unregisterEntities();
+			this.agentGroupB().unregisterEntities();
+			this.agentGroupA().unregisterEntities();
+			this.agentFurnitProd().unregisterEntities();
+			this.animationHandler.unregisterFurnitureInStorage();
+		}
 		super.removeAnimator();
 	}
 
