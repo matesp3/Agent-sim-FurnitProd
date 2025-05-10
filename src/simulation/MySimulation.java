@@ -62,7 +62,6 @@ public class MySimulation extends OSPABA.Simulation
 		RNG<Double> rndFitInstDur = new UniformContinuousRNG(15.0*60.0, 25.0*60.0, SeedGen.getSeedRNG());
 		this.agentGroupA().setFitInstGenerator(rndFitInstDur);
 		this.agentGroupC().setFitInstGenerator(rndFitInstDur);
-
 	}
 
 	public TIME_UNIT getTimeUnit() {
@@ -89,13 +88,11 @@ public class MySimulation extends OSPABA.Simulation
 	@Override
 	public void removeAnimator() {
 		// unregister all entities from animator here on one place
-		synchronized (this) {
-			this.agentGroupC().unregisterEntities();
-			this.agentGroupB().unregisterEntities();
-			this.agentGroupA().unregisterEntities();
-			this.agentFurnitProd().unregisterEntities();
-			this.animationHandler.unregisterFurnitureInStorage();
-		}
+		this.agentGroupC().unregisterEntities();
+		this.agentGroupB().unregisterEntities();
+		this.agentGroupA().unregisterEntities();
+		this.agentFurnitProd().unregisterEntities();
+		this.animationHandler.unregisterFurnitureInStorage();
 		super.removeAnimator();
 	}
 

@@ -182,8 +182,13 @@ public class FurnitProdSimController {
         if (!this.isSimRunning()) { // before simulation start
             return;
         }
-        this.sim.removeAnimator();
+        System.out.println("Going call removeAnimator()");
         this.animator = null;
+        this.sim.removeAnimator();
+//        Thread t = new Thread(() -> {this.sim.removeAnimator();}, "Thread-removeAnimator");
+//        t.setDaemon(true);
+//        t.start();
+        System.out.println("Is paused?"+this.sim.isPaused());
     }
 
     public void setEnabledConsoleLogs(boolean enabled) {

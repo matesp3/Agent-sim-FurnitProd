@@ -134,9 +134,10 @@ public class FurnitureProdForm extends JFrame implements ISimDelegate, ActionLis
         this.checkAnimator.setSelected(false);
         this.animationViewer.removeAnimPane(); // removing animator from viewer
         this.animator = null;
-        Thread t = new Thread(this.furnitProdSimController::removeAnimator, "Thread-AnimRemoving");
-        t.setDaemon(true);
-        t.start();
+        this.furnitProdSimController.removeAnimator();
+//        Thread t = new Thread(this.furnitProdSimController::removeAnimator, "Thread-AnimRemoving");
+//        t.setDaemon(true);
+//        t.start();
     }
 
     /**

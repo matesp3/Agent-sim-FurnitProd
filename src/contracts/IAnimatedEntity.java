@@ -1,6 +1,5 @@
 package contracts;
 
-import OSPAnimator.IAnimator;
 import animation.AnimatedEntity;
 
 /**
@@ -18,5 +17,5 @@ public interface IAnimatedEntity {
      */
     AnimatedEntity getAnimatedEntity();
 
-    void removeAnimatedEntity(IAnimator from);
+    void removeAnimatedEntity();
 }

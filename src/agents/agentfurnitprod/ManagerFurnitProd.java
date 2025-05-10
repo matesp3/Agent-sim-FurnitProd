@@ -346,8 +346,8 @@ public class ManagerFurnitProd extends OSPABA.Manager
 		f.setTimeCompleted(this.mySim().currentTime());
 		this.myAgent().getDeskManager().setDeskFree(f.getDeskID(), f); // release desk
 
-		if (f.getAnimatedEntity() != null && this.mySim().animatorExists())
-			f.removeAnimatedEntity(this.mySim().animator());
+		if (this.mySim().animatorExists())
+			f.removeAnimatedEntity();
 //			f.getAnimatedEntity().unregisterEntity(this.mySim().animator());
 
 		if (f.getMyOrder().isCompleted()) { // if all furniture products of this order are completed

@@ -286,9 +286,9 @@ public class Furniture implements IAnimatedEntity {
     }
 
     @Override
-    public void removeAnimatedEntity(IAnimator from) {
+    public void removeAnimatedEntity() {
         if (this.animFurniture != null) {
-            this.animFurniture.unregisterEntity(from);
+            this.animFurniture.unregisterEntity();
             this.animFurniture = null;
         }
     }
@@ -327,8 +327,10 @@ public class Furniture implements IAnimatedEntity {
 
         @Override
         public void registerEntity(IAnimator animator) {
-            animator.register(this.txtTechStep);
-            animator.register(this); // img
+            if (animator != null) {
+                animator.register(this.txtTechStep);
+                animator.register(this); // img
+            }
         }
 
         @Override
@@ -338,11 +340,9 @@ public class Furniture implements IAnimatedEntity {
         }
 
         @Override
-        public void unregisterEntity(IAnimator animator) {
-            animator.remove(this.txtTechStep);
-            animator.remove(this);
+        public void unregisterEntity() {
             this.txtTechStep.remove();
-            super.remove(); // img
+            this.remove(); // img
         }
 
         @Override

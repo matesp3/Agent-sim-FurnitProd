@@ -102,10 +102,10 @@ public class DeskAllocation {
         }
     }
 
-    public void unregisterDesks(IAnimator animator) {
+    public void unregisterDesks() {
         for (int i = 0; i < this.desks.length; i++) {
             if (this.desks[i] != null) {
-                this.desks[i].removeAnimatedEntity(animator);
+                this.desks[i].removeAnimatedEntity();
 //                this.desks[i].getAnimatedEntity().unregisterEntity(animator);
             }
         }

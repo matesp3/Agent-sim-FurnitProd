@@ -131,9 +131,9 @@ public class Order {
         }
     }
 
-    public void unregisterUnstarted(IAnimator animator) {
+    public void unregisterUnstarted() {
         for (int i = this.nextToBeProcessed; i < this.products.length; i++) {
-            this.products[i].removeAnimatedEntity(animator);
+            this.products[i].removeAnimatedEntity();
 //            this.products[i].getAnimatedEntity().unregisterEntity(animator);
         }
     }
