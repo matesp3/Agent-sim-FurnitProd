@@ -232,11 +232,11 @@ public class AgentFurnitProd extends OSPABA.Agent implements IAgentWithEntity
 
 	@Override
 	public void unregisterEntities() {
-		this.deskManager.unregisterDesks(this.mySim().animator());
-		for (Order o : this.qStarted)
-			o.unregisterUnstarted(this.mySim().animator());
-		for (Order o : this.qUnstarted)
-			o.unregisterUnstarted(this.mySim().animator());
+		this.deskManager.unregisterDesks();
+//		for (Order o : this.qStarted)
+//			o.unregisterUnstarted();
+//		for (Order o : this.qUnstarted)
+//			o.unregisterUnstarted();
 	}
 
 }

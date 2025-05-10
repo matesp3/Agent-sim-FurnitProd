@@ -235,6 +235,14 @@ public class Carpenter implements IAnimatedEntity {
         return this.animCarpenter;
     }
 
+    @Override
+    public void removeAnimatedEntity() {
+        if (this.animCarpenter != null) {
+            this.animCarpenter.unregisterEntity();
+            this.animCarpenter = null;
+        }
+    }
+
     public static class AnimatedCarpenter extends AnimatedEntity {
         private final AnimTextItem txtWorkStatus;
         private final Carpenter c;
@@ -261,8 +269,10 @@ public class Carpenter implements IAnimatedEntity {
 
         @Override
         public void registerEntity(IAnimator animator) {
-            animator.register(this.txtWorkStatus);
-            animator.register(this); // img
+            if (animator != null) {
+                animator.register(this.txtWorkStatus);
+                animator.register(this); // img
+            }
         }
 
         @Override
@@ -274,11 +284,9 @@ public class Carpenter implements IAnimatedEntity {
         }
 
         @Override
-        public void unregisterEntity(IAnimator animator) {
-            animator.remove(this.txtWorkStatus);
-            animator.remove(this);
+        public void unregisterEntity() {
             this.txtWorkStatus.remove();
-            super.remove(); // img
+            this.remove(); // img
         }
 
         @Override

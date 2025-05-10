@@ -11,7 +11,6 @@ import agents.agentgroupb.*;
 import agents.agentgroupc.*;
 import agents.agentfurnitprod.*;
 import animation.FurnitureFactoryAnimation;
-import common.Carpenter;
 import common.Furniture;
 import common.Order;
 import results.FurnitProdRepStats;
@@ -60,10 +59,9 @@ public class MySimulation extends OSPABA.Simulation
 	{
 		init();
 		// fit installation is one random phenomenon
-		RNG<Double> rndFitInstDur = new UniformContinuousRNG(15.0, 25.0, SeedGen.getSeedRNG());
+		RNG<Double> rndFitInstDur = new UniformContinuousRNG(15.0*60.0, 25.0*60.0, SeedGen.getSeedRNG());
 		this.agentGroupA().setFitInstGenerator(rndFitInstDur);
 		this.agentGroupC().setFitInstGenerator(rndFitInstDur);
-
 	}
 
 	public TIME_UNIT getTimeUnit() {
@@ -90,11 +88,11 @@ public class MySimulation extends OSPABA.Simulation
 	@Override
 	public void removeAnimator() {
 		// unregister all entities from animator here on one place
-//		this.agentGroupC().unregisterEntities();
-//		this.agentGroupB().unregisterEntities();
-//		this.agentGroupA().unregisterEntities();
-//		this.agentFurnitProd().unregisterEntities();
-//		this.animationHandler.clear();
+		this.agentGroupC().unregisterEntities();
+		this.agentGroupB().unregisterEntities();
+		this.agentGroupA().unregisterEntities();
+		this.agentFurnitProd().unregisterEntities();
+		this.animationHandler.unregisterFurnitureInStorage();
 		super.removeAnimator();
 	}
 

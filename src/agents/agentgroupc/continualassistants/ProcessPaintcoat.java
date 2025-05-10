@@ -5,6 +5,7 @@ import OSPRNG.EmpiricPair;
 import OSPRNG.EmpiricRNG;
 import OSPRNG.RNG;
 import OSPRNG.UniformContinuousRNG;
+import animation.AnimatedEntity;
 import common.Furniture;
 import simulation.*;
 import agents.agentgroupc.*;

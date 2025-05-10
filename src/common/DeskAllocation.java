@@ -28,7 +28,7 @@ public class DeskAllocation {
             throw new IllegalArgumentException("Desk ID " + deskId + " does not exist");
         if (this.desks[deskId] != userIdentity)
             throw new IllegalArgumentException("Violation of desk freeing. This identity cannot free desk that doesn't"
-                    + " belong to him ");
+                    + " belong to him. Owner: "+this.desks[deskId]+", Applicant: "+userIdentity);
         this.desks[deskId] = null;
         this.usedDesks--;
         this.statCount.addSample(this.usedDesks);
@@ -102,10 +102,11 @@ public class DeskAllocation {
         }
     }
 
-    public void unregisterDesks(IAnimator animator) {
+    public void unregisterDesks() {
         for (int i = 0; i < this.desks.length; i++) {
             if (this.desks[i] != null) {
-                this.desks[i].getAnimatedEntity().unregisterEntity(animator);
+                this.desks[i].removeAnimatedEntity();
+//                this.desks[i].getAnimatedEntity().unregisterEntity(animator);
             }
         }
     }

@@ -16,4 +16,6 @@ public interface IAnimatedEntity {
      * is not present.
      */
     AnimatedEntity getAnimatedEntity();
+
+    void removeAnimatedEntity();
 }

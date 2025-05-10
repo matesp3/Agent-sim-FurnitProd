@@ -8,6 +8,8 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Handles creating desks entities, registering them to specified {@code animator} and moving other items onto them
@@ -44,6 +46,7 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
     private final CarpenterStorageQueue carpQB;
     private final CarpenterStorageQueue carpQC;
     private int desksCount;
+    private ArrayList<AnimatedEntity> furnitInStorage;
 
     /**
      * @param animator animator, to which all desk entities will be registered
@@ -57,6 +60,7 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        this.furnitInStorage = new ArrayList<>();
         this.animator = animator;
         this.desksCount = desksCount;
 
@@ -72,67 +76,98 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
     }
 
     public void enqueueFurnitureInStorage(AnimatedEntity furniture, boolean alreadyStartedOrder) {
-        furniture.setPosition(STORAGE_UNSTARTED_POS_START); // first anim - bcs of nullptrException
+        if (furniture != null) {
+            furniture.setPosition(STORAGE_UNSTARTED_POS_START); // first anim - bcs of nullptrException
+            this.furnitInStorage.add(furniture);
+        }
     }
 
     public void placeFurnitureOnDesk(int deskId, AnimatedEntity furniture) {
-        double x = getDeskBaseX(deskId) + ((ImgResources.WIDTH_DESK - furniture.getWidth()) / 3.75);
-        double y = getDeskBaseY(deskId) + DESK_HOVER_OFFSET_Y - furniture.getHeight();
-        furniture.setPosition(x, y);
-        furniture.setZIndex(calcFurnitureZIndex(deskId));
+        if (furniture != null) {
+            double x = getDeskBaseX(deskId) + ((ImgResources.WIDTH_DESK - furniture.getWidth()) / 3.75);
+            double y = getDeskBaseY(deskId) + DESK_HOVER_OFFSET_Y - furniture.getHeight();
+            furniture.setPosition(x, y);
+            furniture.setZIndex(calcFurnitureZIndex(deskId));
+        }
     }
 
     public void moveFurnitureToDesk(int deskId, AnimatedEntity furniture, double startTime, double movingDur) {
-        double x = getDeskBaseX(deskId) + ((ImgResources.WIDTH_DESK - furniture.getWidth()) / 3.75);
-        double y = getDeskBaseY(deskId) + DESK_HOVER_OFFSET_Y - furniture.getHeight();
-        furniture.moveTo(startTime, movingDur, x, y);
-        furniture.setZIndex(calcFurnitureZIndex(deskId));
+        if (furniture != null) {
+            for (int i = 0; i < this.furnitInStorage.size(); i++) {
+                if (this.furnitInStorage.get(i) == furniture) {
+                    this.furnitInStorage.remove(i);
+                    break;
+                }
+            }
+            double x = getDeskBaseX(deskId) + ((ImgResources.WIDTH_DESK - furniture.getWidth()) / 3.75);
+            double y = getDeskBaseY(deskId) + DESK_HOVER_OFFSET_Y - furniture.getHeight();
+            furniture.moveTo(startTime, movingDur, x, y);
+            furniture.setZIndex(calcFurnitureZIndex(deskId));
+        }
     }
 
     public void moveCarpenterToOtherDesk(int deskId, AnimatedEntity carpenter, double startTime, double dur) {
-        double x = getDeskBaseX(deskId) - ImgResources.WIDTH_CARPENTER + 25;
-        double y = getDeskBaseY(deskId) + ImgResources.HEIGHT_DESK - ImgResources.HEIGHT_CARPENTER + 15;
-        carpenter.moveTo(startTime, dur, x, y);
-        carpenter.setZIndex(calcCarpenterZIndex(deskId));
+        if (carpenter != null) {
+            double x = getDeskBaseX(deskId) - ImgResources.WIDTH_CARPENTER + 25;
+            double y = getDeskBaseY(deskId) + ImgResources.HEIGHT_DESK - ImgResources.HEIGHT_CARPENTER + 15;
+            carpenter.moveTo(startTime, dur, x, y);
+            carpenter.setZIndex(calcCarpenterZIndex(deskId));
+        }
     }
 
     public void moveCarpenterAToStorage(AnimatedEntity carpenter, double startTime, double movingDur) {
-        this.carpQA.enqueue(carpenter, startTime, movingDur);
+        if (carpenter != null) {
+            this.carpQA.enqueue(carpenter, startTime, movingDur);
+        }
     }
 
     public void placeCarpenterAToStorage(AnimatedEntity carpenter) {
-        this.carpQA.enqueue(carpenter);
-        carpenter.setZIndex(2);
+        if (carpenter != null) {
+            this.carpQA.enqueue(carpenter);
+            carpenter.setZIndex(2);
+        }
     }
 
     public void placeCarpenterToDesk(int deskId, AnimatedEntity carpenter) {
-        carpenter.setPosition(getDeskBaseX(deskId), getDeskBaseY(deskId));
-        carpenter.setZIndex(calcCarpenterZIndex(deskId));
+        if (carpenter != null) {
+            carpenter.setPosition(getDeskBaseX(deskId), getDeskBaseY(deskId));
+            carpenter.setZIndex(calcCarpenterZIndex(deskId));
+        }
     }
 
     public void placeCarpenterBToStorage(AnimatedEntity carpenter) {
-        this.carpQB.enqueue(carpenter);
-        carpenter.setZIndex(1);
+        if (carpenter != null) {
+            this.carpQB.enqueue(carpenter);
+            carpenter.setZIndex(1);
+        }
     }
 
     public void placeCarpenterCToStorage(AnimatedEntity carpenter) {
-        this.carpQC.enqueue(carpenter);
-        carpenter.setZIndex(0);
+        if (carpenter != null) {
+            this.carpQC.enqueue(carpenter);
+            carpenter.setZIndex(0);
+        }
     }
 
     public void moveCarpenterAToDesk(int deskID, AnimatedEntity carpenter, double v, double dur) {
-        this.carpQA.dequeue(carpenter, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
-        carpenter.setZIndex(calcCarpenterZIndex(deskID));
+        if (carpenter != null) {
+            this.carpQA.dequeue(carpenter, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
+            carpenter.setZIndex(calcCarpenterZIndex(deskID));
+        }
     }
 
     public void moveCarpenterBToDesk(int deskID, AnimatedEntity carpenter, double v, double dur) {
-        this.carpQB.dequeue(carpenter, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
-        carpenter.setZIndex(calcCarpenterZIndex(deskID));
+        if (carpenter != null) {
+            this.carpQB.dequeue(carpenter, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
+            carpenter.setZIndex(calcCarpenterZIndex(deskID));
+        }
     }
 
     public void moveCarpenterCToDesk(int deskID, AnimatedEntity carpenter, double v, double dur) {
-        this.carpQC.dequeue(carpenter, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
-        carpenter.setZIndex(calcCarpenterZIndex(deskID));
+        if (carpenter != null) {
+            this.carpQC.dequeue(carpenter, v, dur, getDeskBaseX(deskID), getDeskBaseY(deskID));
+            carpenter.setZIndex(calcCarpenterZIndex(deskID));
+        }
     }
 
     public IAnimator getAnimator() {
@@ -143,7 +178,11 @@ public class FurnitureFactoryAnimation implements IAnimatorHandler {
         this.animator = animator;
     }
 
-    public void clear() {
+    public void unregisterFurnitureInStorage() {
+        for (AnimatedEntity furniture : this.furnitInStorage) {
+            this.animator.remove(furniture);
+        }
+        this.furnitInStorage.clear();
     }
 
     private void initDesks() {
