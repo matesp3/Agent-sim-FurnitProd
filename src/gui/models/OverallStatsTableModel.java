@@ -12,7 +12,7 @@ public class OverallStatsTableModel extends AbstractTableModel {
     private List<StatResult.ConfInterval> lResults;
     private final String[] aColNames = new String[] {
             "Stat name",
-            "95% Confidence interval: <left-bound | MEAN | right-bound>",
+            "95% Confidence interval",
             "Unit" };
     private final Class<?>[] aColClasses = new Class<?>[] {
             String.class,
